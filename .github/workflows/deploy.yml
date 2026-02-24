@@ -24,19 +24,27 @@ jobs:
           cache: "npm"
 
       - name: Instalar dependências
-        run: |
-          npm ci || npm ci --legacy-peer-deps
+        run: npm ci --prefer-offline --no-audit
 
       - name: Gerar Prisma Client
         run: npx prisma generate
 
       - name: Build Next.js
         run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
 
-      - name: Verificar saída do build
+      - name: Preparar arquivos para deploy
         run: |
-          test -d .next || (echo "❌ Pasta .next não encontrada"; exit 1)
-          ls -al .next
+          mkdir -p deploy-package
+          cp -r .next deploy-package/
+          cp -r public deploy-package/
+          cp package.json deploy-package/
+          cp package-lock.json deploy-package/
+          cp next.config.mjs deploy-package/
+          cp -r prisma deploy-package/
+          echo "✅ Arquivos preparados para deploy"
+          ls -la deploy-package/
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -46,7 +54,7 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftps
           port: 21
-          local-dir: ./
+          local-dir: ./deploy-package/
           server-dir: /
           dangerous-clean-slate: false
           state-name: .ftp-deploy-sync-state.json
@@ -56,15 +64,6 @@ jobs:
             **/node_modules/**
             **/.next/cache/**
             **/coverage/**
-            **/.vscode/**
-            **/.idea/**
-            **/tests/**
-            **/*.log
-            **/.env
-            **/.env.*
-            !**/.env.production
             **/.DS_Store
             **/Thumbs.db
-            **/*.md
-            !**/README.md
-          log-level: verbose
+          log-level: standard

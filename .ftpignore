@@ -1,0 +1,20 @@
+# Ignorar código-fonte - apenas enviar build
+/app/**
+/components/**
+/lib/**
+/prisma/migrations/**
+/.git/**
+/.github/**
+/node_modules/**
+/.next/cache/**
+/.vscode/**
+/.idea/**
+/tests/**
+*.log
+.env
+.env.*
+!.env.production
+.DS_Store
+Thumbs.db
+*.md
+!README.md
