@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Contatos recebidos pelo formulário do site
+model Contact {
+  id           Int      @id @default(autoincrement())
+  nome         String
+  empresa      String?
+  telefone     String
+  email        String
+  tipoVeiculo  String
+  mensagem     String   @db.Text
+  comoConheceu String?
+  lido         Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@map("contacts")
+}
+
+// Configurações de SEO por página
+model SeoSetting {
+  id            Int      @id @default(autoincrement())
+  pageSlug      String   @unique
+  metaTitulo    String
+  metaDescricao String   @db.Text
+  ogImage       String?
+  updatedAt     DateTime @updatedAt
+
+  @@map("seo_settings")
+}
+
+// Fotos da galeria de serviços
+model GalleryPhoto {
+  id        Int      @id @default(autoincrement())
+  filename  String
+  alt       String
+  category  String
+  sortOrder Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("gallery_photos")
+}
+
+// Vídeos do YouTube
+model Video {
+  id        Int      @id @default(autoincrement())
+  youtubeId String
+  titulo    String
+  categoria String
+  sortOrder Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("videos")
+}
+
+// Configurações gerais do sistema (cores, SMTP, credenciais admin)
+model Setting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String @db.Text
+
+  @@map("settings")
+}
+
+// Usuários do painel administrativo
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String   @default("Admin")
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
+}
+
+// Banners do Hero Slider com título e descrição editáveis
+model HeroBanner {
+  id          Int      @id @default(autoincrement())
+  filename    String
+  titulo      String   @default("")
+  descricao   String   @db.Text
+  sortOrder   Int      @default(0)
+  visible     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("hero_banners")
+}

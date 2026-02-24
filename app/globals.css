@@ -1,0 +1,287 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ================================================================
+   DESIGN SYSTEM — EOS / Ice Van
+   Primary: Blue Iris (#4747E8) | Font: Plus Jakarta Sans
+   Extracted from EOS Design System reference
+   ================================================================ */
+
+@layer base {
+  :root {
+    /* === BRAND (Dynamic via admin panel — fallbacks = EOS tokens) === */
+    --brand-primary:   #4747E8;   /* Blue Iris */
+    --brand-secondary: #6B68FF;   /* Blue Iris light */
+    --brand-accent:    #FEB63D;   /* Amber */
+    --brand-dark:      #0E0D35;   /* Neutral_100 */
+    --brand-light:     #F4F6F9;   /* Pale Grey */
+
+    /* === BASE === */
+    --background: 216 31% 97%;    /* #F4F6F9 Pale Grey */
+    --foreground: 241 61% 13%;    /* #0E0D35 Neutral_100 */
+
+    /* === CARD === */
+    --card: 0 0% 100%;            /* #FFFFFF */
+    --card-foreground: 241 61% 13%;
+
+    /* === POPOVER / DROPDOWN / TOOLTIP === */
+    --popover: 0 0% 100%;
+    --popover-foreground: 241 61% 13%;
+
+    /* === PRIMARY — Blue Iris === */
+    --primary: 240 78% 59%;       /* #4747E8 */
+    --primary-foreground: 0 0% 100%;
+
+    /* === SECONDARY === */
+    --secondary: 245 98% 98%;     /* #F4F3FF Hover Grey */
+    --secondary-foreground: 241 61% 13%;
+
+    /* === MUTED === */
+    --muted: 240 14% 97%;         /* #F8F8F9 Neutral Grey */
+    --muted-foreground: 243 9% 56%; /* #868599 Neutral_50 */
+
+    /* === ACCENT — Amber === */
+    --accent: 38 99% 62%;         /* #FEB63D */
+    --accent-foreground: 241 61% 13%;
+
+    /* === DESTRUCTIVE — Heart Rhythm Red === */
+    --destructive: 0 100% 67%;    /* #FF5555 */
+    --destructive-foreground: 0 0% 100%;
+
+    /* === BORDERS & INPUTS === */
+    --border: 240 9% 91%;         /* #E7E7EB Neutral_10 */
+    --input: 240 9% 83%;          /* #CFCFD7 Neutral_20 */
+    --ring: 240 78% 59%;          /* Primary */
+
+    /* === BORDER RADIUS === */
+    --radius: 0.75rem;
+
+    /* === CHART COLORS === */
+    --chart-1: 240 78% 59%;       /* Blue Iris */
+    --chart-2: 15 100% 71%;       /* Safety Orange #FF8F6B */
+    --chart-3: 38 99% 62%;        /* Amber #FEB63D */
+    --chart-4: 122 55% 56%;       /* Success #51CC56 */
+    --chart-5: 220 100% 68%;      /* Static Blue #5B93FF */
+
+    /* === SIDEBAR === */
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground:   240 5.3% 26.1%;
+    --sidebar-primary:   240 5.9% 10%;
+    --sidebar-primary-foreground:   0 0% 98%;
+    --sidebar-accent:   240 4.8% 95.9%;
+    --sidebar-accent-foreground:   240 5.9% 10%;
+    --sidebar-border:   220 13% 91%;
+    --sidebar-ring:   217.2 91.2% 59.8%;
+
+    /* === SEMANTIC COLORS === */
+    --success: 122 55% 56%;       /* #51CC56 Successful */
+    --success-foreground: 0 0% 100%;
+    --warning: 38 99% 62%;        /* #FEB63D Amber */
+    --warning-foreground: 241 61% 13%;
+    --info: 220 100% 68%;         /* #5B93FF Static Blue */
+    --info-foreground: 0 0% 100%;
+    --sidebar-background:   0 0% 98%;
+  }
+
+  .dark {
+    --background: 241 61% 13%;    /* #0E0D35 */
+    --foreground: 216 31% 97%;    /* #F4F6F9 */
+
+    --card: 241 48% 19%;          /* #1A1948 */
+    --card-foreground: 216 31% 97%;
+
+    --popover: 241 48% 19%;
+    --popover-foreground: 216 31% 97%;
+
+    --primary: 239 100% 73%;      /* #7A77FF — lighter for dark bg */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 241 32% 22%;     /* #27264A */
+    --secondary-foreground: 240 9% 91%;
+
+    --muted: 241 48% 19%;
+    --muted-foreground: 244 9% 65%; /* #9F9EAE Neutral_40 */
+
+    --accent: 38 99% 62%;
+    --accent-foreground: 241 61% 13%;
+
+    --destructive: 0 100% 67%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 242 21% 30%;        /* #3E3D5D */
+    --input: 242 21% 30%;
+    --ring: 239 100% 73%;
+
+    --chart-1: 239 100% 73%;
+    --chart-2: 15 100% 71%;
+    --chart-3: 38 99% 62%;
+    --chart-4: 122 55% 56%;
+    --chart-5: 220 100% 68%;
+
+    --sidebar: 241 61% 10%;
+    --sidebar-foreground:   240 4.8% 95.9%;
+    --sidebar-primary:   224.3 76.3% 48%;
+    --sidebar-primary-foreground:   0 0% 100%;
+    --sidebar-accent:   240 3.7% 15.9%;
+    --sidebar-accent-foreground:   240 4.8% 95.9%;
+    --sidebar-border:   240 3.7% 15.9%;
+    --sidebar-ring:   217.2 91.2% 59.8%;
+
+    --success: 122 55% 56%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 99% 62%;
+    --warning-foreground: 241 61% 13%;
+    --info: 220 100% 68%;
+    --info-foreground: 0 0% 100%;
+    --sidebar-background:   240 5.9% 10%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans text-brand-dark antialiased;
+    font-size: 16px;
+    line-height: 1.6;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold leading-tight;
+  }
+
+  h1 { @apply text-3xl md:text-4xl lg:text-5xl; }
+  h2 { @apply text-2xl md:text-3xl lg:text-4xl; }
+  h3 { @apply text-xl md:text-2xl; }
+  h4 { @apply text-lg md:text-xl; }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+}
+
+@layer components {
+  /* Container padrão */
+  .container-site {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Seção padrão */
+  .section-padding {
+    @apply py-16 md:py-20 lg:py-24;
+  }
+
+  /* Fundo alternado de seções */
+  .section-light {
+    @apply bg-brand-light;
+  }
+
+  /* Botão primário */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-brand-primary text-white font-semibold
+           px-6 py-3 rounded-lg transition-all duration-200
+           hover:shadow-md active:scale-95;
+  }
+  .btn-primary:hover {
+    filter: brightness(0.88);
+  }
+
+  /* Botão de CTA (âmbar) */
+  .btn-accent {
+    @apply inline-flex items-center gap-2 bg-brand-accent text-white font-semibold
+           px-6 py-3 rounded-lg transition-all duration-200
+           hover:shadow-md active:scale-95;
+  }
+  .btn-accent:hover {
+    filter: brightness(0.88);
+  }
+
+  /* Botão outline */
+  .btn-outline {
+    @apply inline-flex items-center gap-2 border-2 border-brand-primary text-brand-primary
+           font-semibold px-6 py-3 rounded-lg transition-all duration-200
+           hover:bg-brand-primary hover:text-white active:scale-95;
+  }
+
+  /* Card padrão */
+  .card {
+    @apply bg-white rounded-xl shadow-card hover:shadow-card-hover
+           transition-all duration-300 overflow-hidden;
+  }
+
+  /* Input de formulário */
+  .form-input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg text-brand-dark
+           bg-white placeholder-gray-400 focus:outline-none focus:ring-2
+           focus:ring-brand-secondary focus:border-transparent transition-all duration-200;
+  }
+
+  /* Label de formulário */
+  .form-label {
+    @apply block text-sm font-semibold text-brand-dark mb-1;
+  }
+
+  /* Erro de formulário */
+  .form-error {
+    @apply text-red-500 text-sm mt-1;
+  }
+
+  /* Badge de categoria */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+           text-brand-secondary;
+    background-color: color-mix(in srgb, var(--brand-secondary, #4747E8) 12%, transparent);
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    @apply flex items-center gap-2 text-sm text-gray-500;
+  }
+
+  .breadcrumb a {
+    @apply hover:text-brand-secondary transition-colors;
+  }
+}
+
+/* Embla Carousel */
+.embla {
+  overflow: hidden;
+}
+
+.embla__container {
+  display: flex;
+}
+
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+/* Lightbox overlay */
+.lightbox-overlay {
+  @apply fixed inset-0 bg-black/90 z-50 flex items-center justify-center;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Scrollbar customizada */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.8);
+}

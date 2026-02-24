@@ -1,0 +1,7 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#003957"/>
+  <rect x="0" y="500" width="1200" height="130" fill="#F28C28"/>
+  <text x="600" y="290" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="52" font-weight="800">Ice Van</text>
+  <text x="600" y="360" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="Inter,sans-serif" font-size="26">Refrigeração para Transporte</text>
+  <text x="600" y="560" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="22" font-weight="600">icevans.com.br</text>
+</svg>

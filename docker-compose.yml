@@ -1,0 +1,31 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: icevans_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: icevans123
+      MYSQL_DATABASE: icevans
+      MYSQL_USER: icevans
+      MYSQL_PASSWORD: icevans123
+    ports:
+      - "3307:3306"
+    volumes:
+      - icevans_db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: icevans_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: icevans123
+    ports:
+      - "8090:80"
+    depends_on:
+      - db
+
+volumes:
+  icevans_db_data:

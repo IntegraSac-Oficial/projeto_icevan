@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd /c \"taskkill /F /IM node.exe 2>&1\")",
+      "Bash(powershell -Command:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(docker compose:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(netstat:*)",
+      "mcp__shadcn__get_project_registries",
+      "mcp__shadcn__search_items_in_registries",
+      "mcp__shadcn__view_items_in_registries",
+      "mcp__shadcn__get_item_examples_from_registries",
+      "mcp__shadcn__get_add_command_for_items",
+      "Bash(npx shadcn@latest add:*)",
+      "mcp__shadcn__get_audit_checklist",
+      "Bash(npx tsc:*)",
+      "Bash(node -e:*)",
+      "Bash(node:*)",
+      "WebFetch(domain:shadcn.com)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "WebFetch(domain:lucide.dev)",
+      "mcp__shadcn__list_items_in_registries"
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+name: Deploy Next.js to FTP
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build & Deploy via FTP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: |
+          npm ci || npm ci --legacy-peer-deps
+
+      - name: Gerar Prisma Client
+        run: npx prisma generate
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Verificar saída do build
+        run: |
+          test -d .next || (echo "❌ Pasta .next não encontrada"; exit 1)
+          ls -al .next
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftps
+          port: 21
+          local-dir: ./
+          server-dir: /
+          dangerous-clean-slate: false
+          state-name: .ftp-deploy-sync-state.json
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.next/cache/**
+            **/coverage/**
+            **/.vscode/**
+            **/.idea/**
+            **/tests/**
+            **/*.log
+            **/.env
+            **/.env.*
+            !**/.env.production
+            **/.DS_Store
+            **/Thumbs.db
+            **/*.md
+            !**/README.md
+          log-level: verbose
