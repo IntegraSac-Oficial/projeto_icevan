@@ -33,7 +33,7 @@ function CodeBlock({ code }: { code: string }) {
   )
 }
 
-export default function DialogPage() {
+export default function DialogShowcasePage() {
   return (
     <div className="space-y-16 py-8">
       {/* Header */}

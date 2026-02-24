@@ -29,7 +29,7 @@ function CodeBlock({ code }: { code: string }) {
   )
 }
 
-export default function BreadcrumbPage() {
+export default function BreadcrumbShowcasePage() {
   return (
     <div className="space-y-16 py-8">
       {/* Header */}
