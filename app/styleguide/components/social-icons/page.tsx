@@ -141,7 +141,7 @@ export default function SocialIconsShowcasePage() {
           seguindo o padrão shadcn/ui de componentes SVG com <code className="font-mono text-sm bg-muted px-1 py-0.5 rounded">currentColor</code>.
         </p>
         <div className="text-sm font-mono text-muted-foreground bg-muted px-3 py-2 rounded-lg border border-border inline-block">
-          import &#123; IconWhatsApp, IconInstagram, ... &#125; from "@/components/ui/social-icons"
+          import &#123; IconWhatsApp, IconInstagram, ... &#125; from &quot;@/components/ui/social-icons&quot;
         </div>
       </div>
 

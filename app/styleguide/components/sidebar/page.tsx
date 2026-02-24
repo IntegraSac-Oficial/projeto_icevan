@@ -521,7 +521,7 @@ export default function SidebarShowcasePage() {
       {/* ── Usage Code ───────────────────────────────────────── */}
       <section className="pb-16">
         <h2 className="text-2xl font-bold mb-1">Usage</h2>
-        <p className="text-muted-foreground text-sm mb-5">Import from the project's AppSidebar component or compose from primitives</p>
+        <p className="text-muted-foreground text-sm mb-5">Import from the project&apos;s AppSidebar component or compose from primitives</p>
 
         <div className="space-y-4">
           <div>

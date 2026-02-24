@@ -14,7 +14,7 @@ import {
   TrendingUp,
   TrendingDown,
   Users,
-  Image,
+  Image as ImageIcon,
   ArrowRight,
   Star,
   CheckCircle2,
@@ -107,7 +107,7 @@ export default function CardShowcasePage() {
         <div className="flex gap-2 text-sm text-muted-foreground font-mono">
           <span>import &#123; Card, CardHeader, CardTitle, CardDescription,</span>
           <br />
-          <span>  CardContent, CardFooter &#125; from "@/components/ui/card"</span>
+          <span>  CardContent, CardFooter &#125; from &quot;@/components/ui/card&quot;</span>
         </div>
       </div>
 
@@ -239,7 +239,7 @@ export default function CardShowcasePage() {
             <CardHeader className="pb-2 flex flex-row items-start justify-between space-y-0">
               <CardDescription>Imagens</CardDescription>
               <div className="p-1.5 bg-secondary rounded-md">
-                <Image className="size-4 text-primary" />
+                <ImageIcon className="size-4 text-primary" />
               </div>
             </CardHeader>
             <CardContent className="pt-0">
@@ -298,7 +298,7 @@ export default function CardShowcasePage() {
                 ))}
               </div>
               <CardTitle className="text-base leading-snug">
-                "Serviço impecável, equipe muito profissional."
+                &quot;Serviço impecável, equipe muito profissional.&quot;
               </CardTitle>
             </CardHeader>
             <CardContent>
