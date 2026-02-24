@@ -13,13 +13,8 @@ export async function middleware(request: NextRequest) {
 
   // Propagar header x-is-admin para o root layout suprimir Header/Footer do site
   const requestHeaders = new Headers(request.headers);
-  if (pathname.startsWith("/admin") || pathname.startsWith("/styleguide")) {
+  if (pathname.startsWith("/admin")) {
     requestHeaders.set("x-is-admin", "1");
-  }
-
-  // Styleguide — sem autenticação necessária
-  if (pathname.startsWith("/styleguide")) {
-    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   // Permitir acesso à página e API de login sem autenticação
@@ -56,5 +51,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*", "/styleguide", "/styleguide/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
 };
