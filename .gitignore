@@ -1,6 +1,13 @@
 node_modules
-# Keep environment variables out of version control
+
+# Environment variables — never commit real credentials
 .env
+.env.local
+.env*.local
+
+# Next.js build output
+.next/
+out/
 
 /lib/generated/prisma
 tsconfig.tsbuildinfo

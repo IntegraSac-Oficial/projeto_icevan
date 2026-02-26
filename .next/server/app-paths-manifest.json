@@ -1,9 +1,0 @@
-{
-  "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js",
-  "/api/logo/route": "app/api/logo/route.js",
-  "/styleguide/components/social-icons/page": "app/styleguide/components/social-icons/page.js",
-  "/admin/videos/page": "app/admin/videos/page.js",
-  "/admin/aparencia/page": "app/admin/aparencia/page.js",
-  "/styleguide/components/sidebar/page": "app/styleguide/components/sidebar/page.js"
-}
