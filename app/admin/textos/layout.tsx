@@ -11,6 +11,7 @@ import {
   Car,
   PanelBottom,
   Phone,
+  Building2,
 } from "lucide-react";
 
 const navItems = [
@@ -34,6 +35,11 @@ const navItems = [
     href: "/admin/textos/aplicacoes",
     icon: Car,
     startsWith: true,
+  },
+  {
+    label: "Empresa",
+    href: "/admin/textos/empresa",
+    icon: Building2,
   },
   {
     label: "Contato",
