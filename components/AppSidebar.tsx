@@ -16,6 +16,7 @@ import {
   LogOut,
   ExternalLink,
   Paintbrush,
+  FileText,
 } from "lucide-react"
 
 import {
@@ -38,10 +39,11 @@ const navMain = [
 ]
 
 const navContent = [
-  { title: "Banners Hero", url: "/admin/banners", icon: Megaphone },
-  { title: "Galeria",      url: "/admin/galeria", icon: GalleryHorizontalEnd },
-  { title: "Imagens",      url: "/admin/imagens", icon: Image },
-  { title: "Vídeos",       url: "/admin/videos",  icon: Video },
+  { title: "Banners Hero", url: "/admin/banners",  icon: Megaphone },
+  { title: "Galeria",      url: "/admin/galeria",  icon: GalleryHorizontalEnd },
+  { title: "Imagens",      url: "/admin/imagens",  icon: Image },
+  { title: "Vídeos",       url: "/admin/videos",   icon: Video },
+  { title: "Veículos",     url: "/admin/veiculos", icon: Truck },
 ]
 
 const navComm = [
@@ -49,9 +51,10 @@ const navComm = [
 ]
 
 const navSettings = [
-  { title: "Aparência",     url: "/admin/aparencia",     icon: Paintbrush },
-  { title: "SEO",           url: "/admin/seo",           icon: Search },
-  { title: "Configurações", url: "/admin/configuracoes", icon: Settings },
+  { title: "Textos do Site", url: "/admin/textos",        icon: FileText },
+  { title: "Aparência",      url: "/admin/aparencia",     icon: Paintbrush },
+  { title: "SEO",            url: "/admin/seo",           icon: Search },
+  { title: "Configurações",  url: "/admin/configuracoes", icon: Settings },
 ]
 
 function NavItem({

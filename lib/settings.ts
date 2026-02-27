@@ -10,6 +10,17 @@ export async function getSetting(key: string, fallback = ""): Promise<string> {
   }
 }
 
+/** Lê uma setting JSON do banco. Retorna fallback se não existir ou inválido. */
+export async function getSettingJSON<T>(key: string, fallback: T): Promise<T> {
+  try {
+    const s = await prisma.setting.findUnique({ where: { key } });
+    if (!s?.value) return fallback;
+    return JSON.parse(s.value) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 /** Salva múltiplas settings de uma vez (upsert por chave). */
 export async function saveSettings(data: Record<string, string>): Promise<void> {
   await Promise.all(

@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
-  ChevronRight,
   MapPin,
   Phone,
   Mail,
@@ -12,6 +10,7 @@ import {
 import { ContactForm } from "@/components/ContactForm";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { empresa } from "@/lib/config";
+import { getSetting } from "@/lib/settings";
 import { whatsappUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -21,7 +20,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contato" },
 };
 
-export default function ContatoPage() {
+export default async function ContatoPage() {
+  const mapsUrl = await getSetting("empresa_maps_embed", empresa.googleMapsEmbed);
+  const endereco = await getSetting("empresa_endereco", empresa.enderecoCompleto);
+  const telefone = await getSetting("empresa_telefone", empresa.telefone);
+  const email = await getSetting("empresa_email", empresa.email);
+  const horario = await getSetting("empresa_horario", empresa.horario);
+
   return (
     <main className="pt-24 md:pt-28">
       {/* Hero da página */}
@@ -41,6 +46,21 @@ export default function ContatoPage() {
         </div>
       </section>
 
+      {/* Mapa — logo após o hero */}
+      {mapsUrl && (
+        <section className="h-72 md:h-96 relative">
+          <iframe
+            src={mapsUrl}
+            title={`Localização da ${empresa.nome}`}
+            className="w-full h-full border-0"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            aria-label="Mapa com localização da Ice Van"
+          />
+        </section>
+      )}
+
       {/* Conteúdo principal */}
       <section className="section-padding bg-white">
         <div className="container-site">
@@ -59,7 +79,6 @@ export default function ContatoPage() {
 
             {/* Informações — 1/3 */}
             <div className="space-y-6">
-              {/* Card de info de contato */}
               <div className="card p-6">
                 <h3 className="font-heading font-bold text-brand-primary text-lg mb-5">
                   Informações de Contato
@@ -76,42 +95,36 @@ export default function ContatoPage() {
                         <MessageCircle className="w-5 h-5 text-[#25D366]" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">
-                          WhatsApp
-                        </p>
+                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">WhatsApp</p>
                         <p className="font-semibold">{empresa.whatsapp}</p>
                       </div>
                     </a>
                   </li>
                   <li>
                     <a
-                      href={`tel:${empresa.telefone.replace(/\D/g, "")}`}
+                      href={`tel:${telefone.replace(/\D/g, "")}`}
                       className="flex gap-3 text-gray-700 hover:text-brand-primary transition-colors group"
                     >
                       <div className="p-2 rounded-lg bg-brand-primary/10 group-hover:bg-brand-primary/20 transition-colors flex-shrink-0">
                         <Phone className="w-5 h-5 text-brand-primary" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">
-                          Telefone
-                        </p>
-                        <p className="font-semibold">{empresa.telefone}</p>
+                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Telefone</p>
+                        <p className="font-semibold">{telefone}</p>
                       </div>
                     </a>
                   </li>
                   <li>
                     <a
-                      href={`mailto:${empresa.email}`}
+                      href={`mailto:${email}`}
                       className="flex gap-3 text-gray-700 hover:text-brand-primary transition-colors group"
                     >
                       <div className="p-2 rounded-lg bg-brand-primary/10 group-hover:bg-brand-primary/20 transition-colors flex-shrink-0">
                         <Mail className="w-5 h-5 text-brand-primary" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">
-                          E-mail
-                        </p>
-                        <p className="font-semibold">{empresa.email}</p>
+                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">E-mail</p>
+                        <p className="font-semibold">{email}</p>
                       </div>
                     </a>
                   </li>
@@ -120,12 +133,8 @@ export default function ContatoPage() {
                       <MapPin className="w-5 h-5 text-brand-primary" />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">
-                        Endereço
-                      </p>
-                      <p className="font-semibold text-sm leading-relaxed">
-                        {empresa.enderecoCompleto}
-                      </p>
+                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Endereço</p>
+                      <p className="font-semibold text-sm leading-relaxed">{endereco}</p>
                     </div>
                   </li>
                   <li className="flex gap-3 text-gray-700">
@@ -133,16 +142,13 @@ export default function ContatoPage() {
                       <Clock className="w-5 h-5 text-brand-primary" />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">
-                        Horário
-                      </p>
-                      <p className="font-semibold text-sm">{empresa.horario}</p>
+                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Horário</p>
+                      <p className="font-semibold text-sm">{horario}</p>
                     </div>
                   </li>
                 </ul>
               </div>
 
-              {/* WhatsApp CTA */}
               <a
                 href={whatsappUrl()}
                 target="_blank"
@@ -153,14 +159,12 @@ export default function ContatoPage() {
                 Chamar no WhatsApp
               </a>
 
-              {/* Instagram */}
               {empresa.instagram && (
                 <a
                   href={empresa.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-gray-600 hover:text-brand-accent
-                             transition-colors font-medium"
+                  className="flex items-center gap-3 text-gray-600 hover:text-brand-accent transition-colors font-medium"
                 >
                   <Instagram className="w-5 h-5" />
                   Siga-nos no Instagram
@@ -169,19 +173,6 @@ export default function ContatoPage() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Mapa */}
-      <section className="h-80 md:h-96 relative">
-        <iframe
-          src={empresa.googleMapsEmbed}
-          title={`Localização da ${empresa.nome}`}
-          className="w-full h-full border-0"
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          aria-label="Mapa com localização da Ice Van"
-        />
       </section>
     </main>
   );

@@ -23,18 +23,19 @@ const navLinks = [
   { href: "/contato", label: "Contato" },
 ];
 
-const aplicacoes = [
-  { href: "/fiorinos", label: "Fiorinos" },
-  { href: "/van-ducato", label: "Van Ducato" },
-  { href: "/van-sprinter", label: "Van Sprinter" },
-  { href: "/van-master", label: "Van Master" },
-  { href: "/expert-porta-frigorifica", label: "Expert c/ Porta Frigorífica" },
+const DEFAULT_APLICACOES = [
+  { href: "/fiorinos",                  label: "Fiorinos" },
+  { href: "/van-ducato",                label: "Van Ducato" },
+  { href: "/van-sprinter",              label: "Van Sprinter" },
+  { href: "/van-master",                label: "Van Master" },
+  { href: "/expert-porta-frigorifica",  label: "Expert c/ Porta Frigorífica" },
   { href: "/fiorino-porta-frigorifica", label: "Fiorino c/ Porta Frigorífica" },
 ];
 
 export function Footer() {
   const [logoSrc, setLogoSrc] = useState("/images/logo/logo-white.svg");
-  
+  const [aplicacoes, setAplicacoes] = useState(DEFAULT_APLICACOES);
+
   // Tipo explícito para permitir valores dinâmicos
   type TextosFooter = {
     descricao: string;
@@ -56,14 +57,12 @@ export function Footer() {
     footerRodape:    "CNPJ — Refrigeração para Transporte | São Paulo, SP",
   });
 
-  // Busca logo e textos dinâmicos
+  // Busca logo, textos dinâmicos e registro de veículos
   useEffect(() => {
     const fetchLogo = async () => {
       try {
         const res = await fetch("/api/logo?t=" + Date.now());
         const data = await res.json();
-
-        // Prioridade: Logo Branca > Logo Principal > Fallback
         if (data.branca) {
           setLogoSrc(data.branca + '?t=' + Date.now());
         } else if (data.principal) {
@@ -87,6 +86,15 @@ export function Footer() {
           footerCopyright: data.footer_copyright   || prev.footerCopyright,
           footerRodape:    data.footer_rodape      || prev.footerRodape,
         }));
+        // Atualiza lista de aplicações com o registro de veículos
+        if (data["vehicles_registry"]) {
+          try {
+            const registry = JSON.parse(data["vehicles_registry"]) as { href: string; label: string }[];
+            if (Array.isArray(registry) && registry.length > 0) {
+              setAplicacoes(registry.map((v) => ({ href: v.href, label: v.label })));
+            }
+          } catch { /* usa padrão */ }
+        }
       } catch {
         // mantém fallbacks do config
       }

@@ -9,7 +9,8 @@ interface ApplicationCardProps {
 }
 
 export function ApplicationCard({ application }: ApplicationCardProps) {
-  const { slug, titulo, subtitulo, thumb } = application;
+  const { slug, titulo, subtitulo, thumb, href } = application;
+  const pageHref = href ?? `/${slug}`;
 
   return (
     <div className="card group flex flex-col hover:-translate-y-1 transition-transform duration-300">
@@ -39,7 +40,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
         {/* Ações */}
         <div className="flex flex-col sm:flex-row gap-2 mt-auto">
           <Link
-            href={`/${slug}`}
+            href={pageHref}
             className="flex-1 btn-outline text-sm py-2.5 justify-center"
           >
             Saiba mais

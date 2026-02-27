@@ -10,7 +10,6 @@ import {
   Award,
   Users,
   ArrowRight,
-  Phone,
 } from "lucide-react";
 import { HeroSlider } from "@/components/HeroSlider";
 import { SolutionSection } from "@/components/SolutionSection";
@@ -20,6 +19,7 @@ import { SectionTitle } from "@/components/ui/SectionTitle";
 import { applications, loadApplicationImages } from "@/lib/applications";
 import { empresa } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
+import { getSettingJSON } from "@/lib/settings";
 
 export const metadata: Metadata = {
   title: `${empresa.nome} — ${empresa.slogan}`,
@@ -70,37 +70,74 @@ async function loadHeroBanners() {
   }
 }
 
-const diferenciais = [
+const ICONS_DIFERENCIAIS = [ShieldCheck, Clock, Award, Users];
+
+const DEFAULT_DIFERENCIAIS = [
   {
-    icon: ShieldCheck,
     title: "Qualidade Garantida",
     desc: "Materiais de primeira linha e mão de obra especializada com garantia de 12 meses.",
   },
   {
-    icon: Clock,
     title: "Prazo no Combinado",
     desc: "Cumprimos os prazos de entrega para você não perder tempo nem dinheiro.",
   },
   {
-    icon: Award,
     title: "Experiência Comprovada",
     desc: "Anos de atuação no mercado de refrigeração veicular com centenas de instalações realizadas.",
   },
   {
-    icon: Users,
     title: "Atendimento Personalizado",
     desc: "Cada projeto é dimensionado conforme o veículo, a carga e a necessidade do cliente.",
   },
 ];
 
+interface DiferenciaisContent {
+  titulo_secao: string;
+  subtitulo_secao: string;
+  cards: { title: string; desc: string }[];
+}
+
+const DEFAULT_DIFERENCIAIS_CONTENT: DiferenciaisContent = {
+  titulo_secao: "Por que escolher a",
+  subtitulo_secao:
+    "Somos especialistas em refrigeração veicular com foco em qualidade, pontualidade e satisfação total do cliente.",
+  cards: DEFAULT_DIFERENCIAIS,
+};
+
+interface ContatoCta {
+  label: string;
+  numero: string;
+}
+
+interface CtaContent {
+  titulo: string;
+  subtitulo: string;
+  texto: string;
+  titulo_form: string;
+  contatos: ContatoCta[];
+}
+
+const DEFAULT_CTA: CtaContent = {
+  titulo: "Solicite seu Orçamento",
+  subtitulo: "Sem Compromisso",
+  texto:
+    "Preencha o formulário ao lado ou entre em contato direto pelo WhatsApp. Nossa equipe responde rapidamente com a solução ideal para o seu veículo.",
+  titulo_form: "Fale com nosso time",
+  contatos: [{ label: "WhatsApp", numero: empresa.whatsapp }],
+};
+
 export default async function Home() {
-  const heroBanners = await loadHeroBanners();
-  
-  // Carregar imagens dinâmicas para as 3 primeiras aplicações
-  const firstThreeApps = await Promise.all(
-    applications.slice(0, 3).map(app => loadApplicationImages(app.slug))
-  );
+  const [heroBanners, difContent, ctaContent, firstThreeApps] = await Promise.all([
+    loadHeroBanners(),
+    getSettingJSON<DiferenciaisContent>("content_diferenciais", DEFAULT_DIFERENCIAIS_CONTENT),
+    getSettingJSON<CtaContent>("content_cta", DEFAULT_CTA),
+    Promise.all(applications.slice(0, 3).map(app => loadApplicationImages(app.slug))),
+  ]);
+
   const validApps = firstThreeApps.filter(app => app !== undefined);
+  const diferenciais = (difContent.cards ?? DEFAULT_DIFERENCIAIS).slice(0, 4).map(
+    (card, i) => ({ ...DEFAULT_DIFERENCIAIS[i], ...card, icon: ICONS_DIFERENCIAIS[i] })
+  );
 
   return (
     <main>
@@ -178,9 +215,9 @@ export default async function Home() {
       <section className="section-padding section-light">
         <div className="container-site">
           <SectionTitle
-            title="Por que escolher a"
+            title={difContent.titulo_secao || DEFAULT_DIFERENCIAIS_CONTENT.titulo_secao}
             accent={empresa.nome}
-            subtitle="Somos especialistas em refrigeração veicular com foco em qualidade, pontualidade e satisfação total do cliente."
+            subtitle={difContent.subtitulo_secao || DEFAULT_DIFERENCIAIS_CONTENT.subtitulo_secao}
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {diferenciais.map((d) => {
@@ -208,37 +245,39 @@ export default async function Home() {
             {/* Texto CTA */}
             <div className="text-white">
               <h2 className="text-white mb-5">
-                Solicite seu Orçamento
-                <span className="block text-brand-accent">Sem Compromisso</span>
+                {ctaContent.titulo || DEFAULT_CTA.titulo}
+                <span className="block text-brand-accent">{ctaContent.subtitulo || DEFAULT_CTA.subtitulo}</span>
               </h2>
               <p className="text-white/80 text-lg leading-relaxed mb-8">
-                Preencha o formulário ao lado ou entre em contato direto pelo WhatsApp.
-                Nossa equipe responde rapidamente com a solução ideal para o seu veículo.
+                {ctaContent.texto || DEFAULT_CTA.texto}
               </p>
               <div className="space-y-4">
-                <a
-                  href={whatsappUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-white hover:text-brand-accent transition-colors"
-                >
-                  <MessageCircle className="w-6 h-6 text-[#25D366]" />
-                  <span className="text-lg font-semibold">{empresa.whatsapp}</span>
-                </a>
-                <a
-                  href={`tel:${empresa.telefone.replace(/\D/g, "")}`}
-                  className="flex items-center gap-3 text-white hover:text-brand-accent transition-colors"
-                >
-                  <Phone className="w-6 h-6 text-brand-secondary" />
-                  <span className="text-lg font-semibold">{empresa.telefone}</span>
-                </a>
+                {(ctaContent.contatos ?? DEFAULT_CTA.contatos).map((c, i) => {
+                  const digits = c.numero.replace(/\D/g, "");
+                  return (
+                    <div key={i} className="space-y-0.5">
+                      {c.label && (
+                        <p className="text-white/60 text-xs uppercase tracking-wider">{c.label}</p>
+                      )}
+                      <a
+                        href={`https://wa.me/${digits}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 text-white hover:text-brand-accent transition-colors"
+                      >
+                        <MessageCircle className="w-6 h-6 text-[#25D366]" />
+                        <span className="text-lg font-semibold">{c.numero}</span>
+                      </a>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             {/* Formulário compacto */}
             <div className="bg-white rounded-2xl p-7 shadow-xl">
               <h3 className="text-brand-primary font-heading font-bold text-xl mb-6">
-                Fale com nosso time
+                {ctaContent.titulo_form || DEFAULT_CTA.titulo_form}
               </h3>
               <ContactForm compact />
             </div>

@@ -1,63 +1,20 @@
-/**
- * DADOS DAS 6 APLICAÇÕES — Ice Van
- *
- * Cada objeto representa uma aplicação com:
- * - slug: usado na URL (/van-ducato)
- * - titulo: nome exibido na UI
- * - subtitulo: descrição curta para cards
- * - conteudo: texto SEO de 300-500 palavras para a página de detalhe
- * - specs: especificações técnicas básicas
- * - thumb: imagem do card na página /aplicacoes
- * - imagens: fotos da galeria na página de detalhe
- */
+"use client";
 
-export interface Application {
-  slug: string;
-  titulo: string;
-  subtitulo: string;
-  conteudo: string[];
-  specs: { label: string; valor: string }[];
-  thumb: string;
-  imagens: string[];
-  metaTitulo: string;
-  metaDescricao: string;
-  href?: string; // URL da página — se omitido usa /{slug}; novos veículos usam /aplicacoes/{slug}
-}
+import { useEffect, useState, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Save, Loader2, CheckCircle, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
-export interface VehicleRegistryItem {
-  slug: string;
-  label: string;
-  href: string;
-  ordem: number;
-}
-
-/** Veículos padrão para o registro (fallback quando não há dado no banco) */
-const DEFAULT_REGISTRY: VehicleRegistryItem[] = [
-  { slug: "fiorinos",                  label: "Fiorinos",                       href: "/fiorinos",                  ordem: 1 },
-  { slug: "van-ducato",                label: "Van Ducato",                     href: "/van-ducato",                ordem: 2 },
-  { slug: "van-sprinter",              label: "Van Sprinter",                   href: "/van-sprinter",              ordem: 3 },
-  { slug: "van-master",                label: "Van Master",                     href: "/van-master",                ordem: 4 },
-  { slug: "expert-porta-frigorifica",  label: "Expert c/ Porta Frigorífica",   href: "/expert-porta-frigorifica",  ordem: 5 },
-  { slug: "fiorino-porta-frigorifica", label: "Fiorino c/ Porta Frigorífica",  href: "/fiorino-porta-frigorifica", ordem: 6 },
-];
-
-/** Lê o registro de veículos do banco, com fallback para os 6 padrão */
-export async function getVehicleRegistry(): Promise<VehicleRegistryItem[]> {
-  try {
-    const { getSettingJSON } = await import("@/lib/settings");
-    const registry = await getSettingJSON<VehicleRegistryItem[]>("vehicles_registry", DEFAULT_REGISTRY);
-    return registry.sort((a, b) => a.ordem - b.ordem);
-  } catch {
-    return DEFAULT_REGISTRY;
-  }
-}
-
-export const applications: Application[] = [
-  {
-    slug: "fiorinos",
+// Dados estáticos como fallback (cópia dos valores padrão)
+const STATIC_DEFAULTS: Record<string, { titulo: string; subtitulo: string; conteudo: string[]; specs: { label: string; valor: string }[] }> = {
+  fiorinos: {
     titulo: "Fiorinos",
-    subtitulo:
-      "Isolamento térmico e refrigeração para Fiat Fiorino — ideal para pequenas entregas de perecíveis.",
+    subtitulo: "Isolamento térmico e refrigeração para Fiat Fiorino — ideal para pequenas entregas de perecíveis.",
     conteudo: [
       "O Fiat Fiorino é um dos veículos utilitários mais utilizados no transporte de perecíveis em centros urbanos. Sua agilidade, baixo consumo e facilidade de estacionamento o tornam a escolha preferida de pequenos empreendedores, padarias, açougues, distribuidoras de laticínios e empresas de delivery refrigerado.",
       "Na Ice Van, desenvolvemos soluções completas de isolamento térmico e refrigeração especialmente dimensionadas para o Fiorino. O processo começa com a aplicação de painéis de poliuretano injetado de alta densidade no baú, garantindo excelente eficiência térmica sem comprometer a capacidade de carga útil do veículo.",
@@ -73,20 +30,10 @@ export const applications: Application[] = [
       { label: "Acabamento interno", valor: "PVC alimentício ou alumínio" },
       { label: "Garantia", valor: "12 meses (sistema de refrigeração)" },
     ],
-    thumb: "/images/aplicacoes/fiorinos/thumb.webp",
-    imagens: [
-      "/images/aplicacoes/fiorinos/foto-01.webp",
-      "/images/aplicacoes/fiorinos/foto-02.webp",
-    ],
-    metaTitulo: "Refrigeração para Fiorino | Isolamento Térmico — Ice Van",
-    metaDescricao:
-      "Instale sistemas de refrigeração e isolamento térmico no seu Fiat Fiorino. Soluções profissionais para transporte de perecíveis. Solicite orçamento.",
   },
-  {
-    slug: "van-ducato",
+  "van-ducato": {
     titulo: "Van Ducato",
-    subtitulo:
-      "Solução completa de refrigeração para Fiat Ducato — um dos furgões mais utilizados no transporte de alimentos.",
+    subtitulo: "Solução completa de refrigeração para Fiat Ducato — um dos furgões mais utilizados no transporte de alimentos.",
     conteudo: [
       "O Fiat Ducato é um dos furgões mais populares no Brasil para o transporte refrigerado de médio porte. Com amplo espaço de carga, motor robusto e excelente custo-benefício, o Ducato é a preferência de distribuidoras, redes de supermercados, farmácias e empresas de logística alimentar que precisam de capacidade sem abrir mão da agilidade.",
       "A Ice Van oferece projetos personalizados de isolamento térmico e refrigeração para o Ducato em suas diversas versões (curto, longo, teto elevado). Utilizamos painéis de PU injetado de alta densidade nas paredes, teto e piso, garantindo máxima eficiência térmica e durabilidade estrutural.",
@@ -102,24 +49,14 @@ export const applications: Application[] = [
       { label: "Acabamento interno", valor: "Alumínio ou PVC alimentício" },
       { label: "Garantia", valor: "12 meses (sistema de refrigeração)" },
     ],
-    thumb: "/images/aplicacoes/van-ducato/thumb.webp",
-    imagens: [
-      "/images/aplicacoes/van-ducato/foto-01.webp",
-      "/images/aplicacoes/van-ducato/foto-02.webp",
-    ],
-    metaTitulo: "Refrigeração para Van Ducato | Fiat Ducato Frigorífico — Ice Van",
-    metaDescricao:
-      "Transforme seu Fiat Ducato em um veículo frigorífico profissional. Isolamento térmico e refrigeração de alta performance. Orçamento grátis.",
   },
-  {
-    slug: "van-sprinter",
+  "van-sprinter": {
     titulo: "Van Sprinter",
-    subtitulo:
-      "Equipamento de refrigeração de alta capacidade para Mercedes-Benz Sprinter.",
+    subtitulo: "Equipamento de refrigeração de alta capacidade para Mercedes-Benz Sprinter.",
     conteudo: [
       "A Mercedes-Benz Sprinter é referência em furgões de alta capacidade no segmento de transporte refrigerado. Robusta, confiável e com excelente desempenho em rodovias, a Sprinter é amplamente utilizada por distribuidoras de grande porte, redes hospitalares, indústrias alimentícias e operadoras logísticas que exigem máxima performance.",
       "Na Ice Van, desenvolvemos soluções de refrigeração especialmente projetadas para a Sprinter, levando em conta sua estrutura robusta e seu alto volume de carga. O isolamento térmico é executado com painéis de poliuretano de alta densidade (40–60 kg/m³), garantindo baixíssima troca térmica e eficiência energética superior.",
-      "Os sistemas de refrigeração instalados são de alta potência, capazes de manter temperaturas estáveis mesmo em condições extremas de calor externo. Trabalhamos com equipamentos de acionamento independente (motor auxiliar diesel ou elétrico), garantindo refrigeração contínua mesmo com o veículo desligado — essencial para operações prolongadas de carga e descarga.",
+      "Os sistemas de refrigeração instalados são de alta potência, capazes de manter temperaturas estáveis mesmo em condições extremas de calor externo. Trabalhamos com equipamentos de acionamento independente (motor auxiliar diesel ou elétrico), garantindo refrigeração contínua mesmo com o veículo desligado.",
       "O acabamento interno é feito em alumínio ou aço inox, com piso antiderrapante e canais de drenagem para fácil higienização. Todas as instalações seguem as normas sanitárias vigentes para transporte de alimentos e medicamentos.",
       "A Ice Van oferece suporte técnico especializado para a Sprinter, incluindo revisão periódica do sistema de refrigeração, recarga de gás refrigerante e manutenção preventiva. Entre em contato e solicite um projeto personalizado para a sua operação.",
     ],
@@ -131,20 +68,10 @@ export const applications: Application[] = [
       { label: "Acabamento interno", valor: "Alumínio ou aço inox" },
       { label: "Acionamento do sistema", valor: "Elétrico ou motor auxiliar diesel" },
     ],
-    thumb: "/images/aplicacoes/van-sprinter/thumb.webp",
-    imagens: [
-      "/images/aplicacoes/van-sprinter/foto-01.webp",
-      "/images/aplicacoes/van-sprinter/foto-02.webp",
-    ],
-    metaTitulo: "Refrigeração para Sprinter | Van Mercedes Frigorífica — Ice Van",
-    metaDescricao:
-      "Equipamentos de refrigeração de alta capacidade para Mercedes-Benz Sprinter. Isolamento profissional e sistemas robustos para transporte de perecíveis.",
   },
-  {
-    slug: "van-master",
+  "van-master": {
     titulo: "Van Master",
-    subtitulo:
-      "Isolamento e refrigeração para Renault Master — excelente custo-benefício para frotas médias.",
+    subtitulo: "Isolamento e refrigeração para Renault Master — excelente custo-benefício para frotas médias.",
     conteudo: [
       "A Renault Master é uma excelente opção para frotas médias que buscam volume de carga generoso aliado a custo-benefício competitivo. Muito utilizada por distribuidoras de bebidas, laticínios, produtos farmacêuticos e empresas de alimentação coletiva, a Master oferece versatilidade e robustez para operações urbanas e regionais.",
       "A Ice Van possui ampla experiência na instalação de sistemas de isolamento térmico e refrigeração para a Renault Master em todas as suas versões (curta, longa e teto alto). O processo de adaptação preserva a integridade estrutural do veículo e valoriza o investimento do cliente.",
@@ -160,23 +87,13 @@ export const applications: Application[] = [
       { label: "Acabamento interno", valor: "PVC ou alumínio" },
       { label: "Garantia", valor: "12 meses (sistema de refrigeração)" },
     ],
-    thumb: "/images/aplicacoes/van-master/thumb.webp",
-    imagens: [
-      "/images/aplicacoes/van-master/foto-01.webp",
-      "/images/aplicacoes/van-master/foto-02.webp",
-    ],
-    metaTitulo: "Refrigeração para Van Master | Renault Master Frigorífica — Ice Van",
-    metaDescricao:
-      "Soluções de refrigeração e isolamento térmico para Renault Master. Ótimo custo-benefício para frotas médias. Solicite orçamento personalizado.",
   },
-  {
-    slug: "expert-porta-frigorifica",
+  "expert-porta-frigorifica": {
     titulo: "Expert com Porta Frigorífica",
-    subtitulo:
-      "Citroën/Peugeot Expert adaptado com porta frigorífica de alta vedação.",
+    subtitulo: "Citroën/Peugeot Expert adaptado com porta frigorífica de alta vedação.",
     conteudo: [
       "A Citroën Berlingo Expert e a Peugeot Expert são furgões compactos muito utilizados no comércio e na distribuição urbana. Quando equipadas com sistema de isolamento térmico e porta frigorífica de alta vedação, tornam-se plataformas extremamente eficientes para o transporte de alimentos frescos, laticínios, floricultura e produtos farmacêuticos.",
-      "A porta frigorífica é um dos elementos mais críticos do sistema de refrigeração. Na Ice Van, instalamos portas com perfis de vedação dupla, juntas magnéticas e dobradiças reforçadas em aço inox, garantindo estanqueidade total e resistência ao uso intensivo. O sistema de fechamento é seguro e de fácil operação, mesmo com as mãos ocupadas.",
+      "A porta frigorífica é um dos elementos mais críticos do sistema de refrigeração. Na Ice Van, instalamos portas com perfis de vedação dupla, juntas magnéticas e dobradiças reforçadas em aço inox, garantindo estanqueidade total e resistência ao uso intensivo.",
       "O processo de conversão da Expert inclui o revestimento completo do compartimento de carga com painéis de poliuretano injetado, seguido pela instalação do sistema de refrigeração e pela montagem da porta frigorífica sob medida. Todo o trabalho é executado sem comprometer a garantia de fábrica do veículo.",
       "Oferecemos acabamento interno em PVC alimentício na cor branca, com perfis de proteção de canto em aço inox para maior durabilidade em operações de carga e descarga. O piso é revestido com material antiderrapante e impermeável, facilitando a higienização.",
       "A combinação de isolamento térmico de qualidade com uma porta frigorífica bem projetada resulta em menor consumo de energia, maior autonomia do sistema de refrigeração e melhor conservação dos produtos. Entre em contato e solicite uma avaliação técnica para a sua Expert.",
@@ -189,23 +106,13 @@ export const applications: Application[] = [
       { label: "Porta frigorífica", valor: "Vedação dupla, junta magnética" },
       { label: "Acabamento interno", valor: "PVC alimentício branco" },
     ],
-    thumb: "/images/aplicacoes/expert-porta-frigorifica/thumb.webp",
-    imagens: [
-      "/images/aplicacoes/expert-porta-frigorifica/foto-01.webp",
-      "/images/aplicacoes/expert-porta-frigorifica/foto-02.webp",
-    ],
-    metaTitulo: "Expert com Porta Frigorífica | Citroën Peugeot Frigorífico — Ice Van",
-    metaDescricao:
-      "Adaptação da Citroën/Peugeot Expert com porta frigorífica de alta vedação e isolamento térmico profissional. Ideal para transporte de perecíveis.",
   },
-  {
-    slug: "fiorino-porta-frigorifica",
+  "fiorino-porta-frigorifica": {
     titulo: "Fiorino com Porta Frigorífica",
-    subtitulo:
-      "Fiat Fiorino com porta frigorífica integrada para operações que exigem mais isolamento.",
+    subtitulo: "Fiat Fiorino com porta frigorífica integrada para operações que exigem mais isolamento.",
     conteudo: [
       "O Fiat Fiorino com porta frigorífica é a solução ideal para pequenos negócios que necessitam de um veículo compacto, ágil e com alto grau de isolamento térmico. Perfeito para roteiros urbanos com múltiplas paradas, este equipamento garante que a temperatura interna seja mantida mesmo durante as aberturas frequentes do compartimento de carga.",
-      "A versão com porta frigorífica se diferencia da conversão padrão pela instalação de uma porta de alto desempenho com vedação reforçada, juntas magnéticas flexíveis e perfis de alumínio que garantem o mínimo de troca térmica a cada abertura. Esta solução é especialmente recomendada para entrega de sorvetes, produtos lácteos, carnes frescas e produtos farmacêuticos.",
+      "A versão com porta frigorífica se diferencia da conversão padrão pela instalação de uma porta de alto desempenho com vedação reforçada, juntas magnéticas flexíveis e perfis de alumínio que garantem o mínimo de troca térmica a cada abertura.",
       "O processo de instalação começa com o revestimento interno do baú com painéis de poliuretano injetado de alta densidade (40 kg/m³), seguido pela instalação da porta frigorífica sob medida e do sistema de refrigeração compacto, especialmente selecionado para o volume reduzido do Fiorino.",
       "Apesar do tamanho compacto, o sistema instalado é capaz de manter temperaturas de 0°C a -10°C de forma estável, suficiente para a maioria das aplicações de transporte resfriado urbano. O acabamento interno em PVC alimentício facilita a limpeza e mantém a conformidade sanitária.",
       "A Ice Van oferece um serviço completo de conversão do Fiorino: projeto técnico, instalação e assistência pós-venda. Nosso time de técnicos especializados garante que o seu veículo esteja 100% operacional dentro do prazo acordado. Solicite seu orçamento agora mesmo.",
@@ -218,115 +125,249 @@ export const applications: Application[] = [
       { label: "Porta frigorífica", valor: "Vedação reforçada, junta magnética" },
       { label: "Acabamento interno", valor: "PVC alimentício" },
     ],
-    thumb: "/images/aplicacoes/fiorino-porta-frigorifica/thumb.webp",
-    imagens: [
-      "/images/aplicacoes/fiorino-porta-frigorifica/foto-01.webp",
-      "/images/aplicacoes/fiorino-porta-frigorifica/foto-02.webp",
-    ],
-    metaTitulo: "Fiorino com Porta Frigorífica | Isolamento e Refrigeração — Ice Van",
-    metaDescricao:
-      "Fiat Fiorino adaptado com porta frigorífica de alta vedação e isolamento térmico profissional. Ideal para pequenas entregas urbanas de perecíveis.",
   },
-];
+};
 
-/** Busca uma aplicação pelo slug */
-export function getApplicationBySlug(slug: string): Application | undefined {
-  return applications.find((app) => app.slug === slug);
+interface AppData {
+  titulo: string;
+  subtitulo: string;
+  conteudo: string[];
+  specs: { label: string; valor: string }[];
 }
 
-/**
- * Carrega conteúdo de texto do banco para uma aplicação.
- * Mescla com os dados estáticos — banco tem prioridade.
- * Suporta veículos dinâmicos (não presentes no array estático).
- */
-export async function loadApplicationContent(slug: string): Promise<Application | undefined> {
-  const staticApp = getApplicationBySlug(slug);
+type SaveStatus = "idle" | "saving" | "saved";
 
-  try {
-    const { getSettingJSON } = await import("@/lib/settings");
-    type ContentOverride = Partial<Omit<Application, "slug">>;
-    const override = await getSettingJSON<ContentOverride>(`content_application_${slug}`, {});
+export default function AplicacaoEditPage() {
+  const params = useParams();
+  const router = useRouter();
+  const slug = typeof params.slug === "string" ? params.slug : "";
+  const staticDefault = STATIC_DEFAULTS[slug];
 
-    if (staticApp) {
-      return { ...staticApp, ...override };
+  const [data, setData] = useState<AppData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+
+  const load = useCallback(async () => {
+    if (!staticDefault) {
+      setLoading(false);
+      return;
     }
-
-    // Veículo dinâmico (só existe no banco)
-    if (override.titulo) {
-      return {
-        slug,
-        titulo: override.titulo,
-        subtitulo: override.subtitulo ?? "",
-        conteudo: override.conteudo ?? [],
-        specs: override.specs ?? [],
-        thumb: override.thumb ?? `/images/aplicacoes/${slug}/thumb.webp`,
-        imagens: override.imagens ?? [],
-        metaTitulo: override.metaTitulo ?? override.titulo,
-        metaDescricao: override.metaDescricao ?? "",
-        href: `/aplicacoes/${slug}`,
-      };
+    try {
+      const res = await fetch("/api/admin/settings");
+      const all = await res.json() as Record<string, string>;
+      const key = `content_application_${slug}`;
+      if (all[key]) {
+        setData({ ...staticDefault, ...JSON.parse(all[key]) });
+      } else {
+        setData(staticDefault);
+      }
+    } catch {
+      setData(staticDefault);
+    } finally {
+      setLoading(false);
     }
-  } catch {
-    // fallback silencioso
+  }, [slug, staticDefault]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const save = async () => {
+    if (!data) return;
+    setSaveStatus("saving");
+    try {
+      await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [`content_application_${slug}`]: JSON.stringify(data) }),
+      });
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("idle"), 2500);
+    } catch {
+      setSaveStatus("idle");
+    }
+  };
+
+  const updateConteudo = (index: number, value: string) => {
+    setData((prev) => {
+      if (!prev) return prev;
+      const conteudo = [...prev.conteudo];
+      conteudo[index] = value;
+      return { ...prev, conteudo };
+    });
+  };
+
+  const addConteudo = () => {
+    setData((prev) => prev ? { ...prev, conteudo: [...prev.conteudo, ""] } : prev);
+  };
+
+  const removeConteudo = (index: number) => {
+    setData((prev) => {
+      if (!prev) return prev;
+      return { ...prev, conteudo: prev.conteudo.filter((_, i) => i !== index) };
+    });
+  };
+
+  const updateSpec = (index: number, field: "label" | "valor", value: string) => {
+    setData((prev) => {
+      if (!prev) return prev;
+      const specs = [...prev.specs];
+      specs[index] = { ...specs[index], [field]: value };
+      return { ...prev, specs };
+    });
+  };
+
+  const addSpec = () => {
+    setData((prev) => prev ? { ...prev, specs: [...prev.specs, { label: "", valor: "" }] } : prev);
+  };
+
+  const removeSpec = (index: number) => {
+    setData((prev) => {
+      if (!prev) return prev;
+      return { ...prev, specs: prev.specs.filter((_, i) => i !== index) };
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-40">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
-  return staticApp;
-}
-
-/**
- * Carrega imagens dinamicamente do filesystem para uma aplicação
- * Retorna a aplicação com as imagens atualizadas do disco
- */
-export async function loadApplicationImages(slug: string): Promise<Application | undefined> {
-  // Primeiro mescla conteúdo do banco
-  const app = await loadApplicationContent(slug);
-  if (!app) return undefined;
-
-  try {
-    const { readdir } = await import("fs/promises");
-    const path = await import("path");
-
-    const folderPath = path.join(process.cwd(), "public", "images", "aplicacoes", slug);
-    const files = await readdir(folderPath);
-
-    const imageFiles = files
-      .filter((f) => /\.(jpg|jpeg|png|webp|svg)$/i.test(f))
-      .sort((a, b) => a.localeCompare(b)); // Ordenar alfabeticamente
-
-    if (imageFiles.length > 0) {
-      const imagens = imageFiles.map((f) => `/images/aplicacoes/${slug}/${f}`);
-      return {
-        ...app,
-        thumb: imagens[0] || app.thumb, // Primeira imagem é o thumbnail
-        imagens,
-      };
-    }
-  } catch {
-    // Se falhar, retorna a aplicação com imagens padrão
+  if (!staticDefault || !data) {
+    return (
+      <div className="space-y-4">
+        <p className="text-destructive">Aplicação não encontrada: &quot;{slug}&quot;</p>
+        <Button variant="outline" onClick={() => router.back()}>
+          <ArrowLeft className="w-4 h-4" /> Voltar
+        </Button>
+      </div>
+    );
   }
 
-  return app;
-}
+  return (
+    <div className="max-w-3xl space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <Link
+            href="/admin/textos/aplicacoes"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-2 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Todas as aplicações
+          </Link>
+          <h1 className="text-2xl font-bold">{data.titulo}</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            Edite os textos e especificações técnicas desta aplicação.
+          </p>
+        </div>
+        <Button onClick={save} disabled={saveStatus === "saving"}>
+          {saveStatus === "saving" ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : saveStatus === "saved" ? (
+            <CheckCircle className="w-4 h-4 text-green-500" />
+          ) : (
+            <Save className="w-4 h-4" />
+          )}
+          {saveStatus === "saved" ? "Salvo!" : "Salvar"}
+        </Button>
+      </div>
 
-/**
- * Carrega imagens dinamicamente da pasta empresa
- * Retorna array de URLs das imagens ordenadas por prefixo numérico
- */
-export async function loadEmpresaImages(): Promise<string[]> {
-  try {
-    const { readdir } = await import("fs/promises");
-    const path = await import("path");
-    
-    const folderPath = path.join(process.cwd(), "public", "images", "empresa");
-    const files = await readdir(folderPath);
-    
-    const imageFiles = files
-      .filter((f) => /\.(jpg|jpeg|png|webp|svg)$/i.test(f))
-      .sort((a, b) => a.localeCompare(b)); // Ordenar alfabeticamente (01-, 02-, 03-...)
-    
-    return imageFiles.map((f) => `/images/empresa/${f}`);
-  } catch {
-    // Se falhar, retorna array vazio
-    return [];
-  }
+      {/* Dados básicos */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Informações Principais</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>Título (nome do veículo)</Label>
+            <Input
+              value={data.titulo}
+              onChange={(e) => setData((p) => p ? { ...p, titulo: e.target.value } : p)}
+            />
+          </div>
+          <div>
+            <Label>Subtítulo (descrição curta para cards)</Label>
+            <Textarea
+              value={data.subtitulo}
+              onChange={(e) => setData((p) => p ? { ...p, subtitulo: e.target.value } : p)}
+              rows={2}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Conteúdo (parágrafos) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Texto da Página</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {data.conteudo.map((paragrafo, i) => (
+            <div key={i} className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label>Parágrafo {i + 1}</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeConteudo(i)}
+                  className="h-7 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+              <Textarea
+                value={paragrafo}
+                onChange={(e) => updateConteudo(i, e.target.value)}
+                rows={4}
+              />
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={addConteudo}>
+            <Plus className="w-4 h-4" />
+            Adicionar parágrafo
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Especificações técnicas */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Especificações Técnicas</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {data.specs.map((spec, i) => (
+            <div key={i} className="flex gap-2 items-start">
+              <div className="flex-1">
+                <Input
+                  value={spec.label}
+                  onChange={(e) => updateSpec(i, "label", e.target.value)}
+                  placeholder="Rótulo (ex: Capacidade de carga)"
+                  className="mb-2"
+                />
+                <Input
+                  value={spec.valor}
+                  onChange={(e) => updateSpec(i, "valor", e.target.value)}
+                  placeholder="Valor (ex: Até 1.500 kg)"
+                />
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeSpec(i)}
+                className="mt-1 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={addSpec}>
+            <Plus className="w-4 h-4" />
+            Adicionar especificação
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ChevronRight, MessageCircle } from "lucide-react";
 import { ApplicationCard } from "@/components/ApplicationCard";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { applications, loadApplicationImages } from "@/lib/applications";
+import { getVehicleRegistry, loadApplicationImages } from "@/lib/applications";
 import { whatsappUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -14,11 +14,12 @@ export const metadata: Metadata = {
 };
 
 export default async function AplicacoesPage() {
-  // Carregar imagens dinâmicas para todas as aplicações
+  // Carrega a lista de veículos do registro (banco ou padrão)
+  const registry = await getVehicleRegistry();
   const applicationsWithImages = await Promise.all(
-    applications.map(app => loadApplicationImages(app.slug))
+    registry.map((v) => loadApplicationImages(v.slug))
   );
-  const validApplications = applicationsWithImages.filter(app => app !== undefined);
+  const validApplications = applicationsWithImages.filter((app) => app !== undefined);
 
   return (
     <main className="pt-24 md:pt-28">
