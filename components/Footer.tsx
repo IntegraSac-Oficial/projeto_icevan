@@ -34,7 +34,19 @@ const aplicacoes = [
 
 export function Footer() {
   const [logoSrc, setLogoSrc] = useState("/images/logo/logo-white.svg");
-  const [textos, setTextos] = useState({
+  
+  // Tipo explícito para permitir valores dinâmicos
+  type TextosFooter = {
+    descricao: string;
+    endereco: string;
+    telefone: string;
+    email: string;
+    horario: string;
+    footerCopyright: string;
+    footerRodape: string;
+  };
+
+  const [textos, setTextos] = useState<TextosFooter>({
     descricao:       empresa.descricao,
     endereco:        empresa.enderecoCompleto,
     telefone:        empresa.telefone,
