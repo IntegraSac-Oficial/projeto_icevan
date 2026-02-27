@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import {
   MapPin,
-  Phone,
   Mail,
   Clock,
   MessageCircle,
@@ -10,7 +9,7 @@ import {
 import { ContactForm } from "@/components/ContactForm";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { empresa } from "@/lib/config";
-import { getSetting } from "@/lib/settings";
+import { getSetting, getSettingJSON } from "@/lib/settings";
 import { whatsappUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -20,12 +19,18 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contato" },
 };
 
+interface ContatoItem { label: string; numero: string; }
+
 export default async function ContatoPage() {
-  const mapsUrl = await getSetting("empresa_maps_embed", empresa.googleMapsEmbed);
-  const endereco = await getSetting("empresa_endereco", empresa.enderecoCompleto);
-  const telefone = await getSetting("empresa_telefone", empresa.telefone);
-  const email = await getSetting("empresa_email", empresa.email);
-  const horario = await getSetting("empresa_horario", empresa.horario);
+  const [mapsUrl, endereco, email, horario, contatos] = await Promise.all([
+    getSetting("empresa_maps_embed", empresa.googleMapsEmbed),
+    getSetting("empresa_endereco", empresa.enderecoCompleto),
+    getSetting("empresa_email", empresa.email),
+    getSetting("empresa_horario", empresa.horario),
+    getSettingJSON<ContatoItem[]>("empresa_contatos", [
+      { label: "WhatsApp", numero: empresa.whatsapp },
+    ]),
+  ]);
 
   return (
     <main className="pt-24 md:pt-28">
@@ -84,36 +89,29 @@ export default async function ContatoPage() {
                   Informações de Contato
                 </h3>
                 <ul className="space-y-4">
-                  <li>
-                    <a
-                      href={whatsappUrl()}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex gap-3 text-gray-700 hover:text-[#25D366] transition-colors group"
-                    >
-                      <div className="p-2 rounded-lg bg-[#25D366]/10 group-hover:bg-[#25D366]/20 transition-colors flex-shrink-0">
-                        <MessageCircle className="w-5 h-5 text-[#25D366]" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">WhatsApp</p>
-                        <p className="font-semibold">{empresa.whatsapp}</p>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href={`tel:${telefone.replace(/\D/g, "")}`}
-                      className="flex gap-3 text-gray-700 hover:text-brand-primary transition-colors group"
-                    >
-                      <div className="p-2 rounded-lg bg-brand-primary/10 group-hover:bg-brand-primary/20 transition-colors flex-shrink-0">
-                        <Phone className="w-5 h-5 text-brand-primary" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Telefone</p>
-                        <p className="font-semibold">{telefone}</p>
-                      </div>
-                    </a>
-                  </li>
+                  {contatos.map((c, i) => {
+                    const digits = c.numero.replace(/\D/g, "");
+                    const num = digits.startsWith("55") ? digits : `55${digits}`;
+                    const waUrl = `https://wa.me/${num}?text=${encodeURIComponent("Olá! Gostaria de solicitar um orçamento para refrigeração de veículo.")}`;
+                    return (
+                      <li key={i}>
+                        <a
+                          href={waUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex gap-3 text-gray-700 hover:text-[#25D366] transition-colors group"
+                        >
+                          <div className="p-2 rounded-lg bg-[#25D366]/10 group-hover:bg-[#25D366]/20 transition-colors flex-shrink-0">
+                            <MessageCircle className="w-5 h-5 text-[#25D366]" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">{c.label}</p>
+                            <p className="font-semibold">{c.numero}</p>
+                          </div>
+                        </a>
+                      </li>
+                    );
+                  })}
                   <li>
                     <a
                       href={`mailto:${email}`}
