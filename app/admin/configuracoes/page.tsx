@@ -13,13 +13,14 @@ import {
   EyeOff,
   RefreshCw,
   Image as ImageIcon,
+  Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
-type Tab = "aparencia" | "smtp" | "acesso";
+type Tab = "aparencia" | "empresa" | "smtp" | "acesso";
 
 interface Settings {
   // Cores
@@ -35,6 +36,17 @@ interface Settings {
   smtp_pass:    string;
   smtp_from:    string;
   smtp_nome:    string;
+  // Filtro do banner hero
+  hero_filtro_cor:        string;
+  hero_filtro_opacidade:  string;
+  // Empresa / Rodapé
+  empresa_descricao:  string;
+  empresa_endereco:   string;
+  empresa_telefone:   string;
+  empresa_email:      string;
+  empresa_horario:    string;
+  footer_copyright:   string;
+  footer_rodape:      string;
   // Acesso (não persiste senha no estado — campos separados)
 }
 
@@ -50,6 +62,15 @@ const DEFAULTS: Settings = {
   smtp_pass:  "",
   smtp_from:  "",
   smtp_nome:  "",
+  hero_filtro_cor:       "#2563EB",
+  hero_filtro_opacidade: "20",
+  empresa_descricao: "Especialistas em sistemas de refrigeração e isolamento térmico para veículos de transporte. Atendemos transportadoras, frotas e autônomos em todo o Brasil.",
+  empresa_endereco:  "Rua Gabriela Mistral, 1246 — Penha de França, São Paulo/SP, CEP 03701-000",
+  empresa_telefone:  "(11) 94824-2999",
+  empresa_email:     "vendas@icevans.com.br",
+  empresa_horario:   "Seg a Sex: 8h às 18h | Sáb: 8h às 12h",
+  footer_copyright:  "© 2026 Ice Van. Todos os direitos reservados.",
+  footer_rodape:     "CNPJ — Refrigeração para Transporte | São Paulo, SP",
 };
 
 // ─── Componente de color picker com preview ────────────────────────────────
@@ -371,11 +392,13 @@ export default function ConfiguracoesPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        cor_primaria:   settings.cor_primaria,
-        cor_secundaria: settings.cor_secundaria,
-        cor_destaque:   settings.cor_destaque,
-        cor_neutra:     settings.cor_neutra,
-        cor_texto:      settings.cor_texto,
+        cor_primaria:          settings.cor_primaria,
+        cor_secundaria:        settings.cor_secundaria,
+        cor_destaque:          settings.cor_destaque,
+        cor_neutra:            settings.cor_neutra,
+        cor_texto:             settings.cor_texto,
+        hero_filtro_cor:       settings.hero_filtro_cor,
+        hero_filtro_opacidade: settings.hero_filtro_opacidade,
       }),
     });
     setSaving(false);
@@ -427,6 +450,27 @@ export default function ConfiguracoesPage() {
     setTestingSmtp(false);
   };
 
+  const handleSaveEmpresa = async () => {
+    setSaving(true);
+    setSaved(false);
+    await fetch("/api/admin/settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        empresa_descricao: settings.empresa_descricao,
+        empresa_endereco:  settings.empresa_endereco,
+        empresa_telefone:  settings.empresa_telefone,
+        empresa_email:     settings.empresa_email,
+        empresa_horario:   settings.empresa_horario,
+        footer_copyright:  settings.footer_copyright,
+        footer_rodape:     settings.footer_rodape,
+      }),
+    });
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
+
   const handleSaveAccess = async () => {
     setAccessError("");
     setAccessSaved(false);
@@ -460,9 +504,10 @@ export default function ConfiguracoesPage() {
   };
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: "aparencia", label: "Aparência",    icon: <Palette className="w-4 h-4" /> },
-    { id: "smtp",      label: "SMTP",         icon: <Mail    className="w-4 h-4" /> },
-    { id: "acesso",    label: "Acesso",        icon: <Lock    className="w-4 h-4" /> },
+    { id: "aparencia", label: "Aparência", icon: <Palette    className="w-4 h-4" /> },
+    { id: "empresa",   label: "Empresa",   icon: <Building2  className="w-4 h-4" /> },
+    { id: "smtp",      label: "SMTP",      icon: <Mail       className="w-4 h-4" /> },
+    { id: "acesso",    label: "Acesso",    icon: <Lock       className="w-4 h-4" /> },
   ];
 
   if (loading) {
@@ -636,7 +681,202 @@ export default function ConfiguracoesPage() {
             </CardContent>
           </Card>
 
+          {/* Filtro do banner */}
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Palette className="w-4 h-4" /> Filtro de Cor do Banner
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <p className="text-sm text-muted-foreground">
+                Controla a camada de cor sobreposta às imagens do banner principal.
+              </p>
+
+              {/* Color picker */}
+              <div className="flex items-center gap-3">
+                <div className="relative flex-shrink-0">
+                  <div
+                    className="w-10 h-10 rounded-lg border border-gray-200 shadow-sm cursor-pointer"
+                    style={{ backgroundColor: settings.hero_filtro_cor }}
+                  />
+                  <input
+                    type="color"
+                    value={settings.hero_filtro_cor}
+                    onChange={(e) => setSettings((s) => ({ ...s, hero_filtro_cor: e.target.value }))}
+                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    title="Cor do filtro"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="text-xs font-medium text-gray-500 block mb-1">Cor do filtro</label>
+                  <input
+                    type="text"
+                    value={settings.hero_filtro_cor}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (/^#[0-9A-Fa-f]{0,6}$/.test(v)) setSettings((s) => ({ ...s, hero_filtro_cor: v }));
+                    }}
+                    className="form-input text-sm font-mono py-1.5"
+                    maxLength={7}
+                    placeholder="#2563EB"
+                  />
+                </div>
+              </div>
+
+              {/* Slider de opacidade */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-medium text-gray-500">Intensidade (opacidade)</label>
+                  <span className="text-xs font-mono font-semibold text-brand-primary bg-gray-100 px-2 py-0.5 rounded">
+                    {settings.hero_filtro_opacidade}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="80"
+                  step="1"
+                  value={settings.hero_filtro_opacidade}
+                  onChange={(e) => setSettings((s) => ({ ...s, hero_filtro_opacidade: e.target.value }))}
+                  className="w-full accent-brand-primary"
+                />
+                <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <span>0% (invisível)</span>
+                  <span>80% (intenso)</span>
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div
+                className="relative h-16 rounded-xl overflow-hidden border border-border"
+                style={{ background: "linear-gradient(to right, #1a6b9e, #6baacc, #aad4e8)" }}
+              >
+                <div
+                  className="absolute inset-0 rounded-xl"
+                  style={{
+                    backgroundColor: settings.hero_filtro_cor,
+                    opacity: Number(settings.hero_filtro_opacidade) / 100,
+                  }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-medium text-white drop-shadow">Preview do filtro</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <SaveBar saving={saving} saved={saved} onSave={handleSaveAppearance} />
+        </div>
+      )}
+
+      {/* ── ABA: EMPRESA ───────────────────────────────────────────────── */}
+      {tab === "empresa" && (
+        <div className="space-y-6">
+          {/* Textos do rodapé */}
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Building2 className="w-4 h-4" /> Informações da Empresa
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <p className="text-sm text-muted-foreground">
+                Edite os textos que aparecem no rodapé do site. As alterações ficam visíveis após salvar.
+              </p>
+
+              <div>
+                <label className="form-label">Descrição da empresa</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Aparece abaixo da logo no rodapé.</p>
+                <textarea
+                  rows={3}
+                  value={settings.empresa_descricao}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_descricao: e.target.value }))}
+                  className="form-input resize-none"
+                  placeholder="Especialistas em sistemas de refrigeração..."
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Endereço completo</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Exibido na coluna Contato do rodapé.</p>
+                <input
+                  type="text"
+                  value={settings.empresa_endereco}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_endereco: e.target.value }))}
+                  className="form-input"
+                  placeholder="Rua Exemplo, 123 — Bairro, Cidade/UF, CEP 00000-000"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="form-label">Telefone</label>
+                  <p className="text-xs text-muted-foreground mb-1.5">Exibido na coluna Contato do rodapé.</p>
+                  <input
+                    type="text"
+                    value={settings.empresa_telefone}
+                    onChange={(e) => setSettings((s) => ({ ...s, empresa_telefone: e.target.value }))}
+                    className="form-input"
+                    placeholder="(11) 99999-9999"
+                  />
+                </div>
+                <div>
+                  <label className="form-label">E-mail de contato</label>
+                  <p className="text-xs text-muted-foreground mb-1.5">Exibido na coluna Contato do rodapé.</p>
+                  <input
+                    type="text"
+                    value={settings.empresa_email}
+                    onChange={(e) => setSettings((s) => ({ ...s, empresa_email: e.target.value }))}
+                    className="form-input"
+                    placeholder="contato@empresa.com.br"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="form-label">Horário de atendimento</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Exibido na coluna Contato do rodapé.</p>
+                <input
+                  type="text"
+                  value={settings.empresa_horario}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_horario: e.target.value }))}
+                  className="form-input"
+                  placeholder="Seg a Sex: 8h às 18h | Sáb: 8h às 12h"
+                />
+              </div>
+
+              <div className="border-t border-border pt-5 space-y-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Barra inferior do rodapé</p>
+
+                <div>
+                  <label className="form-label">Texto de copyright (lado esquerdo)</label>
+                  <p className="text-xs text-muted-foreground mb-1.5">Ex: © 2026 Ice Van. Todos os direitos reservados.</p>
+                  <input
+                    type="text"
+                    value={settings.footer_copyright}
+                    onChange={(e) => setSettings((s) => ({ ...s, footer_copyright: e.target.value }))}
+                    className="form-input"
+                    placeholder="© 2026 Empresa. Todos os direitos reservados."
+                  />
+                </div>
+
+                <div>
+                  <label className="form-label">Texto do rodapé (lado direito)</label>
+                  <p className="text-xs text-muted-foreground mb-1.5">Ex: CNPJ — Refrigeração para Transporte | São Paulo, SP</p>
+                  <input
+                    type="text"
+                    value={settings.footer_rodape}
+                    onChange={(e) => setSettings((s) => ({ ...s, footer_rodape: e.target.value }))}
+                    className="form-input"
+                    placeholder="CNPJ 00.000.000/0001-00 | São Paulo, SP"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <SaveBar saving={saving} saved={saved} onSave={handleSaveEmpresa} />
         </div>
       )}
 

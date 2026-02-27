@@ -33,16 +33,24 @@ const aplicacoes = [
 ];
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
   const [logoSrc, setLogoSrc] = useState("/images/logo/logo-white.svg");
+  const [textos, setTextos] = useState({
+    descricao:       empresa.descricao,
+    endereco:        empresa.enderecoCompleto,
+    telefone:        empresa.telefone,
+    email:           empresa.email,
+    horario:         empresa.horario,
+    footerCopyright: `© ${new Date().getFullYear()} ${empresa.nome}. Todos os direitos reservados.`,
+    footerRodape:    "CNPJ — Refrigeração para Transporte | São Paulo, SP",
+  });
 
-  // Busca a logo atual
+  // Busca logo e textos dinâmicos
   useEffect(() => {
     const fetchLogo = async () => {
       try {
         const res = await fetch("/api/logo?t=" + Date.now());
         const data = await res.json();
-        
+
         // Prioridade: Logo Branca > Logo Principal > Fallback
         if (data.branca) {
           setLogoSrc(data.branca + '?t=' + Date.now());
@@ -53,8 +61,27 @@ export function Footer() {
         console.error('Footer - Erro ao buscar logo:', error);
       }
     };
-    
+
+    const fetchTextos = async () => {
+      try {
+        const res = await fetch("/api/admin/settings");
+        const data: Record<string, string> = await res.json();
+        setTextos((prev) => ({
+          descricao:       data.empresa_descricao  || prev.descricao,
+          endereco:        data.empresa_endereco   || prev.endereco,
+          telefone:        data.empresa_telefone   || prev.telefone,
+          email:           data.empresa_email      || prev.email,
+          horario:         data.empresa_horario    || prev.horario,
+          footerCopyright: data.footer_copyright   || prev.footerCopyright,
+          footerRodape:    data.footer_rodape      || prev.footerRodape,
+        }));
+      } catch {
+        // mantém fallbacks do config
+      }
+    };
+
     fetchLogo();
+    fetchTextos();
   }, []);
 
   return (
@@ -79,7 +106,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-white/70 text-sm leading-relaxed mb-5">
-              {empresa.descricao}
+              {textos.descricao}
             </p>
             {/* Redes sociais */}
             <div className="flex items-center gap-2 flex-wrap">
@@ -217,29 +244,29 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-white/70">
               <li className="flex gap-2.5">
                 <MapPin className="w-4 h-4 text-brand-accent flex-shrink-0 mt-0.5" />
-                <span>{empresa.enderecoCompleto}</span>
+                <span>{textos.endereco}</span>
               </li>
               <li>
                 <a
-                  href={`tel:${empresa.telefone.replace(/\D/g, "")}`}
+                  href={`tel:${textos.telefone.replace(/\D/g, "")}`}
                   className="flex gap-2.5 hover:text-white transition-colors"
                 >
                   <Phone className="w-4 h-4 text-brand-accent flex-shrink-0 mt-0.5" />
-                  {empresa.telefone}
+                  {textos.telefone}
                 </a>
               </li>
               <li>
                 <a
-                  href={`mailto:${empresa.email}`}
+                  href={`mailto:${textos.email}`}
                   className="flex gap-2.5 hover:text-white transition-colors"
                 >
                   <Mail className="w-4 h-4 text-brand-accent flex-shrink-0 mt-0.5" />
-                  {empresa.email}
+                  {textos.email}
                 </a>
               </li>
               <li className="flex gap-2.5">
                 <Clock className="w-4 h-4 text-brand-accent flex-shrink-0 mt-0.5" />
-                <span>{empresa.horario}</span>
+                <span>{textos.horario}</span>
               </li>
             </ul>
           </div>
@@ -250,12 +277,8 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="container-site py-4 flex flex-col sm:flex-row items-center
                         justify-between gap-2 text-sm text-white/50">
-          <p>
-            © {currentYear} {empresa.nome}. Todos os direitos reservados.
-          </p>
-          <p>
-            CNPJ — Refrigeração para Transporte | São Paulo, SP
-          </p>
+          <p>{textos.footerCopyright}</p>
+          <p>{textos.footerRodape}</p>
         </div>
       </div>
     </footer>

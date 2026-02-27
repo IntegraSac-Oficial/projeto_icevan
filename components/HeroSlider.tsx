@@ -47,13 +47,25 @@ const defaultSlides: Slide[] = [
 ];
 
 export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ 
-    loop: true, 
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
     duration: 40,
     skipSnaps: false,
     dragFree: false,
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [filtroCor, setFiltroCor] = useState("#2563EB");
+  const [filtroOpacidade, setFiltroOpacidade] = useState(20);
+
+  useEffect(() => {
+    fetch("/api/admin/settings")
+      .then((r) => r.json())
+      .then((data: Record<string, string>) => {
+        if (data.hero_filtro_cor)       setFiltroCor(data.hero_filtro_cor);
+        if (data.hero_filtro_opacidade) setFiltroOpacidade(Number(data.hero_filtro_opacidade));
+      })
+      .catch(() => {});
+  }, []);
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -94,37 +106,40 @@ export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
                 priority={index === 0}
                 sizes="100vw"
               />
-              {/* Filtro azul suave */}
-              <div className="absolute inset-0 bg-blue-600/20" />
+              {/* Filtro de cor controlável pelo painel */}
+              <div
+                className="absolute inset-0"
+                style={{ backgroundColor: filtroCor, opacity: filtroOpacidade / 100 }}
+              />
               {/* Overlay - mais forte à esquerda */}
               <div className="absolute inset-0 bg-gradient-to-r from-brand-primary/90 via-brand-primary/60 to-transparent" />
 
               {/* Conteúdo do slide - posicionado à esquerda */}
-              <div className="absolute inset-0 flex items-center">
+              <div className="absolute inset-0 flex items-end pb-14 sm:items-center sm:pb-0">
                 <div className="w-full px-8 sm:px-12 lg:px-20 xl:px-28">
                   <div className="max-w-2xl text-left">
-                    <h1 className="text-white font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight mb-5 drop-shadow-lg">
+                    <h1 className="text-white font-heading font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight mb-3 sm:mb-5 drop-shadow-lg">
                       {slide.headline}
                     </h1>
-                    <p className="text-white/90 text-lg md:text-xl leading-relaxed mb-8 drop-shadow">
+                    <p className="text-white/90 text-sm sm:text-lg md:text-xl leading-relaxed mb-5 sm:mb-8 drop-shadow">
                       {slide.sub}
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col items-start sm:flex-row gap-3 sm:gap-4">
                       <a
                         href={whatsappUrl("Olá! Gostaria de solicitar um orçamento para refrigeração de veículo.")}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-accent text-lg px-8 py-4 shadow-lg"
+                        className="btn-accent text-sm sm:text-lg px-5 py-2.5 sm:px-8 sm:py-4 shadow-lg"
                       >
-                        <MessageCircle className="w-5 h-5" />
+                        <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                         Solicite um Orçamento
                       </a>
                       <Link
                         href="/aplicacoes"
-                        className="btn-outline border-white text-white hover:bg-white hover:text-brand-primary text-lg px-8 py-4"
+                        className="btn-outline border-white text-white hover:bg-white hover:text-brand-primary text-sm sm:text-lg px-5 py-2.5 sm:px-8 sm:py-4"
                       >
                         Conheça Nossas Aplicações
-                        <ArrowRight className="w-5 h-5" />
+                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                       </Link>
                     </div>
 

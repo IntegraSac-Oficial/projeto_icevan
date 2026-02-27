@@ -153,6 +153,27 @@ export default async function Home() {
       {/* Seção de soluções */}
       <SolutionSection />
 
+      {/* Aplicações — preview das 6 */}
+      <section className="section-padding bg-white">
+        <div className="container-site">
+          <SectionTitle
+            title="Nossas Aplicações"
+            subtitle="Soluções de refrigeração e isolamento térmico para os principais veículos utilizados no transporte de perecíveis."
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            {validApps.map((app) => (
+              <ApplicationCard key={app.slug} application={app} />
+            ))}
+          </div>
+          <div className="text-center">
+            <Link href="/aplicacoes" className="btn-primary px-10 py-4 text-lg">
+              Ver Todas as Aplicações
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Diferenciais */}
       <section className="section-padding section-light">
         <div className="container-site">
@@ -176,27 +197,6 @@ export default async function Home() {
                 </div>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* Aplicações — preview das 6 */}
-      <section className="section-padding bg-white">
-        <div className="container-site">
-          <SectionTitle
-            title="Nossas Aplicações"
-            subtitle="Soluções de refrigeração e isolamento térmico para os principais veículos utilizados no transporte de perecíveis."
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-            {validApps.map((app) => (
-              <ApplicationCard key={app.slug} application={app} />
-            ))}
-          </div>
-          <div className="text-center">
-            <Link href="/aplicacoes" className="btn-primary px-10 py-4 text-lg">
-              Ver Todas as Aplicações
-              <ArrowRight className="w-5 h-5" />
-            </Link>
           </div>
         </div>
       </section>
