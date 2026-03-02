@@ -14,6 +14,7 @@ import {
   RefreshCw,
   Image as ImageIcon,
   Building2,
+  Phone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,6 +48,8 @@ interface Settings {
   empresa_horario:    string;
   footer_copyright:   string;
   footer_rodape:      string;
+  // Header
+  header_telefone:    string;
   // Acesso (não persiste senha no estado — campos separados)
 }
 
@@ -71,6 +74,7 @@ const DEFAULTS: Settings = {
   empresa_horario:   "Seg a Sex: 8h às 18h | Sáb: 8h às 12h",
   footer_copyright:  "© 2026 Ice Van. Todos os direitos reservados.",
   footer_rodape:     "CNPJ — Refrigeração para Transporte | São Paulo, SP",
+  header_telefone:   "(11) 4824-2999",
 };
 
 // ─── Componente de color picker com preview ────────────────────────────────
@@ -464,6 +468,7 @@ export default function ConfiguracoesPage() {
         empresa_horario:   settings.empresa_horario,
         footer_copyright:  settings.footer_copyright,
         footer_rodape:     settings.footer_rodape,
+        header_telefone:   settings.header_telefone,
       }),
     });
     setSaving(false);
@@ -773,6 +778,30 @@ export default function ConfiguracoesPage() {
       {/* ── ABA: EMPRESA ───────────────────────────────────────────────── */}
       {tab === "empresa" && (
         <div className="space-y-6">
+          {/* Telefone do Header */}
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Phone className="w-4 h-4" /> Telefone do Header
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Este telefone aparece na barra superior do site (topo da página).
+              </p>
+              <div>
+                <label className="form-label">Telefone</label>
+                <input
+                  type="text"
+                  value={settings.header_telefone}
+                  onChange={(e) => setSettings((s) => ({ ...s, header_telefone: e.target.value }))}
+                  className="form-input"
+                  placeholder="(11) 4824-2999"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Textos do rodapé */}
           <Card>
             <CardHeader className="pb-4">

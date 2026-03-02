@@ -174,11 +174,37 @@ export default function AplicacaoEditPage() {
     if (!data) return;
     setSaveStatus("saving");
     try {
+      // Salva o conteúdo da aplicação
       await fetch("/api/admin/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ [`content_application_${slug}`]: JSON.stringify(data) }),
       });
+
+      // Atualiza o título no registro de veículos (para sincronizar com o footer)
+      try {
+        const registryRes = await fetch("/api/admin/veiculos");
+        const registry = await registryRes.json();
+        const vehicleIndex = registry.findIndex((v: { slug: string }) => v.slug === slug);
+        
+        if (vehicleIndex !== -1) {
+          registry[vehicleIndex].label = data.titulo;
+          await fetch("/api/admin/veiculos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(registry),
+          });
+          
+          // Emite evento para atualizar o Footer
+          if (typeof window !== "undefined") {
+            const { eventBus, EVENTS } = await import("@/lib/events");
+            eventBus.emit(EVENTS.VEHICLES_UPDATED);
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao atualizar registro de veículos:", err);
+      }
+
       setSaveStatus("saved");
       setTimeout(() => setSaveStatus("idle"), 2500);
     } catch {

@@ -19,6 +19,7 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [logoSrc, setLogoSrc] = useState("/images/logo/logo.svg");
+  const [headerTelefone, setHeaderTelefone] = useState(empresa.telefone);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -63,6 +64,23 @@ export function Header() {
     return () => clearInterval(interval);
   }, []);
 
+  // Busca o telefone do header das configurações
+  useEffect(() => {
+    const fetchHeaderTelefone = async () => {
+      try {
+        const res = await fetch("/api/admin/settings");
+        const data = await res.json();
+        if (data.header_telefone) {
+          setHeaderTelefone(data.header_telefone);
+        }
+      } catch (error) {
+        console.error('Header - Erro ao buscar telefone:', error);
+      }
+    };
+    
+    fetchHeaderTelefone();
+  }, []);
+
   // Fecha o menu ao mudar de rota
   const closeMenu = () => setMenuOpen(false);
 
@@ -77,11 +95,11 @@ export function Header() {
       <div className="hidden md:block bg-black/20 border-b border-white/10">
         <div className="container-site flex items-center justify-end gap-4 py-1.5 text-sm text-white/80">
           <a
-            href={`tel:${empresa.telefone.replace(/\D/g, "")}`}
+            href={`tel:${headerTelefone.replace(/\D/g, "")}`}
             className="flex items-center gap-1.5 hover:text-white transition-colors"
           >
             <Phone className="w-3.5 h-3.5" />
-            {empresa.telefone}
+            {headerTelefone}
           </a>
           <span className="text-white/30">|</span>
           <a
@@ -170,11 +188,11 @@ export function Header() {
             {/* Contato no mobile */}
             <div className="mt-4 pt-4 border-t border-white/20 flex flex-col gap-3 px-4">
               <a
-                href={`tel:${empresa.telefone.replace(/\D/g, "")}`}
+                href={`tel:${headerTelefone.replace(/\D/g, "")}`}
                 className="flex items-center gap-2 text-white/80 hover:text-white"
               >
                 <Phone className="w-4 h-4" />
-                {empresa.telefone}
+                {headerTelefone}
               </a>
               <a
                 href={whatsappUrl()}

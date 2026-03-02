@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/social-icons";
 import { empresa } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
+import { eventBus, EVENTS } from "@/lib/events";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -35,6 +36,7 @@ const DEFAULT_APLICACOES = [
 export function Footer() {
   const [logoSrc, setLogoSrc] = useState("/images/logo/logo-white.svg");
   const [aplicacoes, setAplicacoes] = useState(DEFAULT_APLICACOES);
+  const [contatos, setContatos] = useState<{ label: string; numero: string }[]>([]);
 
   // Tipo explícito para permitir valores dinâmicos
   type TextosFooter = {
@@ -75,8 +77,12 @@ export function Footer() {
 
     const fetchTextos = async () => {
       try {
-        const res = await fetch("/api/admin/settings");
+        const res = await fetch("/api/admin/settings?t=" + Date.now());
         const data: Record<string, string> = await res.json();
+        
+        console.log('Footer - Dados recebidos:', data);
+        console.log('Footer - vehicles_registry:', data["vehicles_registry"]);
+        
         setTextos((prev) => ({
           descricao:       data.empresa_descricao  || prev.descricao,
           endereco:        data.empresa_endereco   || prev.endereco,
@@ -86,15 +92,39 @@ export function Footer() {
           footerCopyright: data.footer_copyright   || prev.footerCopyright,
           footerRodape:    data.footer_rodape      || prev.footerRodape,
         }));
+        
         // Atualiza lista de aplicações com o registro de veículos
         if (data["vehicles_registry"]) {
           try {
-            const registry = JSON.parse(data["vehicles_registry"]) as { href: string; label: string }[];
+            const registry = JSON.parse(data["vehicles_registry"]) as { href: string; label: string; ordem?: number }[];
+            console.log('Footer - Registry parseado:', registry);
+            
             if (Array.isArray(registry) && registry.length > 0) {
-              setAplicacoes(registry.map((v) => ({ href: v.href, label: v.label })));
+              // Ordena por ordem se disponível
+              const sorted = registry.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+              const aplicacoesAtualizadas = sorted.map((v) => ({ href: v.href, label: v.label }));
+              console.log('Footer - Aplicações atualizadas:', aplicacoesAtualizadas);
+              setAplicacoes(aplicacoesAtualizadas);
             }
-          } catch { /* usa padrão */ }
+          } catch (err) {
+            console.error('Footer - Erro ao parsear vehicles_registry:', err);
+          }
         }
+
+        // Busca os contatos da lista de contatos (sincroniza com a página de contato)
+        if (data["empresa_contatos"]) {
+          try {
+            const contatosList = JSON.parse(data["empresa_contatos"]) as { label: string; numero: string }[];
+            console.log('Footer - Contatos parseados:', contatosList);
+            if (Array.isArray(contatosList) && contatosList.length > 0) {
+              setContatos(contatosList);
+            }
+          } catch (err) {
+            console.error('Footer - Erro ao parsear empresa_contatos:', err);
+          }
+        }
+      
+      
       } catch {
         // mantém fallbacks do config
       }
@@ -102,6 +132,20 @@ export function Footer() {
 
     fetchLogo();
     fetchTextos();
+    
+    // Escuta eventos de atualização
+    const handleVehiclesUpdate = () => {
+      console.log('Footer - Evento de atualização de veículos recebido');
+      fetchTextos();
+    };
+    
+    eventBus.on(EVENTS.VEHICLES_UPDATED, handleVehiclesUpdate);
+    eventBus.on(EVENTS.SETTINGS_UPDATED, handleVehiclesUpdate);
+    
+    return () => {
+      eventBus.off(EVENTS.VEHICLES_UPDATED, handleVehiclesUpdate);
+      eventBus.off(EVENTS.SETTINGS_UPDATED, handleVehiclesUpdate);
+    };
   }, []);
 
   return (
@@ -266,15 +310,34 @@ export function Footer() {
                 <MapPin className="w-4 h-4 text-brand-accent flex-shrink-0 mt-0.5" />
                 <span>{textos.endereco}</span>
               </li>
-              <li>
-                <a
-                  href={`tel:${textos.telefone.replace(/\D/g, "")}`}
-                  className="flex gap-2.5 hover:text-white transition-colors"
-                >
-                  <Phone className="w-4 h-4 text-brand-accent flex-shrink-0 mt-0.5" />
-                  {textos.telefone}
-                </a>
-              </li>
+              {contatos.length > 0 ? (
+                contatos.map((contato, index) => (
+                  <li key={index}>
+                    <a
+                      href={`https://wa.me/${contato.numero.replace(/\D/g, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex gap-2.5 hover:text-white transition-colors"
+                    >
+                      <Phone className="w-4 h-4 text-brand-accent flex-shrink-0 mt-0.5" />
+                      <div>
+                        <span className="block font-medium">{contato.label}</span>
+                        <span className="block text-xs">{contato.numero}</span>
+                      </div>
+                    </a>
+                  </li>
+                ))
+              ) : (
+                <li>
+                  <a
+                    href={`tel:${textos.telefone.replace(/\D/g, "")}`}
+                    className="flex gap-2.5 hover:text-white transition-colors"
+                  >
+                    <Phone className="w-4 h-4 text-brand-accent flex-shrink-0 mt-0.5" />
+                    {textos.telefone}
+                  </a>
+                </li>
+              )}
               <li>
                 <a
                   href={`mailto:${textos.email}`}

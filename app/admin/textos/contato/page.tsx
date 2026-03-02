@@ -154,7 +154,7 @@ export default function ContatoPage() {
         <CardHeader>
           <CardTitle className="text-base">Números de Contato</CardTitle>
           <CardDescription>
-            Cada número exibe o ícone verde do WhatsApp e abre uma conversa direta. Aparece na coluna lateral da página de contato.
+            Cada número exibe o ícone verde do WhatsApp e abre uma conversa direta. Aparece na coluna lateral da página de contato e também no rodapé do site.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
