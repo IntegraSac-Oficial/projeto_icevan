@@ -10,7 +10,7 @@ interface ApplicationDetailPageProps {
 }
 
 export function ApplicationDetailPage({ application }: ApplicationDetailPageProps) {
-  const { titulo, subtitulo, conteudo, specs, imagens } = application;
+  const { titulo, subtitulo, tituloSecao, conteudo, specs, imagens } = application;
 
   // Remove a primeira imagem (thumbnail) da galeria - mostra apenas fotos de galeria
   const galleryImages = imagens.slice(1);
@@ -61,7 +61,7 @@ export function ApplicationDetailPage({ application }: ApplicationDetailPageProp
             {/* Texto — 2/3 */}
             <div className="lg:col-span-2">
               <h2 className="text-brand-primary mb-6">
-                Refrigeração para {titulo}
+                {tituloSecao || `Refrigeração para ${titulo}`}
               </h2>
               <div className="space-y-5 text-gray-700 leading-relaxed">
                 {conteudo.map((paragrafo, i) => (

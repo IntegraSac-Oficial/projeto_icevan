@@ -11,10 +11,11 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
 // Dados estáticos como fallback (cópia dos valores padrão)
-const STATIC_DEFAULTS: Record<string, { titulo: string; subtitulo: string; conteudo: string[]; specs: { label: string; valor: string }[] }> = {
+const STATIC_DEFAULTS: Record<string, { titulo: string; subtitulo: string; tituloSecao: string; conteudo: string[]; specs: { label: string; valor: string }[] }> = {
   fiorinos: {
     titulo: "Fiorinos",
     subtitulo: "Isolamento térmico e refrigeração para Fiat Fiorino — ideal para pequenas entregas de perecíveis.",
+    tituloSecao: "Refrigeração para Fiorinos",
     conteudo: [
       "O Fiat Fiorino é um dos veículos utilitários mais utilizados no transporte de perecíveis em centros urbanos. Sua agilidade, baixo consumo e facilidade de estacionamento o tornam a escolha preferida de pequenos empreendedores, padarias, açougues, distribuidoras de laticínios e empresas de delivery refrigerado.",
       "Na Ice Van, desenvolvemos soluções completas de isolamento térmico e refrigeração especialmente dimensionadas para o Fiorino. O processo começa com a aplicação de painéis de poliuretano injetado de alta densidade no baú, garantindo excelente eficiência térmica sem comprometer a capacidade de carga útil do veículo.",
@@ -34,6 +35,7 @@ const STATIC_DEFAULTS: Record<string, { titulo: string; subtitulo: string; conte
   "van-ducato": {
     titulo: "Van Ducato",
     subtitulo: "Solução completa de refrigeração para Fiat Ducato — um dos furgões mais utilizados no transporte de alimentos.",
+    tituloSecao: "Refrigeração para Van Ducato",
     conteudo: [
       "O Fiat Ducato é um dos furgões mais populares no Brasil para o transporte refrigerado de médio porte. Com amplo espaço de carga, motor robusto e excelente custo-benefício, o Ducato é a preferência de distribuidoras, redes de supermercados, farmácias e empresas de logística alimentar que precisam de capacidade sem abrir mão da agilidade.",
       "A Ice Van oferece projetos personalizados de isolamento térmico e refrigeração para o Ducato em suas diversas versões (curto, longo, teto elevado). Utilizamos painéis de PU injetado de alta densidade nas paredes, teto e piso, garantindo máxima eficiência térmica e durabilidade estrutural.",
@@ -53,6 +55,7 @@ const STATIC_DEFAULTS: Record<string, { titulo: string; subtitulo: string; conte
   "van-sprinter": {
     titulo: "Van Sprinter",
     subtitulo: "Equipamento de refrigeração de alta capacidade para Mercedes-Benz Sprinter.",
+    tituloSecao: "Refrigeração para Van Sprinter",
     conteudo: [
       "A Mercedes-Benz Sprinter é referência em furgões de alta capacidade no segmento de transporte refrigerado. Robusta, confiável e com excelente desempenho em rodovias, a Sprinter é amplamente utilizada por distribuidoras de grande porte, redes hospitalares, indústrias alimentícias e operadoras logísticas que exigem máxima performance.",
       "Na Ice Van, desenvolvemos soluções de refrigeração especialmente projetadas para a Sprinter, levando em conta sua estrutura robusta e seu alto volume de carga. O isolamento térmico é executado com painéis de poliuretano de alta densidade (40–60 kg/m³), garantindo baixíssima troca térmica e eficiência energética superior.",
@@ -72,6 +75,7 @@ const STATIC_DEFAULTS: Record<string, { titulo: string; subtitulo: string; conte
   "van-master": {
     titulo: "Van Master",
     subtitulo: "Isolamento e refrigeração para Renault Master — excelente custo-benefício para frotas médias.",
+    tituloSecao: "Refrigeração para Van Master",
     conteudo: [
       "A Renault Master é uma excelente opção para frotas médias que buscam volume de carga generoso aliado a custo-benefício competitivo. Muito utilizada por distribuidoras de bebidas, laticínios, produtos farmacêuticos e empresas de alimentação coletiva, a Master oferece versatilidade e robustez para operações urbanas e regionais.",
       "A Ice Van possui ampla experiência na instalação de sistemas de isolamento térmico e refrigeração para a Renault Master em todas as suas versões (curta, longa e teto alto). O processo de adaptação preserva a integridade estrutural do veículo e valoriza o investimento do cliente.",
@@ -91,6 +95,7 @@ const STATIC_DEFAULTS: Record<string, { titulo: string; subtitulo: string; conte
   "expert-porta-frigorifica": {
     titulo: "Expert com Porta Frigorífica",
     subtitulo: "Citroën/Peugeot Expert adaptado com porta frigorífica de alta vedação.",
+    tituloSecao: "Refrigeração para Expert com Porta Frigorífica",
     conteudo: [
       "A Citroën Berlingo Expert e a Peugeot Expert são furgões compactos muito utilizados no comércio e na distribuição urbana. Quando equipadas com sistema de isolamento térmico e porta frigorífica de alta vedação, tornam-se plataformas extremamente eficientes para o transporte de alimentos frescos, laticínios, floricultura e produtos farmacêuticos.",
       "A porta frigorífica é um dos elementos mais críticos do sistema de refrigeração. Na Ice Van, instalamos portas com perfis de vedação dupla, juntas magnéticas e dobradiças reforçadas em aço inox, garantindo estanqueidade total e resistência ao uso intensivo.",
@@ -110,6 +115,7 @@ const STATIC_DEFAULTS: Record<string, { titulo: string; subtitulo: string; conte
   "fiorino-porta-frigorifica": {
     titulo: "Fiorino com Porta Frigorífica",
     subtitulo: "Fiat Fiorino com porta frigorífica integrada para operações que exigem mais isolamento.",
+    tituloSecao: "Refrigeração para Fiorino com Porta Frigorífica",
     conteudo: [
       "O Fiat Fiorino com porta frigorífica é a solução ideal para pequenos negócios que necessitam de um veículo compacto, ágil e com alto grau de isolamento térmico. Perfeito para roteiros urbanos com múltiplas paradas, este equipamento garante que a temperatura interna seja mantida mesmo durante as aberturas frequentes do compartimento de carga.",
       "A versão com porta frigorífica se diferencia da conversão padrão pela instalação de uma porta de alto desempenho com vedação reforçada, juntas magnéticas flexíveis e perfis de alumínio que garantem o mínimo de troca térmica a cada abertura.",
@@ -131,6 +137,7 @@ const STATIC_DEFAULTS: Record<string, { titulo: string; subtitulo: string; conte
 interface AppData {
   titulo: string;
   subtitulo: string;
+  tituloSecao: string;
   conteudo: string[];
   specs: { label: string; valor: string }[];
 }
@@ -320,6 +327,17 @@ export default function AplicacaoEditPage() {
               onChange={(e) => setData((p) => p ? { ...p, subtitulo: e.target.value } : p)}
               rows={2}
             />
+          </div>
+          <div>
+            <Label>Título da seção de conteúdo</Label>
+            <Input
+              value={data.tituloSecao}
+              onChange={(e) => setData((p) => p ? { ...p, tituloSecao: e.target.value } : p)}
+              placeholder={`Refrigeração para ${data.titulo}`}
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Aparece como título da seção de texto na página do veículo.
+            </p>
           </div>
         </CardContent>
       </Card>

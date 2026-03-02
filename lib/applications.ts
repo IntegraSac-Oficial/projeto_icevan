@@ -15,6 +15,7 @@ export interface Application {
   slug: string;
   titulo: string;
   subtitulo: string;
+  tituloSecao?: string; // Título da seção de conteúdo (ex: "Refrigeração para Fiorinos")
   conteudo: string[];
   specs: { label: string; valor: string }[];
   thumb: string;
