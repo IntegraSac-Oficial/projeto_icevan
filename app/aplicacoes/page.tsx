@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/aplicacoes" },
 };
 
+// Revalidar a página a cada 60 segundos
+export const revalidate = 60;
+
 export default async function AplicacoesPage() {
   // Carrega a lista de veículos do registro (banco ou padrão)
   const registry = await getVehicleRegistry();

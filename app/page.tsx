@@ -27,6 +27,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
+// Revalidar a página a cada 60 segundos (ISR - Incremental Static Regeneration)
+export const revalidate = 60;
+
 // Carregar banners dinamicamente do banco de dados
 async function loadHeroBanners() {
   try {

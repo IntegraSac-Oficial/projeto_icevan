@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contato" },
 };
 
+// Revalidar a página a cada 60 segundos
+export const revalidate = 60;
+
 interface ContatoItem { label: string; numero: string; }
 
 export default async function ContatoPage() {

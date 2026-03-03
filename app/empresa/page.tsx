@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/empresa" },
 };
 
+// Revalidar a página a cada 60 segundos
+export const revalidate = 60;
+
 interface MvvCard { titulo: string; descricao: string; }
 
 interface EmpresaContent {
