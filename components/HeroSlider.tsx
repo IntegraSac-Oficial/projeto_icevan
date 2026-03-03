@@ -56,7 +56,7 @@ export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [filtroCor, setFiltroCor] = useState("#2563EB");
   const [filtroOpacidade, setFiltroOpacidade] = useState(20);
-  const [bannerTelefone, setBannerTelefone] = useState(empresa.telefone);
+  const [bannerTelefone, setBannerTelefone] = useState<string>(empresa.telefone);
 
   useEffect(() => {
     fetch("/api/admin/settings")
