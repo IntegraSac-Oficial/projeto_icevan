@@ -50,6 +50,8 @@ interface Settings {
   footer_rodape:      string;
   // Header
   header_telefone:    string;
+  // Banner
+  banner_telefone:    string;
   // Acesso (não persiste senha no estado — campos separados)
 }
 
@@ -75,6 +77,7 @@ const DEFAULTS: Settings = {
   footer_copyright:  "© 2026 Ice Van. Todos os direitos reservados.",
   footer_rodape:     "CNPJ — Refrigeração para Transporte | São Paulo, SP",
   header_telefone:   "(11) 4824-2999",
+  banner_telefone:   "(11) 94824-2999",
 };
 
 // ─── Componente de color picker com preview ────────────────────────────────
@@ -469,6 +472,7 @@ export default function ConfiguracoesPage() {
         footer_copyright:  settings.footer_copyright,
         footer_rodape:     settings.footer_rodape,
         header_telefone:   settings.header_telefone,
+        banner_telefone:   settings.banner_telefone,
       }),
     });
     setSaving(false);
@@ -778,25 +782,37 @@ export default function ConfiguracoesPage() {
       {/* ── ABA: EMPRESA ───────────────────────────────────────────────── */}
       {tab === "empresa" && (
         <div className="space-y-6">
-          {/* Telefone do Header */}
+          {/* Telefones */}
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-base flex items-center gap-2">
-                <Phone className="w-4 h-4" /> Telefone do Header
+                <Phone className="w-4 h-4" /> Telefones do Site
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Este telefone aparece na barra superior do site (topo da página).
+                Configure os telefones que aparecem em diferentes partes do site.
               </p>
               <div>
-                <label className="form-label">Telefone</label>
+                <label className="form-label">Telefone do Header</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Aparece na barra superior do site (topo da página).</p>
                 <input
                   type="text"
                   value={settings.header_telefone}
                   onChange={(e) => setSettings((s) => ({ ...s, header_telefone: e.target.value }))}
                   className="form-input"
                   placeholder="(11) 4824-2999"
+                />
+              </div>
+              <div>
+                <label className="form-label">Telefone do Banner Principal</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Aparece em destaque no banner da página inicial (visível apenas em desktop).</p>
+                <input
+                  type="text"
+                  value={settings.banner_telefone}
+                  onChange={(e) => setSettings((s) => ({ ...s, banner_telefone: e.target.value }))}
+                  className="form-input"
+                  placeholder="(11) 94824-2999"
                 />
               </div>
             </CardContent>

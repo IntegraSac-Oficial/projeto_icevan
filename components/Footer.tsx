@@ -63,12 +63,12 @@ export function Footer() {
   useEffect(() => {
     const fetchLogo = async () => {
       try {
-        const res = await fetch("/api/logo?t=" + Date.now());
+        const res = await fetch("/api/logo");
         const data = await res.json();
         if (data.branca) {
-          setLogoSrc(data.branca + '?t=' + Date.now());
+          setLogoSrc(data.branca);
         } else if (data.principal) {
-          setLogoSrc(data.principal + '?t=' + Date.now());
+          setLogoSrc(data.principal);
         }
       } catch (error) {
         console.error('Footer - Erro ao buscar logo:', error);
@@ -77,7 +77,7 @@ export function Footer() {
 
     const fetchTextos = async () => {
       try {
-        const res = await fetch("/api/admin/settings?t=" + Date.now());
+        const res = await fetch("/api/admin/settings");
         const data: Record<string, string> = await res.json();
         
         console.log('Footer - Dados recebidos:', data);
@@ -163,7 +163,6 @@ export function Footer() {
                 height={60}
                 className="h-14 w-auto"
                 unoptimized
-                key={logoSrc}
               />
               <span className="block text-white font-heading font-bold text-xl mt-2">
                 {empresa.nome}

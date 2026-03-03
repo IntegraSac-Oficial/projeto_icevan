@@ -56,6 +56,7 @@ export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [filtroCor, setFiltroCor] = useState("#2563EB");
   const [filtroOpacidade, setFiltroOpacidade] = useState(20);
+  const [bannerTelefone, setBannerTelefone] = useState(empresa.telefone);
 
   useEffect(() => {
     fetch("/api/admin/settings")
@@ -63,6 +64,7 @@ export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
       .then((data: Record<string, string>) => {
         if (data.hero_filtro_cor)       setFiltroCor(data.hero_filtro_cor);
         if (data.hero_filtro_opacidade) setFiltroOpacidade(Number(data.hero_filtro_opacidade));
+        if (data.banner_telefone)       setBannerTelefone(data.banner_telefone);
       })
       .catch(() => {});
   }, []);
@@ -151,10 +153,10 @@ export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
                           Fale conosco
                         </p>
                         <a
-                          href={`tel:${empresa.telefone.replace(/\D/g, "")}`}
+                          href={`tel:${bannerTelefone.replace(/\D/g, "")}`}
                           className="text-xl font-bold text-white hover:text-brand-accent transition-colors"
                         >
-                          {empresa.telefone}
+                          {bannerTelefone}
                         </a>
                       </div>
                     </div>

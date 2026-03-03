@@ -137,7 +137,7 @@ export default function SeoPage() {
                     {form.metaTitulo || "(sem título)"}
                   </p>
                   <p className="text-xs text-[#006621] mb-0.5">
-                    icevans.com.br{page.slug}
+                    icevanisolamento.com.br{page.slug}
                   </p>
                   <p className="text-xs text-gray-600 line-clamp-2">
                     {form.metaDescricao || "(sem descrição)"}

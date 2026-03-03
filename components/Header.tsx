@@ -31,23 +31,15 @@ export function Header() {
   useEffect(() => {
     const fetchLogo = async () => {
       try {
-        const res = await fetch("/api/logo?t=" + Date.now());
+        const res = await fetch("/api/logo");
         const data = await res.json();
-        
-        console.log('Header - Buscando logo');
-        console.log('Header - Dados recebidos:', data);
         
         // Prioridade: Logo Branca > Logo Principal > Fallback
         if (data.branca) {
-          const logoUrl = data.branca + '?t=' + Date.now();
-          console.log('Header - Usando logo branca:', logoUrl);
-          setLogoSrc(logoUrl);
+          setLogoSrc(data.branca);
         } else if (data.principal) {
-          const logoUrl = data.principal + '?t=' + Date.now();
-          console.log('Header - Logo branca não encontrada, usando principal:', logoUrl);
-          setLogoSrc(logoUrl);
+          setLogoSrc(data.principal);
         } else {
-          console.log('Header - Nenhuma logo encontrada, usando fallback');
           setLogoSrc("/images/logo/logo-white.svg");
         }
       } catch (error) {
@@ -57,11 +49,6 @@ export function Header() {
     };
     
     fetchLogo();
-    
-    // Recarrega a logo a cada 5 segundos para pegar atualizações
-    const interval = setInterval(fetchLogo, 5000);
-    
-    return () => clearInterval(interval);
   }, []);
 
   // Busca o telefone do header das configurações
@@ -127,7 +114,6 @@ export function Header() {
               className="h-16 md:h-20 w-auto"
               priority
               unoptimized
-              key={logoSrc}
             />
           </Link>
 

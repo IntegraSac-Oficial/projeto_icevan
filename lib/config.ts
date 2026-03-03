@@ -46,7 +46,7 @@ export const empresa = {
   },
 
   // SEO
-  siteUrl: "https://icevans.com.br",
+  siteUrl: "https://icevanisolamento.com.br",
   ogImage: "/images/og/og-image.webp",
 
   // Google Analytics 4 — substitua pelo ID real
