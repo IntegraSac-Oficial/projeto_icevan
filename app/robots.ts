@@ -1,14 +1,17 @@
 import { MetadataRoute } from "next";
-import { empresa } from "@/lib/config";
+import { getEmpresaConfig } from "@/lib/empresa-config";
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const config = await getEmpresaConfig();
+  const siteUrl = config.site_url || "https://icevanisolamento.com.br";
+  
   return {
     rules: {
       userAgent: "*",
       allow: "/",
       disallow: ["/api/", "/_next/"],
     },
-    sitemap: `${empresa.siteUrl}/sitemap.xml`,
-    host: empresa.siteUrl,
+    sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl,
   };
 }

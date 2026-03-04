@@ -1,9 +1,10 @@
 import { MetadataRoute } from "next";
-import { empresa } from "@/lib/config";
+import { getEmpresaConfig } from "@/lib/empresa-config";
 import { applications } from "@/lib/applications";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = empresa.siteUrl;
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const config = await getEmpresaConfig();
+  const baseUrl = config.site_url || "https://icevanisolamento.com.br";
   const now = new Date();
 
   // Páginas estáticas principais

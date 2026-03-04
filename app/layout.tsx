@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { empresa } from "@/lib/config";
+import { getEmpresaConfig } from "@/lib/empresa-config";
 import { prisma } from "@/lib/db";
 import { getAllSettings } from "@/lib/settings";
 import "./globals.css";
@@ -30,12 +30,14 @@ function hexToHslStr(hex: string): string {
   return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
 }
 
-// SEO dinâmico: lê configurações globais do MySQL (slug "/"), fallback para config.ts
+// SEO dinâmico: lê configurações globais do MySQL (slug "/"), fallback para config do banco
 export async function generateMetadata(): Promise<Metadata> {
-  let globalTitle: string = `${empresa.nome} — ${empresa.slogan}`;
-  let globalDescription: string = empresa.descricao;
-  let globalOgImage: string = empresa.ogImage;
-  let faviconUrl: string = empresa.logo.favicon;
+  const config = await getEmpresaConfig();
+  
+  let globalTitle: string = `${config.company_name} — ${config.company_slogan}`;
+  let globalDescription: string = config.company_description;
+  let globalOgImage: string = "/images/og-image.jpg";
+  let faviconUrl: string = "/favicon.ico";
 
   try {
     const seo = await prisma.seoSetting.findUnique({
@@ -62,15 +64,14 @@ export async function generateMetadata(): Promise<Metadata> {
       console.error('Erro ao buscar favicon:', err);
     }
   } catch (error) {
-    console.error('Erro ao buscar favicon:', error);
-    // Banco indisponível — usa valores de config.ts
+    console.error('Erro ao buscar SEO:', error);
   }
 
   return {
-    metadataBase: new URL(empresa.siteUrl),
+    metadataBase: new URL(config.site_url || "https://icevanisolamento.com.br"),
     title: {
       default: globalTitle,
-      template: `%s | ${empresa.nome}`,
+      template: `%s | ${config.company_name}`,
     },
     description: globalDescription,
     keywords: [
@@ -90,8 +91,8 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "pt_BR",
-      url: empresa.siteUrl,
-      siteName: empresa.nome,
+      url: config.site_url || "https://icevanisolamento.com.br",
+      siteName: config.company_name,
       title: globalTitle,
       description: globalDescription,
       images: [
@@ -99,7 +100,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: globalOgImage,
           width: 1200,
           height: 630,
-          alt: `${empresa.nome} — Refrigeração para Transporte`,
+          alt: `${config.company_name} — Refrigeração para Transporte`,
         },
       ],
     },
@@ -110,7 +111,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [globalOgImage],
     },
     alternates: {
-      canonical: empresa.siteUrl,
+      canonical: config.site_url || "https://icevanisolamento.com.br",
     },
     robots: {
       index: true,
@@ -135,44 +136,50 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 // Schema.org — LocalBusiness
-const localBusinessSchema = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  name: empresa.nome,
-  description: empresa.descricao,
-  url: empresa.siteUrl,
-  telephone: empresa.telefone,
-  email: empresa.email,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: empresa.endereco,
-    addressLocality: empresa.cidade,
-    addressRegion: empresa.estado,
-    postalCode: empresa.cep,
-    addressCountry: "BR",
-  },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "08:00",
-      closes: "18:00",
+async function getLocalBusinessSchema() {
+  const config = await getEmpresaConfig();
+  
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: config.company_name,
+    description: config.company_description,
+    url: config.site_url || "https://icevanisolamento.com.br",
+    telephone: config.phone,
+    email: config.email,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: config.address,
+      addressLocality: "São Paulo",
+      addressRegion: "SP",
+      postalCode: "",
+      addressCountry: "BR",
     },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Saturday"],
-      opens: "08:00",
-      closes: "12:00",
-    },
-  ],
-  sameAs: [empresa.instagram].filter(Boolean),
-};
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "08:00",
+        closes: "18:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Saturday"],
+        opens: "08:00",
+        closes: "12:00",
+      },
+    ],
+    sameAs: [config.instagram_url, config.facebook_url, config.linkedin_url, config.youtube_url].filter(Boolean),
+  };
+}
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const config = await getEmpresaConfig();
+  const localBusinessSchema = await getLocalBusinessSchema();
   // Detecta rotas admin via header injetado pelo middleware
   const isAdmin = headers().get("x-is-admin") === "1";
 
@@ -229,10 +236,10 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         {/* Google Analytics 4 — apenas no site público */}
-        {!isAdmin && empresa.ga4Id && empresa.ga4Id !== "G-XXXXXXXXXX" && (
+        {!isAdmin && config.ga4_id && config.ga4_id !== "G-XXXXXXXXXX" && (
           <>
             <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${empresa.ga4Id}`}
+              src={`https://www.googletagmanager.com/gtag/js?id=${config.ga4_id}`}
               strategy="afterInteractive"
             />
             <Script id="ga4-init" strategy="afterInteractive">
@@ -240,7 +247,7 @@ export default async function RootLayout({
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', '${empresa.ga4Id}', {
+                gtag('config', '${config.ga4_id}', {
                   page_path: window.location.pathname,
                 });
               `}

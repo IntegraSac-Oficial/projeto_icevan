@@ -8,16 +8,19 @@ import {
 } from "lucide-react";
 import { ContactForm } from "@/components/ContactForm";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { empresa } from "@/lib/config";
+import { getEmpresaConfig } from "@/lib/empresa-config";
 import { getSetting, getSettingJSON } from "@/lib/settings";
 import { whatsappUrl } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "Contato — Solicite um Orçamento",
-  description:
-    "Entre em contato com a Ice Van para solicitar orçamento de refrigeração para seu veículo. Atendemos por WhatsApp, telefone e formulário.",
-  alternates: { canonical: "/contato" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getEmpresaConfig();
+  
+  return {
+    title: "Contato — Solicite um Orçamento",
+    description: `Entre em contato com ${config.company_name} para solicitar orçamento de refrigeração para seu veículo. Atendemos por WhatsApp, telefone e formulário.`,
+    alternates: { canonical: "/contato" },
+  };
+}
 
 // Revalidar a página a cada 60 segundos
 export const revalidate = 60;
@@ -25,13 +28,15 @@ export const revalidate = 60;
 interface ContatoItem { label: string; numero: string; }
 
 export default async function ContatoPage() {
+  const config = await getEmpresaConfig();
+  
   const [mapsUrl, endereco, email, horario, contatos] = await Promise.all([
-    getSetting("empresa_maps_embed", empresa.googleMapsEmbed),
-    getSetting("empresa_endereco", empresa.enderecoCompleto),
-    getSetting("empresa_email", empresa.email),
-    getSetting("empresa_horario", empresa.horario),
+    getSetting("empresa_maps_embed", ""),
+    getSetting("empresa_endereco", config.address),
+    getSetting("empresa_email", config.email),
+    getSetting("empresa_horario", "Seg-Sex: 8h-18h | Sáb: 8h-12h"),
     getSettingJSON<ContatoItem[]>("empresa_contatos", [
-      { label: "WhatsApp", numero: empresa.whatsapp },
+      { label: "WhatsApp", numero: config.whatsapp || "" },
     ]),
   ]);
 
@@ -59,12 +64,12 @@ export default async function ContatoPage() {
         <section className="h-72 md:h-96 relative">
           <iframe
             src={mapsUrl}
-            title={`Localização da ${empresa.nome}`}
+            title={`Localização da ${config.company_name}`}
             className="w-full h-full border-0"
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            aria-label="Mapa com localização da Ice Van"
+            aria-label={`Mapa com localização da ${config.company_name}`}
           />
         </section>
       )}
@@ -160,9 +165,9 @@ export default async function ContatoPage() {
                 Chamar no WhatsApp
               </a>
 
-              {empresa.instagram && (
+              {config.instagram_url && (
                 <a
-                  href={empresa.instagram}
+                  href={config.instagram_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 text-gray-600 hover:text-brand-accent transition-colors font-medium"

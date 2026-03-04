@@ -10,17 +10,20 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { empresa } from "@/lib/config";
+import { getEmpresaConfig } from "@/lib/empresa-config";
 import { whatsappUrl } from "@/lib/utils";
 import { loadEmpresaImages } from "@/lib/applications";
 import { getSettingJSON } from "@/lib/settings";
 
-export const metadata: Metadata = {
-  title: "Empresa — Quem Somos",
-  description:
-    "Conheça a Ice Van: missão, visão, valores e diferenciais de uma empresa especializada em refrigeração para transporte de perecíveis em São Paulo.",
-  alternates: { canonical: "/empresa" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getEmpresaConfig();
+  
+  return {
+    title: "Empresa — Quem Somos",
+    description: `Conheça ${config.company_name}: missão, visão, valores e diferenciais de uma empresa especializada em refrigeração para transporte de perecíveis.`,
+    alternates: { canonical: "/empresa" },
+  };
+}
 
 // Revalidar a página a cada 60 segundos
 export const revalidate = 60;
@@ -44,55 +47,50 @@ interface EmpresaContent {
   ctaSubtitulo: string;
 }
 
-const DEFAULTS: EmpresaContent = {
-  heroLabel: "Quem somos",
-  heroTitulo: "Especialistas em Refrigeração para Transporte",
-  heroSubtitulo:
-    `Há anos no mercado, a ${empresa.nome} é referência em soluções de isolamento térmico e refrigeração para veículos de transporte de perecíveis em São Paulo e região.`,
-  historiaTitle: "Nossa História",
-  historiaParagrafos: [
-    `A ${empresa.nome} nasceu da necessidade de oferecer soluções profissionais de refrigeração para o crescente mercado de transporte de perecíveis no Brasil. Desde o início, nossa proposta foi clara: entregar qualidade técnica, materiais de primeira linha e atendimento consultivo que realmente ajude o cliente a tomar a melhor decisão para o seu negócio.`,
-    `Ao longo dos anos, instalamos sistemas de refrigeração e isolamento térmico em centenas de veículos — desde Fiorinos para pequenas distribuidoras até Sprinters e Ducatos para grandes frotas. Cada projeto é único e desenvolvido conforme as necessidades específicas de temperatura, volume de carga e perfil de operação do cliente.`,
-    `Hoje, a ${empresa.nome} atua a partir de São Paulo, atendendo clientes de todo o estado com agilidade, seriedade e o mesmo compromisso com a qualidade que sempre nos diferenciou no mercado.`,
-  ],
-  mvvTitle: "Missão, Visão e Valores",
-  mvvSubtitulo: "Os pilares que orientam cada projeto e cada relação com nossos clientes.",
-  missao: {
-    titulo: "Missão",
-    descricao: "Oferecer soluções completas de refrigeração e isolamento térmico para veículos de transporte, garantindo a integridade dos produtos perecíveis e a satisfação total dos nossos clientes.",
-  },
-  visao: {
-    titulo: "Visão",
-    descricao: "Ser referência nacional no segmento de refrigeração veicular, reconhecidos pela qualidade técnica, inovação e pelo relacionamento de longo prazo com nossos parceiros e clientes.",
-  },
-  valores: {
-    titulo: "Valores",
-    descricao: "Qualidade sem compromisso. Honestidade nas relações. Comprometimento com o prazo. Respeito ao cliente. Melhoria contínua em processos e materiais.",
-  },
-  diferenciaisTitle: "Nossos Diferenciais",
-  diferenciaisLista: [
-    "Técnicos especializados e certificados",
-    "Materiais de alta qualidade e durabilidade",
-    "Projetos personalizados por veículo e aplicação",
-    "Cumprimento rigoroso de prazos",
-    "Garantia de 12 meses nas instalações",
-    "Suporte e assistência técnica pós-venda",
-    "Conformidade com normas sanitárias ANVISA",
-    "Atendimento consultivo — não somos apenas vendedores",
-  ],
-  ctaTitle: "Vamos conversar sobre seu projeto?",
-  ctaSubtitulo:
-    "Entre em contato agora e descubra como podemos ajudar a transformar seu veículo em uma plataforma de refrigeração profissional.",
-};
-
-const mvvIcons = { missao: Target, visao: Eye, valores: Heart };
-const mvvColors = {
-  missao: "bg-brand-primary",
-  visao: "bg-brand-secondary",
-  valores: "bg-brand-accent",
-};
-
 export default async function EmpresaPage() {
+  const config = await getEmpresaConfig();
+  
+  const DEFAULTS: EmpresaContent = {
+    heroLabel: "Quem somos",
+    heroTitulo: "Especialistas em Refrigeração para Transporte",
+    heroSubtitulo:
+      `Há anos no mercado, a ${config.company_name} é referência em soluções de isolamento térmico e refrigeração para veículos de transporte de perecíveis.`,
+    historiaTitle: "Nossa História",
+    historiaParagrafos: [
+      `A ${config.company_name} nasceu da necessidade de oferecer soluções profissionais de refrigeração para o crescente mercado de transporte de perecíveis no Brasil. Desde o início, nossa proposta foi clara: entregar qualidade técnica, materiais de primeira linha e atendimento consultivo que realmente ajude o cliente a tomar a melhor decisão para o seu negócio.`,
+      `Ao longo dos anos, instalamos sistemas de refrigeração e isolamento térmico em centenas de veículos — desde Fiorinos para pequenas distribuidoras até Sprinters e Ducatos para grandes frotas. Cada projeto é único e desenvolvido conforme as necessidades específicas de temperatura, volume de carga e perfil de operação do cliente.`,
+      `Hoje, a ${config.company_name} atua com agilidade, seriedade e o mesmo compromisso com a qualidade que sempre nos diferenciou no mercado.`,
+    ],
+    mvvTitle: "Missão, Visão e Valores",
+    mvvSubtitulo: "Os pilares que orientam cada projeto e cada relação com nossos clientes.",
+    missao: {
+      titulo: "Missão",
+      descricao: "Oferecer soluções completas de refrigeração e isolamento térmico para veículos de transporte, garantindo a integridade dos produtos perecíveis e a satisfação total dos nossos clientes.",
+    },
+    visao: {
+      titulo: "Visão",
+      descricao: "Ser referência nacional no segmento de refrigeração veicular, reconhecidos pela qualidade técnica, inovação e pelo relacionamento de longo prazo com nossos parceiros e clientes.",
+    },
+    valores: {
+      titulo: "Valores",
+      descricao: "Qualidade sem compromisso. Honestidade nas relações. Comprometimento com o prazo. Respeito ao cliente. Melhoria contínua em processos e materiais.",
+    },
+    diferenciaisTitle: "Nossos Diferenciais",
+    diferenciaisLista: [
+      "Técnicos especializados e certificados",
+      "Materiais de alta qualidade e durabilidade",
+      "Projetos personalizados por veículo e aplicação",
+      "Cumprimento rigoroso de prazos",
+      "Garantia de 12 meses nas instalações",
+      "Suporte e assistência técnica pós-venda",
+      "Conformidade com normas sanitárias ANVISA",
+      "Atendimento consultivo — não somos apenas vendedores",
+    ],
+    ctaTitle: "Vamos conversar sobre seu projeto?",
+    ctaSubtitulo:
+      "Entre em contato agora e descubra como podemos ajudar a transformar seu veículo em uma plataforma de refrigeração profissional.",
+  };
+  
   const [empresaImages, content] = await Promise.all([
     loadEmpresaImages(),
     getSettingJSON<EmpresaContent>("content_empresa", DEFAULTS),
@@ -100,6 +98,13 @@ export default async function EmpresaPage() {
 
   const imagemEscritorio = empresaImages[0] || "/images/empresa/instalacoes.webp";
   const imagemDiferenciais = empresaImages[1] || "/images/empresa/equipe.webp";
+
+  const mvvIcons = { missao: Target, visao: Eye, valores: Heart };
+  const mvvColors = {
+    missao: "bg-brand-primary",
+    visao: "bg-brand-secondary",
+    valores: "bg-brand-accent",
+  };
 
   const mvvCards = [
     { key: "missao" as const, data: content.missao },
@@ -143,7 +148,7 @@ export default async function EmpresaPage() {
             <div className="relative h-80 lg:h-[420px] rounded-2xl overflow-hidden shadow-card-hover">
               <Image
                 src={imagemEscritorio}
-                alt={`Instalações da ${empresa.nome}`}
+                alt={`Instalações da ${config.company_name}`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -186,7 +191,7 @@ export default async function EmpresaPage() {
             <div className="relative h-72 lg:h-96 rounded-2xl overflow-hidden shadow-card-hover">
               <Image
                 src={imagemDiferenciais}
-                alt={`Equipe ${empresa.nome}`}
+                alt={`Equipe ${config.company_name}`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"

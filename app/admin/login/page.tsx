@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Snowflake, Eye, EyeOff, Loader2, Lock, Mail, Zap } from "lucide-react";
-import { empresa } from "@/lib/config";
+import { getEmpresaConfig } from "@/lib/empresa-config";
 
 /* ── Dev-only: preenche campos com credenciais do .env ─── */
 function DevFillButton({
@@ -61,11 +61,18 @@ function DevFillButton({
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    getEmpresaConfig().then(config => {
+      setCompanyName(config.company_name);
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,7 +109,7 @@ export default function AdminLoginPage() {
             <Snowflake className="w-8 h-8 text-brand-accent" />
           </div>
           <h1 className="text-2xl font-heading font-bold text-white">
-            {empresa.nome}
+            {companyName || "Carregando..."}
           </h1>
           <p className="text-white/60 text-sm mt-1">Painel Administrativo</p>
         </div>
@@ -205,7 +212,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center text-white/40 text-xs mt-6">
-          © {new Date().getFullYear()} {empresa.nome} — Área Restrita
+          © {new Date().getFullYear()} {companyName || "..."} — Área Restrita
         </p>
       </div>
     </div>

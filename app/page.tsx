@@ -17,15 +17,19 @@ import { ApplicationCard } from "@/components/ApplicationCard";
 import { ContactForm } from "@/components/ContactForm";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { applications, loadApplicationImages } from "@/lib/applications";
-import { empresa } from "@/lib/config";
+import { getEmpresaConfig } from "@/lib/empresa-config";
 import { whatsappUrl } from "@/lib/utils";
 import { getSettingJSON } from "@/lib/settings";
 
-export const metadata: Metadata = {
-  title: `${empresa.nome} — ${empresa.slogan}`,
-  description: empresa.descricao,
-  alternates: { canonical: "/" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getEmpresaConfig();
+  
+  return {
+    title: `${config.company_name} — ${config.company_slogan}`,
+    description: config.company_description,
+    alternates: { canonical: "/" },
+  };
+}
 
 // Revalidar a página a cada 60 segundos (ISR - Incremental Static Regeneration)
 export const revalidate = 60;
@@ -34,6 +38,7 @@ export const revalidate = 60;
 async function loadHeroBanners() {
   try {
     const { prisma } = await import("@/lib/db");
+    const config = await getEmpresaConfig();
     
     // Busca banners do banco de dados
     const dbBanners = await prisma.heroBanner.findMany({
@@ -44,7 +49,7 @@ async function loadHeroBanners() {
     if (dbBanners.length > 0) {
       return dbBanners.map((banner) => ({
         image: `/images/hero/${banner.filename}`,
-        alt: `Banner — ${empresa.nome}`,
+        alt: `Banner — ${config.company_name}`,
         headline: banner.titulo || "Sistemas de Refrigeração para Transporte",
         sub: banner.descricao || "Qualidade e eficiência para conservar sua carga perecível.",
       }));
@@ -64,7 +69,7 @@ async function loadHeroBanners() {
 
     return imageFiles.map((file, index) => ({
       image: `/images/hero/${file}`,
-      alt: `Banner ${index + 1} — ${empresa.nome}`,
+      alt: `Banner ${index + 1} — ${config.company_name}`,
       headline: "Sistemas de Refrigeração para Transporte",
       sub: "Qualidade e eficiência para conservar sua carga perecível do ponto de partida até a entrega.",
     }));
@@ -120,16 +125,22 @@ interface CtaContent {
   contatos: ContatoCta[];
 }
 
-const DEFAULT_CTA: CtaContent = {
-  titulo: "Solicite seu Orçamento",
-  subtitulo: "Sem Compromisso",
-  texto:
-    "Preencha o formulário ao lado ou entre em contato direto pelo WhatsApp. Nossa equipe responde rapidamente com a solução ideal para o seu veículo.",
-  titulo_form: "Fale com nosso time",
-  contatos: [{ label: "WhatsApp", numero: empresa.whatsapp }],
-};
+async function getDefaultCta(): Promise<CtaContent> {
+  const config = await getEmpresaConfig();
+  return {
+    titulo: "Solicite seu Orçamento",
+    subtitulo: "Sem Compromisso",
+    texto:
+      "Preencha o formulário ao lado ou entre em contato direto pelo WhatsApp. Nossa equipe responde rapidamente com a solução ideal para o seu veículo.",
+    titulo_form: "Fale com nosso time",
+    contatos: [{ label: "WhatsApp", numero: config.whatsapp || "" }],
+  };
+}
 
 export default async function Home() {
+  const config = await getEmpresaConfig();
+  const DEFAULT_CTA = await getDefaultCta();
+  
   const [heroBanners, difContent, ctaContent, firstThreeApps] = await Promise.all([
     loadHeroBanners(),
     getSettingJSON<DiferenciaisContent>("content_diferenciais", DEFAULT_DIFERENCIAIS_CONTENT),
@@ -219,7 +230,7 @@ export default async function Home() {
         <div className="container-site">
           <SectionTitle
             title={difContent.titulo_secao || DEFAULT_DIFERENCIAIS_CONTENT.titulo_secao}
-            accent={empresa.nome}
+            accent={config.company_name}
             subtitle={difContent.subtitulo_secao || DEFAULT_DIFERENCIAIS_CONTENT.subtitulo_secao}
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
