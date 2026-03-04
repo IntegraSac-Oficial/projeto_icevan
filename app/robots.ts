@@ -3,7 +3,7 @@ import { getEmpresaConfig } from "@/lib/empresa-config";
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const config = await getEmpresaConfig();
-  const siteUrl = config.site_url || "https://icevanisolamento.com.br";
+  const siteUrl = config.siteUrl || "https://icevanisolamento.com.br";
   
   return {
     rules: {

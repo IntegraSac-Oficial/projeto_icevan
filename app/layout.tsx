@@ -145,11 +145,11 @@ async function getLocalBusinessSchema() {
     name: config.nome,
     description: config.descricao,
     url: config.siteUrl || "https://icevanisolamento.com.br",
-    telephone: config.phone,
+    telephone: config.telefone,
     email: config.email,
     address: {
       "@type": "PostalAddress",
-      streetAddress: config.address,
+      streetAddress: config.enderecoCompleto,
       addressLocality: "São Paulo",
       addressRegion: "SP",
       postalCode: "",
