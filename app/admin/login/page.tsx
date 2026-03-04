@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     getEmpresaConfig().then(config => {
-      setCompanyName(config.company_name);
+      setCompanyName(config.nome);
     });
   }, []);
 

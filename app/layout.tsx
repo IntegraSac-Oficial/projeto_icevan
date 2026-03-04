@@ -34,8 +34,8 @@ function hexToHslStr(hex: string): string {
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getEmpresaConfig();
   
-  let globalTitle: string = `${config.company_name} — ${config.company_slogan}`;
-  let globalDescription: string = config.company_description;
+  let globalTitle: string = `${config.nome} — ${config.slogan}`;
+  let globalDescription: string = config.descricao;
   let globalOgImage: string = "/images/og-image.jpg";
   let faviconUrl: string = "/favicon.ico";
 
@@ -68,10 +68,10 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    metadataBase: new URL(config.site_url || "https://icevanisolamento.com.br"),
+    metadataBase: new URL(config.siteUrl || "https://icevanisolamento.com.br"),
     title: {
       default: globalTitle,
-      template: `%s | ${config.company_name}`,
+      template: `%s | ${config.nome}`,
     },
     description: globalDescription,
     keywords: [
@@ -91,8 +91,8 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "pt_BR",
-      url: config.site_url || "https://icevanisolamento.com.br",
-      siteName: config.company_name,
+      url: config.siteUrl || "https://icevanisolamento.com.br",
+      siteName: config.nome,
       title: globalTitle,
       description: globalDescription,
       images: [
@@ -100,7 +100,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: globalOgImage,
           width: 1200,
           height: 630,
-          alt: `${config.company_name} — Refrigeração para Transporte`,
+          alt: `${config.nome} — Refrigeração para Transporte`,
         },
       ],
     },
@@ -111,7 +111,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [globalOgImage],
     },
     alternates: {
-      canonical: config.site_url || "https://icevanisolamento.com.br",
+      canonical: config.siteUrl || "https://icevanisolamento.com.br",
     },
     robots: {
       index: true,
@@ -142,9 +142,9 @@ async function getLocalBusinessSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: config.company_name,
-    description: config.company_description,
-    url: config.site_url || "https://icevanisolamento.com.br",
+    name: config.nome,
+    description: config.descricao,
+    url: config.siteUrl || "https://icevanisolamento.com.br",
     telephone: config.phone,
     email: config.email,
     address: {
@@ -169,7 +169,7 @@ async function getLocalBusinessSchema() {
         closes: "12:00",
       },
     ],
-    sameAs: [config.instagram_url, config.facebook_url, config.linkedin_url, config.youtube_url].filter(Boolean),
+    sameAs: [config.instagram, config.facebook, config.linkedin, config.youtube].filter(Boolean),
   };
 }
 
@@ -236,10 +236,10 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         {/* Google Analytics 4 — apenas no site público */}
-        {!isAdmin && config.ga4_id && config.ga4_id !== "G-XXXXXXXXXX" && (
+        {!isAdmin && config.ga4Id && config.ga4Id !== "G-XXXXXXXXXX" && (
           <>
             <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${config.ga4_id}`}
+              src={`https://www.googletagmanager.com/gtag/js?id=${config.ga4Id}`}
               strategy="afterInteractive"
             />
             <Script id="ga4-init" strategy="afterInteractive">
@@ -247,7 +247,7 @@ export default async function RootLayout({
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', '${config.ga4_id}', {
+                gtag('config', '${config.ga4Id}', {
                   page_path: window.location.pathname,
                 });
               `}

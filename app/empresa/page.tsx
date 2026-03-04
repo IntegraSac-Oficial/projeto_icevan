@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
   
   return {
     title: "Empresa — Quem Somos",
-    description: `Conheça ${config.company_name}: missão, visão, valores e diferenciais de uma empresa especializada em refrigeração para transporte de perecíveis.`,
+    description: `Conheça ${config.nome}: missão, visão, valores e diferenciais de uma empresa especializada em refrigeração para transporte de perecíveis.`,
     alternates: { canonical: "/empresa" },
   };
 }
@@ -54,12 +54,12 @@ export default async function EmpresaPage() {
     heroLabel: "Quem somos",
     heroTitulo: "Especialistas em Refrigeração para Transporte",
     heroSubtitulo:
-      `Há anos no mercado, a ${config.company_name} é referência em soluções de isolamento térmico e refrigeração para veículos de transporte de perecíveis.`,
+      `Há anos no mercado, a ${config.nome} é referência em soluções de isolamento térmico e refrigeração para veículos de transporte de perecíveis.`,
     historiaTitle: "Nossa História",
     historiaParagrafos: [
-      `A ${config.company_name} nasceu da necessidade de oferecer soluções profissionais de refrigeração para o crescente mercado de transporte de perecíveis no Brasil. Desde o início, nossa proposta foi clara: entregar qualidade técnica, materiais de primeira linha e atendimento consultivo que realmente ajude o cliente a tomar a melhor decisão para o seu negócio.`,
+      `A ${config.nome} nasceu da necessidade de oferecer soluções profissionais de refrigeração para o crescente mercado de transporte de perecíveis no Brasil. Desde o início, nossa proposta foi clara: entregar qualidade técnica, materiais de primeira linha e atendimento consultivo que realmente ajude o cliente a tomar a melhor decisão para o seu negócio.`,
       `Ao longo dos anos, instalamos sistemas de refrigeração e isolamento térmico em centenas de veículos — desde Fiorinos para pequenas distribuidoras até Sprinters e Ducatos para grandes frotas. Cada projeto é único e desenvolvido conforme as necessidades específicas de temperatura, volume de carga e perfil de operação do cliente.`,
-      `Hoje, a ${config.company_name} atua com agilidade, seriedade e o mesmo compromisso com a qualidade que sempre nos diferenciou no mercado.`,
+      `Hoje, a ${config.nome} atua com agilidade, seriedade e o mesmo compromisso com a qualidade que sempre nos diferenciou no mercado.`,
     ],
     mvvTitle: "Missão, Visão e Valores",
     mvvSubtitulo: "Os pilares que orientam cada projeto e cada relação com nossos clientes.",
@@ -148,7 +148,7 @@ export default async function EmpresaPage() {
             <div className="relative h-80 lg:h-[420px] rounded-2xl overflow-hidden shadow-card-hover">
               <Image
                 src={imagemEscritorio}
-                alt={`Instalações da ${config.company_name}`}
+                alt={`Instalações da ${config.nome}`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -191,7 +191,7 @@ export default async function EmpresaPage() {
             <div className="relative h-72 lg:h-96 rounded-2xl overflow-hidden shadow-card-hover">
               <Image
                 src={imagemDiferenciais}
-                alt={`Equipe ${config.company_name}`}
+                alt={`Equipe ${config.nome}`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"

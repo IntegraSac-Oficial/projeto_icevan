@@ -25,8 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const config = await getEmpresaConfig();
   
   return {
-    title: `${config.company_name} — ${config.company_slogan}`,
-    description: config.company_description,
+    title: `${config.nome} — ${config.slogan}`,
+    description: config.descricao,
     alternates: { canonical: "/" },
   };
 }
@@ -49,7 +49,7 @@ async function loadHeroBanners() {
     if (dbBanners.length > 0) {
       return dbBanners.map((banner) => ({
         image: `/images/hero/${banner.filename}`,
-        alt: `Banner — ${config.company_name}`,
+        alt: `Banner — ${config.nome}`,
         headline: banner.titulo || "Sistemas de Refrigeração para Transporte",
         sub: banner.descricao || "Qualidade e eficiência para conservar sua carga perecível.",
       }));
@@ -69,7 +69,7 @@ async function loadHeroBanners() {
 
     return imageFiles.map((file, index) => ({
       image: `/images/hero/${file}`,
-      alt: `Banner ${index + 1} — ${config.company_name}`,
+      alt: `Banner ${index + 1} — ${config.nome}`,
       headline: "Sistemas de Refrigeração para Transporte",
       sub: "Qualidade e eficiência para conservar sua carga perecível do ponto de partida até a entrega.",
     }));
@@ -230,7 +230,7 @@ export default async function Home() {
         <div className="container-site">
           <SectionTitle
             title={difContent.titulo_secao || DEFAULT_DIFERENCIAIS_CONTENT.titulo_secao}
-            accent={config.company_name}
+            accent={config.nome}
             subtitle={difContent.subtitulo_secao || DEFAULT_DIFERENCIAIS_CONTENT.subtitulo_secao}
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

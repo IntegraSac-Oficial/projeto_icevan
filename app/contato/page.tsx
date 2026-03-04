@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   
   return {
     title: "Contato — Solicite um Orçamento",
-    description: `Entre em contato com ${config.company_name} para solicitar orçamento de refrigeração para seu veículo. Atendemos por WhatsApp, telefone e formulário.`,
+    description: `Entre em contato com ${config.nome} para solicitar orçamento de refrigeração para seu veículo. Atendemos por WhatsApp, telefone e formulário.`,
     alternates: { canonical: "/contato" },
   };
 }
@@ -32,7 +32,7 @@ export default async function ContatoPage() {
   
   const [mapsUrl, endereco, email, horario, contatos] = await Promise.all([
     getSetting("empresa_maps_embed", ""),
-    getSetting("empresa_endereco", config.address),
+    getSetting("empresa_endereco", config.enderecoCompleto),
     getSetting("empresa_email", config.email),
     getSetting("empresa_horario", "Seg-Sex: 8h-18h | Sáb: 8h-12h"),
     getSettingJSON<ContatoItem[]>("empresa_contatos", [
@@ -64,12 +64,12 @@ export default async function ContatoPage() {
         <section className="h-72 md:h-96 relative">
           <iframe
             src={mapsUrl}
-            title={`Localização da ${config.company_name}`}
+            title={`Localização da ${config.nome}`}
             className="w-full h-full border-0"
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            aria-label={`Mapa com localização da ${config.company_name}`}
+            aria-label={`Mapa com localização da ${config.nome}`}
           />
         </section>
       )}
@@ -165,9 +165,9 @@ export default async function ContatoPage() {
                 Chamar no WhatsApp
               </a>
 
-              {config.instagram_url && (
+              {config.instagram && (
                 <a
-                  href={config.instagram_url}
+                  href={config.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 text-gray-600 hover:text-brand-accent transition-colors font-medium"
