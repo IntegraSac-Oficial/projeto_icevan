@@ -76,6 +76,13 @@ export function Footer() {
   });
 
   const [nomeEmpresa, setNomeEmpresa] = useState("");
+  const [whatsappNumero, setWhatsappNumero] = useState("");
+
+  // Função para gerar URL do WhatsApp
+  const whatsappUrl = () => {
+    const numero = whatsappNumero.replace(/\D/g, "");
+    return `https://wa.me/${numero}`;
+  };
 
   // Busca logo, textos dinâmicos e registro de veículos
   useEffect(() => {
