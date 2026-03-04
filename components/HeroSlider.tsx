@@ -5,8 +5,6 @@ import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, MessageCircle, ArrowRight } from "lucide-react";
-import { empresa } from "@/lib/config";
-import { whatsappUrl } from "@/lib/utils";
 
 interface Slide {
   image: string;
@@ -56,7 +54,8 @@ export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [filtroCor, setFiltroCor] = useState("#2563EB");
   const [filtroOpacidade, setFiltroOpacidade] = useState(20);
-  const [bannerTelefone, setBannerTelefone] = useState<string>(empresa.telefone);
+  const [bannerTelefone, setBannerTelefone] = useState("");
+  const [whatsappNumero, setWhatsappNumero] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/settings")
@@ -65,9 +64,16 @@ export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
         if (data.hero_filtro_cor)       setFiltroCor(data.hero_filtro_cor);
         if (data.hero_filtro_opacidade) setFiltroOpacidade(Number(data.hero_filtro_opacidade));
         if (data.banner_telefone)       setBannerTelefone(data.banner_telefone);
+        if (data.empresa_whatsapp_numero) setWhatsappNumero(data.empresa_whatsapp_numero);
       })
       .catch(() => {});
   }, []);
+
+  const whatsappUrl = (msg = "") => {
+    if (!whatsappNumero) return "#";
+    const text = encodeURIComponent(msg || "Olá! Gostaria de mais informações.");
+    return `https://wa.me/${whatsappNumero}?text=${text}`;
+  };
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -146,20 +152,22 @@ export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
                     </div>
 
                     {/* Telefone em destaque - escondido no mobile/tablet */}
-                    <div className="mt-8 hidden lg:flex items-center gap-3 text-white/80">
-                      <div className="w-px h-8 bg-white/30" />
-                      <div>
-                        <p className="text-xs uppercase tracking-wider text-white/60">
-                          Fale conosco
-                        </p>
-                        <a
-                          href={`tel:${bannerTelefone.replace(/\D/g, "")}`}
-                          className="text-xl font-bold text-white hover:text-brand-accent transition-colors"
-                        >
-                          {bannerTelefone}
-                        </a>
+                    {bannerTelefone && (
+                      <div className="mt-8 hidden lg:flex items-center gap-3 text-white/80">
+                        <div className="w-px h-8 bg-white/30" />
+                        <div>
+                          <p className="text-xs uppercase tracking-wider text-white/60">
+                            Fale conosco
+                          </p>
+                          <a
+                            href={`tel:${bannerTelefone.replace(/\D/g, "")}`}
+                            className="text-xl font-bold text-white hover:text-brand-accent transition-colors"
+                          >
+                            {bannerTelefone}
+                          </a>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>

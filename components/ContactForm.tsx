@@ -6,7 +6,7 @@ import { z } from "zod";
 import { useState } from "react";
 import emailjs from "@emailjs/browser";
 import { Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
-import { empresa } from "@/lib/config";
+import { useEffect, useState } from "react";
 
 const schema = z.object({
   nome: z.string().min(2, "Nome deve ter ao menos 2 caracteres"),
@@ -46,6 +46,24 @@ type FormStatus = "idle" | "loading" | "success" | "error";
 
 export function ContactForm({ compact = false }: { compact?: boolean }) {
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [emailjsConfig, setEmailjsConfig] = useState({ serviceId: "", templateId: "", publicKey: "" });
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const res = await fetch("/api/admin/settings");
+        const data = await res.json();
+        setEmailjsConfig({
+          serviceId: data.emailjs_service_id || "",
+          templateId: data.emailjs_template_id || "",
+          publicKey: data.emailjs_public_key || "",
+        });
+      } catch (error) {
+        console.error("Erro ao buscar config EmailJS:", error);
+      }
+    };
+    fetchConfig();
+  }, []);
 
   const {
     register,
@@ -76,12 +94,12 @@ export function ContactForm({ compact = false }: { compact?: boolean }) {
       });
 
       // Enviar por e-mail via EmailJS (se configurado)
-      if (empresa.emailjs.publicKey !== "YOUR_PUBLIC_KEY") {
+      if (emailjsConfig.publicKey && emailjsConfig.publicKey !== "YOUR_PUBLIC_KEY") {
         await emailjs.send(
-          empresa.emailjs.serviceId,
-          empresa.emailjs.templateId,
+          emailjsConfig.serviceId,
+          emailjsConfig.templateId,
           payload,
-          empresa.emailjs.publicKey
+          emailjsConfig.publicKey
         );
       }
 
