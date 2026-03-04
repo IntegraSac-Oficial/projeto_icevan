@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
-type Tab = "aparencia" | "empresa" | "smtp" | "acesso";
+type Tab = "aparencia" | "empresa" | "redes" | "smtp" | "acesso";
 
 interface Settings {
   // Cores
@@ -52,6 +52,35 @@ interface Settings {
   header_telefone:    string;
   // Banner
   banner_telefone:    string;
+  // Redes Sociais
+  empresa_instagram:  string;
+  empresa_facebook:   string;
+  empresa_youtube:    string;
+  empresa_tiktok:     string;
+  empresa_linkedin:   string;
+  empresa_twitter:    string;
+  // Identidade
+  empresa_nome:       string;
+  empresa_slogan:     string;
+  // WhatsApp
+  empresa_whatsapp:   string;
+  empresa_whatsapp_numero: string;
+  // Endereço (componentes)
+  empresa_rua:        string;
+  empresa_bairro:     string;
+  empresa_cidade:     string;
+  empresa_estado:     string;
+  empresa_cep:        string;
+  // SEO e Assets
+  site_url:           string;
+  site_og_image:      string;
+  site_favicon:       string;
+  // Integrações
+  google_analytics_id: string;
+  google_maps_embed:  string;
+  emailjs_service_id: string;
+  emailjs_template_id: string;
+  emailjs_public_key: string;
   // Acesso (não persiste senha no estado — campos separados)
 }
 
@@ -78,6 +107,35 @@ const DEFAULTS: Settings = {
   footer_rodape:     "CNPJ — Refrigeração para Transporte | São Paulo, SP",
   header_telefone:   "(11) 4824-2999",
   banner_telefone:   "(11) 94824-2999",
+  // Redes Sociais
+  empresa_instagram: "https://instagram.com/icevans",
+  empresa_facebook:  "",
+  empresa_youtube:   "",
+  empresa_tiktok:    "",
+  empresa_linkedin:  "",
+  empresa_twitter:   "",
+  // Identidade
+  empresa_nome:      "Ice Van",
+  empresa_slogan:    "Refrigeração para Transporte com Qualidade e Eficiência",
+  // WhatsApp
+  empresa_whatsapp:  "+55 (11) 94824-2999",
+  empresa_whatsapp_numero: "5511948242999",
+  // Endereço (componentes)
+  empresa_rua:       "Rua Gabriela Mistral, 1246",
+  empresa_bairro:    "Penha de França",
+  empresa_cidade:    "São Paulo",
+  empresa_estado:    "SP",
+  empresa_cep:       "03701-000",
+  // SEO e Assets
+  site_url:          "https://icevanisolamento.com.br",
+  site_og_image:     "/images/og/og-image.webp",
+  site_favicon:      "/images/logo/favicon.ico",
+  // Integrações
+  google_analytics_id: "G-XXXXXXXXXX",
+  google_maps_embed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3658.9345!2d-46.5484!3d-23.5229!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sRua+Gabriela+Mistral%2C+1246!5e0!3m2!1spt!2sbr!4v1",
+  emailjs_service_id: "service_icevans",
+  emailjs_template_id: "template_contato",
+  emailjs_public_key: "YOUR_PUBLIC_KEY",
 };
 
 // ─── Componente de color picker com preview ────────────────────────────────
@@ -480,6 +538,49 @@ export default function ConfiguracoesPage() {
     setTimeout(() => setSaved(false), 3000);
   };
 
+  const handleSaveRedes = async () => {
+    setSaving(true);
+    setSaved(false);
+    await fetch("/api/admin/settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        // Redes Sociais
+        empresa_instagram:  settings.empresa_instagram,
+        empresa_facebook:   settings.empresa_facebook,
+        empresa_youtube:    settings.empresa_youtube,
+        empresa_tiktok:     settings.empresa_tiktok,
+        empresa_linkedin:   settings.empresa_linkedin,
+        empresa_twitter:    settings.empresa_twitter,
+        // Identidade
+        empresa_nome:       settings.empresa_nome,
+        empresa_slogan:     settings.empresa_slogan,
+        // WhatsApp
+        empresa_whatsapp:   settings.empresa_whatsapp,
+        empresa_whatsapp_numero: settings.empresa_whatsapp_numero,
+        // Endereço
+        empresa_rua:        settings.empresa_rua,
+        empresa_bairro:     settings.empresa_bairro,
+        empresa_cidade:     settings.empresa_cidade,
+        empresa_estado:     settings.empresa_estado,
+        empresa_cep:        settings.empresa_cep,
+        // SEO e Assets
+        site_url:           settings.site_url,
+        site_og_image:      settings.site_og_image,
+        site_favicon:       settings.site_favicon,
+        // Integrações
+        google_analytics_id: settings.google_analytics_id,
+        google_maps_embed:  settings.google_maps_embed,
+        emailjs_service_id: settings.emailjs_service_id,
+        emailjs_template_id: settings.emailjs_template_id,
+        emailjs_public_key: settings.emailjs_public_key,
+      }),
+    });
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
+
   const handleSaveAccess = async () => {
     setAccessError("");
     setAccessSaved(false);
@@ -515,6 +616,7 @@ export default function ConfiguracoesPage() {
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "aparencia", label: "Aparência", icon: <Palette    className="w-4 h-4" /> },
     { id: "empresa",   label: "Empresa",   icon: <Building2  className="w-4 h-4" /> },
+    { id: "redes",     label: "Redes & Integrações", icon: <Phone className="w-4 h-4" /> },
     { id: "smtp",      label: "SMTP",      icon: <Mail       className="w-4 h-4" /> },
     { id: "acesso",    label: "Acesso",    icon: <Lock       className="w-4 h-4" /> },
   ];
@@ -922,6 +1024,332 @@ export default function ConfiguracoesPage() {
           </Card>
 
           <SaveBar saving={saving} saved={saved} onSave={handleSaveEmpresa} />
+        </div>
+      )}
+
+      {/* ── ABA: REDES & INTEGRAÇÕES ───────────────────────────────────── */}
+      {tab === "redes" && (
+        <div className="space-y-6">
+          {/* Identidade */}
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Building2 className="w-4 h-4" /> Identidade da Empresa
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="form-label">Nome da Empresa</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Usado em todo o site.</p>
+                <input
+                  type="text"
+                  value={settings.empresa_nome}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_nome: e.target.value }))}
+                  className="form-input"
+                  placeholder="Ice Van"
+                />
+              </div>
+              <div>
+                <label className="form-label">Slogan</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Frase de efeito da empresa.</p>
+                <input
+                  type="text"
+                  value={settings.empresa_slogan}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_slogan: e.target.value }))}
+                  className="form-input"
+                  placeholder="Refrigeração para Transporte com Qualidade e Eficiência"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* WhatsApp */}
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Phone className="w-4 h-4" /> WhatsApp
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="form-label">WhatsApp (formatado)</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Ex: +55 (11) 94824-2999</p>
+                <input
+                  type="text"
+                  value={settings.empresa_whatsapp}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_whatsapp: e.target.value }))}
+                  className="form-input"
+                  placeholder="+55 (11) 94824-2999"
+                />
+              </div>
+              <div>
+                <label className="form-label">WhatsApp (apenas números)</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Usado nos links. Ex: 5511948242999</p>
+                <input
+                  type="text"
+                  value={settings.empresa_whatsapp_numero}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_whatsapp_numero: e.target.value }))}
+                  className="form-input"
+                  placeholder="5511948242999"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Endereço Completo */}
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Building2 className="w-4 h-4" /> Endereço (Componentes)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Preencha os componentes do endereço separadamente.
+              </p>
+              <div>
+                <label className="form-label">Rua e Número</label>
+                <input
+                  type="text"
+                  value={settings.empresa_rua}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_rua: e.target.value }))}
+                  className="form-input"
+                  placeholder="Rua Gabriela Mistral, 1246"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="form-label">Bairro</label>
+                  <input
+                    type="text"
+                    value={settings.empresa_bairro}
+                    onChange={(e) => setSettings((s) => ({ ...s, empresa_bairro: e.target.value }))}
+                    className="form-input"
+                    placeholder="Penha de França"
+                  />
+                </div>
+                <div>
+                  <label className="form-label">Cidade</label>
+                  <input
+                    type="text"
+                    value={settings.empresa_cidade}
+                    onChange={(e) => setSettings((s) => ({ ...s, empresa_cidade: e.target.value }))}
+                    className="form-input"
+                    placeholder="São Paulo"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="form-label">Estado (UF)</label>
+                  <input
+                    type="text"
+                    value={settings.empresa_estado}
+                    onChange={(e) => setSettings((s) => ({ ...s, empresa_estado: e.target.value }))}
+                    className="form-input"
+                    placeholder="SP"
+                    maxLength={2}
+                  />
+                </div>
+                <div>
+                  <label className="form-label">CEP</label>
+                  <input
+                    type="text"
+                    value={settings.empresa_cep}
+                    onChange={(e) => setSettings((s) => ({ ...s, empresa_cep: e.target.value }))}
+                    className="form-input"
+                    placeholder="03701-000"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Redes Sociais */}
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Phone className="w-4 h-4" /> Redes Sociais
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                URLs completas das redes sociais. Deixe em branco para ocultar o ícone.
+              </p>
+              <div>
+                <label className="form-label">Instagram</label>
+                <input
+                  type="url"
+                  value={settings.empresa_instagram}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_instagram: e.target.value }))}
+                  className="form-input"
+                  placeholder="https://instagram.com/icevans"
+                />
+              </div>
+              <div>
+                <label className="form-label">Facebook</label>
+                <input
+                  type="url"
+                  value={settings.empresa_facebook}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_facebook: e.target.value }))}
+                  className="form-input"
+                  placeholder="https://facebook.com/icevans"
+                />
+              </div>
+              <div>
+                <label className="form-label">YouTube</label>
+                <input
+                  type="url"
+                  value={settings.empresa_youtube}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_youtube: e.target.value }))}
+                  className="form-input"
+                  placeholder="https://youtube.com/@icevans"
+                />
+              </div>
+              <div>
+                <label className="form-label">TikTok</label>
+                <input
+                  type="url"
+                  value={settings.empresa_tiktok}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_tiktok: e.target.value }))}
+                  className="form-input"
+                  placeholder="https://tiktok.com/@icevans"
+                />
+              </div>
+              <div>
+                <label className="form-label">LinkedIn</label>
+                <input
+                  type="url"
+                  value={settings.empresa_linkedin}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_linkedin: e.target.value }))}
+                  className="form-input"
+                  placeholder="https://linkedin.com/company/icevans"
+                />
+              </div>
+              <div>
+                <label className="form-label">X (Twitter)</label>
+                <input
+                  type="url"
+                  value={settings.empresa_twitter}
+                  onChange={(e) => setSettings((s) => ({ ...s, empresa_twitter: e.target.value }))}
+                  className="form-input"
+                  placeholder="https://x.com/icevans"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* SEO e Assets */}
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base flex items-center gap-2">
+                <ImageIcon className="w-4 h-4" /> SEO e Assets
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="form-label">URL do Site</label>
+                <p className="text-xs text-muted-foreground mb-1.5">URL completa do site (sem barra no final).</p>
+                <input
+                  type="url"
+                  value={settings.site_url}
+                  onChange={(e) => setSettings((s) => ({ ...s, site_url: e.target.value }))}
+                  className="form-input"
+                  placeholder="https://icevanisolamento.com.br"
+                />
+              </div>
+              <div>
+                <label className="form-label">OG Image (compartilhamento)</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Imagem que aparece ao compartilhar no WhatsApp/Facebook.</p>
+                <input
+                  type="text"
+                  value={settings.site_og_image}
+                  onChange={(e) => setSettings((s) => ({ ...s, site_og_image: e.target.value }))}
+                  className="form-input"
+                  placeholder="/images/og/og-image.webp"
+                />
+              </div>
+              <div>
+                <label className="form-label">Favicon (caminho)</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Caminho do favicon (geralmente gerenciado na aba Aparência).</p>
+                <input
+                  type="text"
+                  value={settings.site_favicon}
+                  onChange={(e) => setSettings((s) => ({ ...s, site_favicon: e.target.value }))}
+                  className="form-input"
+                  placeholder="/images/logo/favicon.ico"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Integrações */}
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Phone className="w-4 h-4" /> Integrações Externas
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="form-label">Google Analytics 4 ID</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Ex: G-XXXXXXXXXX</p>
+                <input
+                  type="text"
+                  value={settings.google_analytics_id}
+                  onChange={(e) => setSettings((s) => ({ ...s, google_analytics_id: e.target.value }))}
+                  className="form-input"
+                  placeholder="G-XXXXXXXXXX"
+                />
+              </div>
+              <div>
+                <label className="form-label">Google Maps Embed URL</label>
+                <p className="text-xs text-muted-foreground mb-1.5">URL completa do iframe do Google Maps.</p>
+                <textarea
+                  rows={3}
+                  value={settings.google_maps_embed}
+                  onChange={(e) => setSettings((s) => ({ ...s, google_maps_embed: e.target.value }))}
+                  className="form-input resize-none"
+                  placeholder="https://www.google.com/maps/embed?pb=..."
+                />
+              </div>
+              <div className="border-t border-border pt-4 space-y-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">EmailJS (Formulário de Contato)</p>
+                <div>
+                  <label className="form-label">Service ID</label>
+                  <input
+                    type="text"
+                    value={settings.emailjs_service_id}
+                    onChange={(e) => setSettings((s) => ({ ...s, emailjs_service_id: e.target.value }))}
+                    className="form-input"
+                    placeholder="service_icevans"
+                  />
+                </div>
+                <div>
+                  <label className="form-label">Template ID</label>
+                  <input
+                    type="text"
+                    value={settings.emailjs_template_id}
+                    onChange={(e) => setSettings((s) => ({ ...s, emailjs_template_id: e.target.value }))}
+                    className="form-input"
+                    placeholder="template_contato"
+                  />
+                </div>
+                <div>
+                  <label className="form-label">Public Key</label>
+                  <input
+                    type="text"
+                    value={settings.emailjs_public_key}
+                    onChange={(e) => setSettings((s) => ({ ...s, emailjs_public_key: e.target.value }))}
+                    className="form-input"
+                    placeholder="YOUR_PUBLIC_KEY"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <SaveBar saving={saving} saved={saved} onSave={handleSaveRedes} />
         </div>
       )}
 

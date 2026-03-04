@@ -77,7 +77,7 @@ Servidor Proxmox (físico/dedicado)
 
 | Campo | Valor |
 |-------|-------|
-| **Domínio** | `https://ice.integrasac.com.br` |
+| **Domínio** | `https://icevanisolamento.com.br` |
 | **Porta do container** | `3000` |
 | **Comando pós-deploy** | `npx prisma migrate deploy` |
 | **Build system** | Nixpacks |
@@ -93,8 +93,8 @@ O comando `npx prisma migrate deploy` é executado automaticamente após cada de
 ### Configuração
 
 - **Engine:** MySQL 8
-- **UUID do serviço (Coolify):** `gsgcc8sgw0sooows4sw84s80`
-- **Hostname interno (entre containers Coolify):** `gsgcc8sgw0sooows4sw84s80`
+- **UUID do serviço (Coolify):** `j8wk008wo8448g88kgkw0os0`
+- **Hostname interno (entre containers Coolify):** `j8wk008wo8448g88kgkw0os0`
 - **Porta:** `3306`
 - **Database:** `icevans`
 - **Usuário:** `root`
@@ -102,7 +102,7 @@ O comando `npx prisma migrate deploy` é executado automaticamente após cada de
 ### DATABASE_URL em produção
 
 ```
-mysql://root:SENHA_ROOT@gsgcc8sgw0sooows4sw84s80:3306/icevans
+mysql://root:SENHA_ROOT@j8wk008wo8448g88kgkw0os0:3306/icevans
 ```
 
 > ⚠️ O hostname é o UUID do serviço Coolify — funciona porque ambos os containers (app e banco) estão na mesma rede Docker gerenciada pelo Coolify.
@@ -145,7 +145,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
-      PMA_HOST: gsgcc8sgw0sooows4sw84s80   # UUID do MySQL no Coolify
+      PMA_HOST: j8wk008wo8448g88kgkw0os0   # UUID do MySQL no Coolify
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: SENHA_ROOT_AQUI
@@ -175,7 +175,7 @@ O Cloudflare Tunnel substitui a necessidade de IP público no servidor.
 
 | Campo | Valor |
 |-------|-------|
-| **Domínio público** | `ice.integrasac.com.br` |
+| **Domínio público** | `icevanisolamento.com.br` |
 | **Serviço (destino)** | `https://192.168.100.218:9443` |
 | **Path filter** | Nenhum (rota todos os caminhos) |
 | **TLS Verification** | Desabilitado (certificado self-signed do Traefik Coolify) |
@@ -240,7 +240,7 @@ Configuradas nas variáveis de ambiente do app no Coolify:
 
 | Variável | Descrição |
 |----------|-----------|
-| `DATABASE_URL` | `mysql://root:SENHA@gsgcc8sgw0sooows4sw84s80:3306/icevans` |
+| `DATABASE_URL` | `mysql://root:SENHA@j8wk008wo8448g88kgkw0os0:3306/icevans` |
 | `ADMIN_EMAIL` | E-mail de acesso inicial ao painel admin |
 | `ADMIN_PASSWORD` | Senha de acesso inicial ao painel admin |
 | `JWT_SECRET` | Chave secreta para assinar tokens JWT (mínimo 32 chars) |
@@ -526,7 +526,7 @@ Container é substituído (zero-downtime)
 Post-deploy: npx prisma migrate deploy
   │
   ▼
-App disponível em https://ice.integrasac.com.br
+App disponível em https://icevanisolamento.com.br
 ```
 
 ### Verificar status do deploy

@@ -1,11 +1,74 @@
 {
   "mcpServers": {
-    "shadcn": {
+    "playwright": {
       "command": "npx",
       "args": [
-        "shadcn@latest",
-        "mcp"
-      ]
+        "@playwright/mcp@latest"
+      ],
+      "env": {
+        "DEBUG": "*",
+        "MCP_DEBUG": "true"
+      },
+      "disabled": false
+    },
+    "context7": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": {
+        "DEBUG": "*",
+        "MCP_DEBUG": "true"
+      },
+      "disabled": false
+    },
+    "asaas": {
+      "env": {
+        "DEBUG": "*",
+        "MCP_DEBUG": "true"
+      },
+      "url": "https://docs.asaas.com/mcp",
+      "disabled": false
+    },
+    "browser-tools": {
+      "command": "wsl",
+      "args": [
+        "bash",
+        "-c",
+        "cmd.exe /c npx -y @agentdeskai/browser-tools-mcp@1.2.0"
+      ],
+      "env": {
+        "DEBUG": "*",
+        "MCP_DEBUG": "true"
+      },
+      "disabled": false
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    },
+    "datadog": {
+      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?toolsets=core,synthetics",
+      "disabled": false,
+      "autoApprove": []
+    },
+
+    "coolify": {
+      "command": "npx",
+      "args": ["-y", "@masonator/coolify-mcp"],
+      "env": {
+        "COOLIFY_ACCESS_TOKEN": "3|DQTWnoK78ZfA3Q0yotZJx3L670FSzOeI8WDA6hg01efe5991",
+        "COOLIFY_BASE_URL": "https://coolify.integrasac.com.br"
+      },
+      "disabled": false
     }
   }
 }

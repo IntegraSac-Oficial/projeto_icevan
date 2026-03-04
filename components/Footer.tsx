@@ -13,8 +13,6 @@ import {
   IconLinkedIn,
   IconX,
 } from "@/components/ui/social-icons";
-import { empresa } from "@/lib/config";
-import { whatsappUrl } from "@/lib/utils";
 import { eventBus, EVENTS } from "@/lib/events";
 
 const navLinks = [
@@ -49,15 +47,35 @@ export function Footer() {
     footerRodape: string;
   };
 
+  type RedesSociais = {
+    instagram: string;
+    facebook: string;
+    youtube: string;
+    tiktok: string;
+    linkedin: string;
+    twitter: string;
+  };
+
   const [textos, setTextos] = useState<TextosFooter>({
-    descricao:       empresa.descricao,
-    endereco:        empresa.enderecoCompleto,
-    telefone:        empresa.telefone,
-    email:           empresa.email,
-    horario:         empresa.horario,
-    footerCopyright: `© ${new Date().getFullYear()} ${empresa.nome}. Todos os direitos reservados.`,
-    footerRodape:    "CNPJ — Refrigeração para Transporte | São Paulo, SP",
+    descricao: "",
+    endereco: "",
+    telefone: "",
+    email: "",
+    horario: "",
+    footerCopyright: "",
+    footerRodape: "",
   });
+
+  const [redes, setRedes] = useState<RedesSociais>({
+    instagram: "",
+    facebook: "",
+    youtube: "",
+    tiktok: "",
+    linkedin: "",
+    twitter: "",
+  });
+
+  const [nomeEmpresa, setNomeEmpresa] = useState("");
 
   // Busca logo, textos dinâmicos e registro de veículos
   useEffect(() => {
@@ -84,14 +102,28 @@ export function Footer() {
         console.log('Footer - vehicles_registry:', data["vehicles_registry"]);
         
         setTextos((prev) => ({
-          descricao:       data.empresa_descricao  || prev.descricao,
-          endereco:        data.empresa_endereco   || prev.endereco,
-          telefone:        data.empresa_telefone   || prev.telefone,
-          email:           data.empresa_email      || prev.email,
-          horario:         data.empresa_horario    || prev.horario,
-          footerCopyright: data.footer_copyright   || prev.footerCopyright,
-          footerRodape:    data.footer_rodape      || prev.footerRodape,
+          descricao:       data.empresa_descricao  || "",
+          endereco:        data.empresa_endereco   || "",
+          telefone:        data.empresa_telefone   || "",
+          email:           data.empresa_email      || "",
+          horario:         data.empresa_horario    || "",
+          footerCopyright: data.footer_copyright   || "",
+          footerRodape:    data.footer_rodape      || "",
         }));
+
+        // Atualiza redes sociais
+        setRedes((prev) => ({
+          instagram: data.empresa_instagram || "",
+          facebook:  data.empresa_facebook  || "",
+          youtube:   data.empresa_youtube   || "",
+          tiktok:    data.empresa_tiktok    || "",
+          linkedin:  data.empresa_linkedin  || "",
+          twitter:   data.empresa_twitter   || "",
+        }));
+
+        // Atualiza nome da empresa e WhatsApp
+        setNomeEmpresa(data.empresa_nome || "");
+        setWhatsappNumero(data.empresa_whatsapp_numero || "");
         
         // Atualiza lista de aplicações com o registro de veículos
         if (data["vehicles_registry"]) {
@@ -158,34 +190,38 @@ export function Footer() {
             <Link href="/" className="inline-block mb-4">
               <Image
                 src={logoSrc}
-                alt={empresa.nome}
+                alt={nomeEmpresa || "Logo"}
                 width={200}
                 height={60}
                 className="h-14 w-auto"
                 unoptimized
               />
-              <span className="block text-white font-heading font-bold text-xl mt-2">
-                {empresa.nome}
-              </span>
+              {nomeEmpresa && (
+                <span className="block text-white font-heading font-bold text-xl mt-2">
+                  {nomeEmpresa}
+                </span>
+              )}
             </Link>
             <p className="text-white/70 text-sm leading-relaxed mb-5">
               {textos.descricao}
             </p>
             {/* Redes sociais */}
             <div className="flex items-center gap-2 flex-wrap">
-              <a
-                href={whatsappUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="WhatsApp"
-                className="p-2 rounded-full bg-white/10 hover:bg-[#25D366]
-                           transition-colors duration-200"
-              >
-                <IconWhatsApp className="w-4 h-4" />
-              </a>
-              {empresa.instagram && (
+              {whatsappNumero && (
                 <a
-                  href={empresa.instagram}
+                  href={whatsappUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="WhatsApp"
+                  className="p-2 rounded-full bg-white/10 hover:bg-[#25D366]
+                             transition-colors duration-200"
+                >
+                  <IconWhatsApp className="w-4 h-4" />
+                </a>
+              )}
+              {redes.instagram && (
+                <a
+                  href={redes.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
@@ -195,9 +231,9 @@ export function Footer() {
                   <IconInstagram className="w-4 h-4" />
                 </a>
               )}
-              {empresa.facebook && (
+              {redes.facebook && (
                 <a
-                  href={empresa.facebook}
+                  href={redes.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
@@ -207,9 +243,9 @@ export function Footer() {
                   <IconFacebook className="w-4 h-4" />
                 </a>
               )}
-              {empresa.youtube && (
+              {redes.youtube && (
                 <a
-                  href={empresa.youtube}
+                  href={redes.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"
@@ -219,9 +255,9 @@ export function Footer() {
                   <IconYouTube className="w-4 h-4" />
                 </a>
               )}
-              {empresa.tiktok && (
+              {redes.tiktok && (
                 <a
-                  href={empresa.tiktok}
+                  href={redes.tiktok}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="TikTok"
@@ -231,9 +267,9 @@ export function Footer() {
                   <IconTikTok className="w-4 h-4" />
                 </a>
               )}
-              {empresa.linkedin && (
+              {redes.linkedin && (
                 <a
-                  href={empresa.linkedin}
+                  href={redes.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
@@ -243,9 +279,9 @@ export function Footer() {
                   <IconLinkedIn className="w-4 h-4" />
                 </a>
               )}
-              {empresa.twitter && (
+              {redes.twitter && (
                 <a
-                  href={empresa.twitter}
+                  href={redes.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="X"

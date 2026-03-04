@@ -4,8 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, X, Phone, MessageCircle } from "lucide-react";
-import { empresa } from "@/lib/config";
-import { whatsappUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -18,8 +16,9 @@ const navLinks = [
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [logoSrc, setLogoSrc] = useState("/images/logo/logo.svg");
-  const [headerTelefone, setHeaderTelefone] = useState(empresa.telefone);
+  const [logoSrc, setLogoSrc] = useState("/images/logo/logo-white.svg");
+  const [headerTelefone, setHeaderTelefone] = useState("");
+  const [whatsappNumero, setWhatsappNumero] = useState("");
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -27,49 +26,42 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   
-  // Busca a logo atual
+  // Busca configurações do banco
   useEffect(() => {
-    const fetchLogo = async () => {
+    const fetchConfig = async () => {
       try {
-        const res = await fetch("/api/logo");
-        const data = await res.json();
-        
-        // Prioridade: Logo Branca > Logo Principal > Fallback
-        if (data.branca) {
-          setLogoSrc(data.branca);
-        } else if (data.principal) {
-          setLogoSrc(data.principal);
-        } else {
-          setLogoSrc("/images/logo/logo-white.svg");
+        // Busca logo
+        const logoRes = await fetch("/api/logo");
+        const logoData = await logoRes.json();
+        if (logoData.branca) {
+          setLogoSrc(logoData.branca);
+        } else if (logoData.principal) {
+          setLogoSrc(logoData.principal);
         }
-      } catch (error) {
-        console.error('Header - Erro ao buscar logo:', error);
-        setLogoSrc("/images/logo/logo-white.svg");
-      }
-    };
-    
-    fetchLogo();
-  }, []);
 
-  // Busca o telefone do header das configurações
-  useEffect(() => {
-    const fetchHeaderTelefone = async () => {
-      try {
-        const res = await fetch("/api/admin/settings");
-        const data = await res.json();
-        if (data.header_telefone) {
-          setHeaderTelefone(data.header_telefone);
-        }
+        // Busca configurações
+        const settingsRes = await fetch("/api/admin/settings");
+        const settings = await settingsRes.json();
+        
+        setHeaderTelefone(settings.header_telefone || "");
+        setWhatsappNumero(settings.empresa_whatsapp_numero || "");
       } catch (error) {
-        console.error('Header - Erro ao buscar telefone:', error);
+        console.error('Header - Erro ao buscar configurações:', error);
       }
     };
     
-    fetchHeaderTelefone();
+    fetchConfig();
   }, []);
 
   // Fecha o menu ao mudar de rota
   const closeMenu = () => setMenuOpen(false);
+
+  // Gera URL do WhatsApp
+  const whatsappUrl = (msg = "") => {
+    if (!whatsappNumero) return "#";
+    const text = encodeURIComponent(msg || "Olá! Gostaria de mais informações.");
+    return `https://wa.me/${whatsappNumero}?text=${text}`;
+  };
 
   return (
     <header
@@ -81,23 +73,29 @@ export function Header() {
       {/* Top bar — telefone e WhatsApp */}
       <div className="hidden md:block bg-black/20 border-b border-white/10">
         <div className="container-site flex items-center justify-end gap-4 py-1.5 text-sm text-white/80">
-          <a
-            href={`tel:${headerTelefone.replace(/\D/g, "")}`}
-            className="flex items-center gap-1.5 hover:text-white transition-colors"
-          >
-            <Phone className="w-3.5 h-3.5" />
-            {headerTelefone}
-          </a>
-          <span className="text-white/30">|</span>
-          <a
-            href={whatsappUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 hover:text-[#25D366] transition-colors"
-          >
-            <MessageCircle className="w-3.5 h-3.5" />
-            WhatsApp
-          </a>
+          {headerTelefone && (
+            <a
+              href={`tel:${headerTelefone.replace(/\D/g, "")}`}
+              className="flex items-center gap-1.5 hover:text-white transition-colors"
+            >
+              <Phone className="w-3.5 h-3.5" />
+              {headerTelefone}
+            </a>
+          )}
+          {headerTelefone && whatsappNumero && (
+            <span className="text-white/30">|</span>
+          )}
+          {whatsappNumero && (
+            <a
+              href={whatsappUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 hover:text-[#25D366] transition-colors"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              WhatsApp
+            </a>
+          )}
         </div>
       </div>
 
@@ -108,7 +106,7 @@ export function Header() {
           <Link href="/" onClick={closeMenu} className="flex-shrink-0 flex items-center gap-2">
             <Image
               src={logoSrc}
-              alt="Ice Van — Logo"
+              alt="Logo"
               width={240}
               height={72}
               className="h-16 md:h-20 w-auto"
@@ -131,15 +129,17 @@ export function Header() {
             ))}
 
             {/* CTA WhatsApp no nav desktop */}
-            <a
-              href={whatsappUrl("Olá! Gostaria de solicitar um orçamento.")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-3 btn-accent text-sm py-2 px-4"
-            >
-              <MessageCircle className="w-4 h-4" />
-              Orçamento
-            </a>
+            {whatsappNumero && (
+              <a
+                href={whatsappUrl("Olá! Gostaria de solicitar um orçamento.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-3 btn-accent text-sm py-2 px-4"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Orçamento
+              </a>
+            )}
           </div>
 
           {/* Botão hamburger — mobile */}
@@ -172,25 +172,31 @@ export function Header() {
             </div>
 
             {/* Contato no mobile */}
-            <div className="mt-4 pt-4 border-t border-white/20 flex flex-col gap-3 px-4">
-              <a
-                href={`tel:${headerTelefone.replace(/\D/g, "")}`}
-                className="flex items-center gap-2 text-white/80 hover:text-white"
-              >
-                <Phone className="w-4 h-4" />
-                {headerTelefone}
-              </a>
-              <a
-                href={whatsappUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={closeMenu}
-                className="btn-accent w-full justify-center"
-              >
-                <MessageCircle className="w-4 h-4" />
-                Solicitar Orçamento
-              </a>
-            </div>
+            {(headerTelefone || whatsappNumero) && (
+              <div className="mt-4 pt-4 border-t border-white/20 flex flex-col gap-3 px-4">
+                {headerTelefone && (
+                  <a
+                    href={`tel:${headerTelefone.replace(/\D/g, "")}`}
+                    className="flex items-center gap-2 text-white/80 hover:text-white"
+                  >
+                    <Phone className="w-4 h-4" />
+                    {headerTelefone}
+                  </a>
+                )}
+                {whatsappNumero && (
+                  <a
+                    href={whatsappUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={closeMenu}
+                    className="btn-accent w-full justify-center"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Solicitar Orçamento
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         )}
       </nav>
