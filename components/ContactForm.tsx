@@ -43,26 +43,28 @@ const comoConheceu = [
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
-export function ContactForm({ compact = false }: { compact?: boolean }) {
-  const [status, setStatus] = useState<FormStatus>("idle");
-  const [emailjsConfig, setEmailjsConfig] = useState({ serviceId: "", templateId: "", publicKey: "" });
+interface ContactFormProps {
+  compact?: boolean;
+  emailjsServiceId?: string;
+  emailjsTemplateId?: string;
+  emailjsPublicKey?: string;
+}
 
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const res = await fetch("/api/admin/settings");
-        const data = await res.json();
-        setEmailjsConfig({
-          serviceId: data.emailjs_service_id || "",
-          templateId: data.emailjs_template_id || "",
-          publicKey: data.emailjs_public_key || "",
-        });
-      } catch (error) {
-        console.error("Erro ao buscar config EmailJS:", error);
-      }
-    };
-    fetchConfig();
-  }, []);
+export function ContactForm({ 
+  compact = false,
+  emailjsServiceId = "",
+  emailjsTemplateId = "",
+  emailjsPublicKey = "",
+}: ContactFormProps) {
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [emailjsConfig] = useState({ 
+    serviceId: emailjsServiceId, 
+    templateId: emailjsTemplateId, 
+    publicKey: emailjsPublicKey 
+  });
+
+  // Removido useEffect que fazia fetch para /api/admin/settings
+  // As configurações agora vêm via props do servidor
 
   const {
     register,

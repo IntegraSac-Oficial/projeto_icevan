@@ -117,7 +117,7 @@ export async function getEmpresaConfig(): Promise<EmpresaConfig> {
       linkedin: settings.empresa_linkedin || "",
       twitter: settings.empresa_twitter || "",
 
-      // Logo (caminhos padrão - gerenciado via upload)
+      // Logo - busca da API /api/logo em runtime
       logo: {
         principal: "/images/logo/logo.svg",
         branca: "/images/logo/logo-white.svg",

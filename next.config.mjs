@@ -14,6 +14,20 @@ const nextConfig = {
   },
   // Compressão de assets
   compress: true,
+  // Headers para desabilitar cache em páginas dinâmicas
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -14,6 +14,7 @@ import {
   IconX,
 } from "@/components/ui/social-icons";
 import { eventBus, EVENTS } from "@/lib/events";
+import type { EmpresaConfig } from "@/lib/empresa-config";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -31,10 +32,15 @@ const DEFAULT_APLICACOES = [
   { href: "/fiorino-porta-frigorifica", label: "Fiorino c/ Porta Frigorífica" },
 ];
 
-export function Footer() {
-  const [logoSrc, setLogoSrc] = useState("/images/logo/logo-white.svg");
+interface FooterProps {
+  config: EmpresaConfig;
+  contatos?: { label: string; numero: string }[];
+}
+
+export function Footer({ config, contatos: initialContatos = [] }: FooterProps) {
+  const [logoSrc, setLogoSrc] = useState(config.logo.branca || config.logo.principal);
   const [aplicacoes, setAplicacoes] = useState(DEFAULT_APLICACOES);
-  const [contatos, setContatos] = useState<{ label: string; numero: string }[]>([]);
+  const [contatos, setContatos] = useState<{ label: string; numero: string }[]>(initialContatos);
 
   // Tipo explícito para permitir valores dinâmicos
   type TextosFooter = {
@@ -57,26 +63,26 @@ export function Footer() {
   };
 
   const [textos, setTextos] = useState<TextosFooter>({
-    descricao: "",
-    endereco: "",
-    telefone: "",
-    email: "",
-    horario: "",
+    descricao: config.descricao,
+    endereco: config.enderecoCompleto,
+    telefone: config.telefone,
+    email: config.email,
+    horario: config.horario,
     footerCopyright: "",
     footerRodape: "",
   });
 
   const [redes, setRedes] = useState<RedesSociais>({
-    instagram: "",
-    facebook: "",
-    youtube: "",
-    tiktok: "",
-    linkedin: "",
-    twitter: "",
+    instagram: config.instagram,
+    facebook: config.facebook,
+    youtube: config.youtube,
+    tiktok: config.tiktok,
+    linkedin: config.linkedin,
+    twitter: config.twitter,
   });
 
-  const [nomeEmpresa, setNomeEmpresa] = useState("");
-  const [whatsappNumero, setWhatsappNumero] = useState("");
+  const [nomeEmpresa, setNomeEmpresa] = useState(config.nome);
+  const [whatsappNumero, setWhatsappNumero] = useState(config.whatsappNumero);
 
   // Função para gerar URL do WhatsApp
   const whatsappUrl = () => {
@@ -84,7 +90,7 @@ export function Footer() {
     return `https://wa.me/${numero}`;
   };
 
-  // Busca logo, textos dinâmicos e registro de veículos
+  // Atualiza logo e textos quando houver mudanças no admin
   useEffect(() => {
     const fetchLogo = async () => {
       try {
@@ -100,82 +106,13 @@ export function Footer() {
       }
     };
 
-    const fetchTextos = async () => {
-      try {
-        const res = await fetch("/api/admin/settings");
-        const data: Record<string, string> = await res.json();
-        
-        console.log('Footer - Dados recebidos:', data);
-        console.log('Footer - vehicles_registry:', data["vehicles_registry"]);
-        
-        setTextos((prev) => ({
-          descricao:       data.empresa_descricao  || "",
-          endereco:        data.empresa_endereco   || "",
-          telefone:        data.empresa_telefone   || "",
-          email:           data.empresa_email      || "",
-          horario:         data.empresa_horario    || "",
-          footerCopyright: data.footer_copyright   || "",
-          footerRodape:    data.footer_rodape      || "",
-        }));
-
-        // Atualiza redes sociais
-        setRedes((prev) => ({
-          instagram: data.empresa_instagram || "",
-          facebook:  data.empresa_facebook  || "",
-          youtube:   data.empresa_youtube   || "",
-          tiktok:    data.empresa_tiktok    || "",
-          linkedin:  data.empresa_linkedin  || "",
-          twitter:   data.empresa_twitter   || "",
-        }));
-
-        // Atualiza nome da empresa e WhatsApp
-        setNomeEmpresa(data.empresa_nome || "");
-        setWhatsappNumero(data.empresa_whatsapp_numero || "");
-        
-        // Atualiza lista de aplicações com o registro de veículos
-        if (data["vehicles_registry"]) {
-          try {
-            const registry = JSON.parse(data["vehicles_registry"]) as { href: string; label: string; ordem?: number }[];
-            console.log('Footer - Registry parseado:', registry);
-            
-            if (Array.isArray(registry) && registry.length > 0) {
-              // Ordena por ordem se disponível
-              const sorted = registry.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
-              const aplicacoesAtualizadas = sorted.map((v) => ({ href: v.href, label: v.label }));
-              console.log('Footer - Aplicações atualizadas:', aplicacoesAtualizadas);
-              setAplicacoes(aplicacoesAtualizadas);
-            }
-          } catch (err) {
-            console.error('Footer - Erro ao parsear vehicles_registry:', err);
-          }
-        }
-
-        // Busca os contatos da lista de contatos (sincroniza com a página de contato)
-        if (data["empresa_contatos"]) {
-          try {
-            const contatosList = JSON.parse(data["empresa_contatos"]) as { label: string; numero: string }[];
-            console.log('Footer - Contatos parseados:', contatosList);
-            if (Array.isArray(contatosList) && contatosList.length > 0) {
-              setContatos(contatosList);
-            }
-          } catch (err) {
-            console.error('Footer - Erro ao parsear empresa_contatos:', err);
-          }
-        }
-      
-      
-      } catch {
-        // mantém fallbacks do config
-      }
-    };
-
+    // Chama imediatamente para corrigir o caminho da logo
     fetchLogo();
-    fetchTextos();
-    
-    // Escuta eventos de atualização
+
+    // Escuta eventos de atualização do admin
     const handleVehiclesUpdate = () => {
       console.log('Footer - Evento de atualização de veículos recebido');
-      fetchTextos();
+      // Aqui poderia re-fetch dados se necessário
     };
     
     eventBus.on(EVENTS.VEHICLES_UPDATED, handleVehiclesUpdate);

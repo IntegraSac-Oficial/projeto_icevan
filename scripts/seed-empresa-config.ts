@@ -8,6 +8,12 @@
  * npx tsx scripts/seed-empresa-config.ts
  */
 
+import { config } from "dotenv";
+import { resolve } from "path";
+
+// Carrega variáveis de ambiente do .env.local
+config({ path: resolve(process.cwd(), ".env.local") });
+
 import { prisma } from "../lib/db";
 
 const INITIAL_CONFIG = {
@@ -60,6 +66,10 @@ const INITIAL_CONFIG = {
   // Telefones específicos
   header_telefone: "(11) 4824-2999",
   banner_telefone: "(11) 94824-2999",
+
+  // Hero Banner - Filtro de cor
+  hero_filtro_cor: "#2563EB",
+  hero_filtro_opacidade: "20",
 
   // Footer
   footer_copyright: "© 2026 Ice Van. Todos os direitos reservados.",

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, X, Phone, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { EmpresaConfig } from "@/lib/empresa-config";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -13,12 +14,16 @@ const navLinks = [
   { href: "/contato", label: "Contato" },
 ];
 
-export function Header() {
+interface HeaderProps {
+  config: EmpresaConfig;
+}
+
+export function Header({ config }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [logoSrc, setLogoSrc] = useState("/images/logo/logo-white.svg");
-  const [headerTelefone, setHeaderTelefone] = useState("");
-  const [whatsappNumero, setWhatsappNumero] = useState("");
+  const [logoSrc, setLogoSrc] = useState(config.logo.branca || config.logo.principal);
+  const [headerTelefone, setHeaderTelefone] = useState(config.telefone);
+  const [whatsappNumero, setWhatsappNumero] = useState(config.whatsappNumero);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -26,11 +31,10 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   
-  // Busca configurações do banco
+  // Atualiza logo quando houver mudanças no admin
   useEffect(() => {
-    const fetchConfig = async () => {
+    const fetchLogo = async () => {
       try {
-        // Busca logo
         const logoRes = await fetch("/api/logo");
         const logoData = await logoRes.json();
         if (logoData.branca) {
@@ -38,19 +42,13 @@ export function Header() {
         } else if (logoData.principal) {
           setLogoSrc(logoData.principal);
         }
-
-        // Busca configurações
-        const settingsRes = await fetch("/api/admin/settings");
-        const settings = await settingsRes.json();
-        
-        setHeaderTelefone(settings.header_telefone || "");
-        setWhatsappNumero(settings.empresa_whatsapp_numero || "");
       } catch (error) {
-        console.error('Header - Erro ao buscar configurações:', error);
+        console.error('Header - Erro ao buscar logo:', error);
       }
     };
     
-    fetchConfig();
+    // Chama imediatamente para corrigir o caminho da logo
+    fetchLogo();
   }, []);
 
   // Fecha o menu ao mudar de rota

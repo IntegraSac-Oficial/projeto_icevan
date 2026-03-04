@@ -15,6 +15,10 @@ interface Slide {
 
 interface HeroSliderProps {
   slides?: Slide[];
+  filtroCor?: string;
+  filtroOpacidade?: number;
+  bannerTelefone?: string;
+  whatsappNumero?: string;
 }
 
 const defaultSlides: Slide[] = [
@@ -44,7 +48,13 @@ const defaultSlides: Slide[] = [
   },
 ];
 
-export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
+export function HeroSlider({ 
+  slides = defaultSlides,
+  filtroCor: initialFiltroCor = "#2563EB",
+  filtroOpacidade: initialFiltroOpacidade = 20,
+  bannerTelefone: initialBannerTelefone = "",
+  whatsappNumero: initialWhatsappNumero = "",
+}: HeroSliderProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     duration: 40,
@@ -52,22 +62,13 @@ export function HeroSlider({ slides = defaultSlides }: HeroSliderProps) {
     dragFree: false,
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [filtroCor, setFiltroCor] = useState("#2563EB");
-  const [filtroOpacidade, setFiltroOpacidade] = useState(20);
-  const [bannerTelefone, setBannerTelefone] = useState("");
-  const [whatsappNumero, setWhatsappNumero] = useState("");
+  const [filtroCor, setFiltroCor] = useState(initialFiltroCor);
+  const [filtroOpacidade, setFiltroOpacidade] = useState(initialFiltroOpacidade);
+  const [bannerTelefone, setBannerTelefone] = useState(initialBannerTelefone);
+  const [whatsappNumero, setWhatsappNumero] = useState(initialWhatsappNumero);
 
-  useEffect(() => {
-    fetch("/api/admin/settings")
-      .then((r) => r.json())
-      .then((data: Record<string, string>) => {
-        if (data.hero_filtro_cor)       setFiltroCor(data.hero_filtro_cor);
-        if (data.hero_filtro_opacidade) setFiltroOpacidade(Number(data.hero_filtro_opacidade));
-        if (data.banner_telefone)       setBannerTelefone(data.banner_telefone);
-        if (data.empresa_whatsapp_numero) setWhatsappNumero(data.empresa_whatsapp_numero);
-      })
-      .catch(() => {});
-  }, []);
+  // Removido useEffect que fazia fetch para /api/admin/settings
+  // Os dados agora vêm via props do servidor
 
   const whatsappUrl = (msg = "") => {
     if (!whatsappNumero) return "#";

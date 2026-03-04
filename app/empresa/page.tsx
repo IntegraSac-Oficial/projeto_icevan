@@ -15,6 +15,9 @@ import { whatsappUrl } from "@/lib/utils";
 import { loadEmpresaImages } from "@/lib/applications";
 import { getSettingJSON } from "@/lib/settings";
 
+// Desabilita cache para sempre buscar dados atualizados do banco
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getEmpresaConfig();
   

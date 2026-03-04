@@ -9,6 +9,9 @@ import { prisma } from "@/lib/db";
 import { getAllSettings } from "@/lib/settings";
 import "./globals.css";
 
+// Desabilita cache para sempre buscar dados atualizados do banco
+export const dynamic = 'force-dynamic';
+
 /** Converte hex (#RRGGBB) para string de componentes HSL usada pelas CSS vars do shadcn ("H S% L%"). */
 function hexToHslStr(hex: string): string {
   if (!hex.startsWith("#") || hex.length !== 7) return "0 0% 0%";
@@ -185,6 +188,10 @@ export default async function RootLayout({
 
   // Lê todas as settings de uma vez para injetar CSS custom properties
   const s = await getAllSettings();
+  
+  // Busca lista de contatos para o Footer
+  const { getSettingJSON } = await import("@/lib/settings");
+  const contatos = await getSettingJSON<{ label: string; numero: string }[]>("empresa_contatos", []);
 
   // Brand colors — sempre injetadas com fallbacks
   const primary   = s.cor_primaria   ?? "#4747E8";
@@ -255,9 +262,9 @@ export default async function RootLayout({
           </>
         )}
 
-        {!isAdmin && <Header />}
+        {!isAdmin && <Header config={config} />}
         {isAdmin ? children : <div className="flex-1">{children}</div>}
-        {!isAdmin && <Footer />}
+        {!isAdmin && <Footer config={config} contatos={contatos} />}
         {!isAdmin && <WhatsAppButton />}
       </body>
     </html>

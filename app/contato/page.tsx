@@ -12,6 +12,9 @@ import { getEmpresaConfig } from "@/lib/empresa-config";
 import { getSetting, getSettingJSON } from "@/lib/settings";
 import { whatsappUrl } from "@/lib/utils";
 
+// Desabilita cache para sempre buscar dados atualizados do banco
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getEmpresaConfig();
   
@@ -86,7 +89,11 @@ export default async function ContatoPage() {
                 centered={false}
               />
               <div className="bg-brand-light rounded-2xl p-6 md:p-8">
-                <ContactForm />
+                <ContactForm 
+                  emailjsServiceId={config.emailjs.serviceId}
+                  emailjsTemplateId={config.emailjs.templateId}
+                  emailjsPublicKey={config.emailjs.publicKey}
+                />
               </div>
             </div>
 

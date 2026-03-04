@@ -21,6 +21,9 @@ import { getEmpresaConfig } from "@/lib/empresa-config";
 import { whatsappUrl } from "@/lib/utils";
 import { getSettingJSON } from "@/lib/settings";
 
+// Desabilita cache para sempre buscar dados atualizados do banco
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getEmpresaConfig();
   
@@ -141,6 +144,17 @@ export default async function Home() {
   const config = await getEmpresaConfig();
   const DEFAULT_CTA = await getDefaultCta();
   
+  // Busca configurações do hero banner
+  const { getAllSettings } = await import("@/lib/settings");
+  const settings = await getAllSettings();
+  
+  const heroConfig = {
+    filtroCor: settings.hero_filtro_cor || "#2563EB",
+    filtroOpacidade: Number(settings.hero_filtro_opacidade || 20),
+    bannerTelefone: settings.banner_telefone || config.telefone,
+    whatsappNumero: config.whatsappNumero,
+  };
+  
   const [heroBanners, difContent, ctaContent, firstThreeApps] = await Promise.all([
     loadHeroBanners(),
     getSettingJSON<DiferenciaisContent>("content_diferenciais", DEFAULT_DIFERENCIAIS_CONTENT),
@@ -157,7 +171,13 @@ export default async function Home() {
     <main>
       {/* Hero Slider */}
       <div className="pt-16 md:pt-[88px]">
-        <HeroSlider slides={heroBanners} />
+        <HeroSlider 
+          slides={heroBanners}
+          filtroCor={heroConfig.filtroCor}
+          filtroOpacidade={heroConfig.filtroOpacidade}
+          bannerTelefone={heroConfig.bannerTelefone}
+          whatsappNumero={heroConfig.whatsappNumero}
+        />
       </div>
 
       {/* Navegação rápida — 2 cards */}
@@ -293,7 +313,12 @@ export default async function Home() {
               <h3 className="text-brand-primary font-heading font-bold text-xl mb-6">
                 {ctaContent.titulo_form || DEFAULT_CTA.titulo_form}
               </h3>
-              <ContactForm compact />
+              <ContactForm 
+                compact
+                emailjsServiceId={config.emailjs.serviceId}
+                emailjsTemplateId={config.emailjs.templateId}
+                emailjsPublicKey={config.emailjs.publicKey}
+              />
             </div>
           </div>
         </div>
