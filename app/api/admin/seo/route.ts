@@ -12,14 +12,28 @@ export async function PUT(request: NextRequest) {
   const body = await request.json();
   const { pageSlug, metaTitulo, metaDescricao, ogImage } = body;
 
-  if (!pageSlug || !metaTitulo || !metaDescricao) {
-    return NextResponse.json({ error: "Campos obrigatórios ausentes" }, { status: 400 });
+  if (!pageSlug) {
+    return NextResponse.json({ error: "pageSlug é obrigatório" }, { status: 400 });
+  }
+
+  // Permitir salvar mesmo se apenas um campo estiver preenchido
+  if (!metaTitulo && !metaDescricao) {
+    return NextResponse.json({ error: "Preencha pelo menos o título ou a descrição" }, { status: 400 });
   }
 
   const setting = await prisma.seoSetting.upsert({
     where: { pageSlug },
-    update: { metaTitulo, metaDescricao, ogImage: ogImage || null },
-    create: { pageSlug, metaTitulo, metaDescricao, ogImage: ogImage || null },
+    update: { 
+      metaTitulo: metaTitulo || "", 
+      metaDescricao: metaDescricao || "", 
+      ogImage: ogImage || null 
+    },
+    create: { 
+      pageSlug, 
+      metaTitulo: metaTitulo || "", 
+      metaDescricao: metaDescricao || "", 
+      ogImage: ogImage || null 
+    },
   });
 
   return NextResponse.json(setting);

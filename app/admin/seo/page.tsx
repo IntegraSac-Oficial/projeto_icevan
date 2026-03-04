@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Save, Loader2, CheckCircle, Search } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -35,6 +35,46 @@ export default function SeoPage() {
   );
   const [savingSlug, setSavingSlug] = useState<string | null>(null);
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [errorSlug, setErrorSlug] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  // Carregar dados existentes do banco
+  useEffect(() => {
+    const loadSeoData = async () => {
+      try {
+        const res = await fetch("/api/admin/seo");
+        const data = await res.json();
+        
+        // Criar mapa de dados existentes
+        const existingData: Record<string, SeoForm> = {};
+        data.forEach((item: any) => {
+          existingData[item.pageSlug] = {
+            metaTitulo: item.metaTitulo || "",
+            metaDescricao: item.metaDescricao || "",
+            ogImage: item.ogImage || "",
+          };
+        });
+        
+        // Mesclar com formulários vazios (para páginas sem dados)
+        setForms((prev) => {
+          const updated = { ...prev };
+          Object.keys(existingData).forEach((slug) => {
+            if (updated[slug]) {
+              updated[slug] = existingData[slug];
+            }
+          });
+          return updated;
+        });
+      } catch (error) {
+        console.error("Erro ao carregar dados de SEO:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadSeoData();
+  }, []);
 
   const updateForm = (slug: string, field: keyof SeoForm, value: string) => {
     setForms((prev) => ({
@@ -45,14 +85,29 @@ export default function SeoPage() {
 
   const saveSeo = async (slug: string) => {
     setSavingSlug(slug);
+    setErrorSlug(null);
     try {
-      await fetch("/api/admin/seo", {
+      const res = await fetch("/api/admin/seo", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pageSlug: slug, ...forms[slug] }),
       });
+      
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Erro ao salvar");
+      }
+      
       setSavedSlug(slug);
       setTimeout(() => setSavedSlug(null), 3000);
+    } catch (error) {
+      console.error("Erro ao salvar SEO:", error);
+      setErrorSlug(slug);
+      setErrorMessage(error instanceof Error ? error.message : "Erro ao salvar");
+      setTimeout(() => {
+        setErrorSlug(null);
+        setErrorMessage("");
+      }, 5000);
     } finally {
       setSavingSlug(null);
     }
@@ -60,6 +115,14 @@ export default function SeoPage() {
 
   const titleLength = (slug: string) => forms[slug].metaTitulo.length;
   const descLength = (slug: string) => forms[slug].metaDescricao.length;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 max-w-3xl">
@@ -76,6 +139,7 @@ export default function SeoPage() {
         const form = forms[page.slug];
         const isSaving = savingSlug === page.slug;
         const isSaved = savedSlug === page.slug;
+        const hasError = errorSlug === page.slug;
         const t = titleLength(page.slug);
         const d = descLength(page.slug);
 
@@ -161,6 +225,12 @@ export default function SeoPage() {
                   )}
                   {isSaved ? "Salvo!" : "Salvar"}
                 </button>
+                
+                {hasError && (
+                  <span className="text-xs text-red-500">
+                    {errorMessage}
+                  </span>
+                )}
               </div>
             </CardContent>
           </Card>
