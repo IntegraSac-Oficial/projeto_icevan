@@ -32,14 +32,20 @@ const DEFAULT_APLICACOES = [
   { href: "/fiorino-porta-frigorifica", label: "Fiorino c/ Porta Frigorífica" },
 ];
 
+interface Aplicacao {
+  href: string;
+  label: string;
+}
+
 interface FooterProps {
   config: EmpresaConfig;
   contatos?: { label: string; numero: string }[];
+  aplicacoes?: Aplicacao[];
 }
 
-export function Footer({ config, contatos: initialContatos = [] }: FooterProps) {
+export function Footer({ config, contatos: initialContatos = [], aplicacoes: initialAplicacoes = DEFAULT_APLICACOES }: FooterProps) {
   const [logoSrc, setLogoSrc] = useState(config.logo.branca || config.logo.principal);
-  const [aplicacoes, setAplicacoes] = useState(DEFAULT_APLICACOES);
+  const [aplicacoes, setAplicacoes] = useState<Aplicacao[]>(initialAplicacoes);
   const [contatos, setContatos] = useState<{ label: string; numero: string }[]>(initialContatos);
 
   // Tipo explícito para permitir valores dinâmicos
@@ -106,13 +112,26 @@ export function Footer({ config, contatos: initialContatos = [] }: FooterProps) 
       }
     };
 
-    // Chama imediatamente para corrigir o caminho da logo
+    const fetchAplicacoes = async () => {
+      try {
+        const res = await fetch("/api/aplicacoes");
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setAplicacoes(data);
+        }
+      } catch (error) {
+        console.error('Footer - Erro ao buscar aplicações:', error);
+      }
+    };
+
+    // Chama imediatamente para corrigir o caminho da logo e carregar aplicações
     fetchLogo();
+    fetchAplicacoes();
 
     // Escuta eventos de atualização do admin
     const handleVehiclesUpdate = () => {
       console.log('Footer - Evento de atualização de veículos recebido');
-      // Aqui poderia re-fetch dados se necessário
+      fetchAplicacoes(); // Re-fetch aplicações quando houver atualização
     };
     
     eventBus.on(EVENTS.VEHICLES_UPDATED, handleVehiclesUpdate);

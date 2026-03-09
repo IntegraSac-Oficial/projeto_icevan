@@ -192,6 +192,14 @@ export default async function RootLayout({
   // Busca lista de contatos para o Footer
   const { getSettingJSON } = await import("@/lib/settings");
   const contatos = await getSettingJSON<{ label: string; numero: string }[]>("empresa_contatos", []);
+  
+  // Busca lista de aplicações para o Footer
+  const { getVehicleRegistry } = await import("@/lib/applications");
+  const registry = await getVehicleRegistry();
+  const aplicacoes = registry.map((v) => ({
+    href: v.href,
+    label: v.label,
+  }));
 
   // Brand colors — sempre injetadas com fallbacks
   const primary   = s.cor_primaria   ?? "#4747E8";
@@ -264,7 +272,7 @@ export default async function RootLayout({
 
         {!isAdmin && <Header config={config} />}
         {isAdmin ? children : <div className="flex-1">{children}</div>}
-        {!isAdmin && <Footer config={config} contatos={contatos} />}
+        {!isAdmin && <Footer config={config} contatos={contatos} aplicacoes={aplicacoes} />}
         {!isAdmin && <WhatsAppButton />}
       </body>
     </html>

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { eventBus, EVENTS } from "@/lib/events";
 
 interface VehicleRegistryItem {
   slug: string;
@@ -80,6 +81,9 @@ export default function VeiculosPage() {
       });
       setSaveStatus("saved");
       setTimeout(() => setSaveStatus("idle"), 2500);
+      
+      // Emite evento para atualizar o footer
+      eventBus.emit(EVENTS.VEHICLES_UPDATED);
     } catch {
       setSaveStatus("idle");
     }
