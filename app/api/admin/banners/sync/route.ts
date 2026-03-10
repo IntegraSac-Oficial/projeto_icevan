@@ -16,9 +16,22 @@ export async function POST() {
       .filter((f) => /\.(jpg|jpeg|png|webp|svg)$/i.test(f))
       .sort((a, b) => a.localeCompare(b));
 
-    // Para cada imagem, criar ou atualizar no banco
-    for (let i = 0; i < imageFiles.length; i++) {
-      const filename = imageFiles[i];
+    // Separar arquivos desktop e mobile
+    const desktopFiles = imageFiles.filter(f => !f.includes('-mobile.'));
+    const mobileFiles = imageFiles.filter(f => f.includes('-mobile.'));
+
+    // Para cada imagem desktop, criar ou atualizar no banco
+    for (let i = 0; i < desktopFiles.length; i++) {
+      const filename = desktopFiles[i];
+      
+      // Procurar arquivo mobile correspondente (ignora extensão)
+      const baseName = filename.replace(/\.(jpg|jpeg|png|webp|svg)$/i, '');
+      const mobileFilename = mobileFiles.find(f => {
+        const mobileBase = f.replace(/-mobile\.(jpg|jpeg|png|webp|svg)$/i, '');
+        return mobileBase === baseName;
+      });
+      
+      console.log(`Banner: ${filename} -> Mobile: ${mobileFilename || 'não encontrado'}`);
       
       // Verificar se já existe
       const existing = await prisma.heroBanner.findFirst({
@@ -30,6 +43,7 @@ export async function POST() {
         await prisma.heroBanner.create({
           data: {
             filename,
+            mobileFilename: mobileFilename || null,
             titulo: "",
             descricao: "",
             sortOrder: i + 1,
@@ -37,10 +51,13 @@ export async function POST() {
           },
         });
       } else {
-        // Atualizar sortOrder
+        // Atualizar sortOrder e mobileFilename
         await prisma.heroBanner.update({
           where: { id: existing.id },
-          data: { sortOrder: i + 1 },
+          data: { 
+            sortOrder: i + 1,
+            mobileFilename: mobileFilename || null,
+          },
         });
       }
     }
@@ -48,14 +65,18 @@ export async function POST() {
     // Remover banners que não existem mais no filesystem
     const allBanners = await prisma.heroBanner.findMany();
     for (const banner of allBanners) {
-      if (!imageFiles.includes(banner.filename)) {
+      if (!desktopFiles.includes(banner.filename)) {
         await prisma.heroBanner.delete({
           where: { id: banner.id },
         });
       }
     }
 
-    return NextResponse.json({ ok: true, synced: imageFiles.length });
+    return NextResponse.json({ 
+      ok: true, 
+      synced: desktopFiles.length,
+      mobileDetected: mobileFiles.length 
+    });
   } catch (error) {
     console.error("Erro ao sincronizar banners:", error);
     return NextResponse.json({ error: "Erro ao sincronizar banners" }, { status: 500 });
