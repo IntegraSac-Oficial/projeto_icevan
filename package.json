@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "prepare-dirs": "node scripts/ensure-directories.js"
+    "prepare-dirs": "node scripts/ensure-directories.js",
+    "seed": "npx tsx scripts/seed-empresa-config.ts"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
