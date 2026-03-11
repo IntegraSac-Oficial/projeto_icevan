@@ -7,6 +7,11 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const logoDir = path.join(process.cwd(), "public", "images", "logo");
+    
+    // Garante que o diretório existe
+    const { ensureDirectory } = await import("@/lib/ensure-directories");
+    await ensureDirectory(logoDir);
+    
     const files = await readdir(logoDir);
     
     // Procura logo principal - QUALQUER extensão

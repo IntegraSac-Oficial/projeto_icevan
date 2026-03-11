@@ -20,6 +20,7 @@ import { applications, loadApplicationImages } from "@/lib/applications";
 import { getEmpresaConfig } from "@/lib/empresa-config";
 import { whatsappUrl } from "@/lib/utils";
 import { getSettingJSON } from "@/lib/settings";
+import { ensureImageDirectories } from "@/lib/ensure-directories";
 
 // Desabilita cache para sempre buscar dados atualizados do banco
 export const dynamic = 'force-dynamic';
@@ -42,6 +43,12 @@ async function loadHeroBanners() {
   try {
     const { prisma } = await import("@/lib/db");
     const config = await getEmpresaConfig();
+    
+    // Garante que o diretório hero existe
+    const { ensureDirectory } = await import("@/lib/ensure-directories");
+    const path = await import("path");
+    const heroDir = path.join(process.cwd(), "public", "images", "hero");
+    await ensureDirectory(heroDir);
     
     // Busca banners do banco de dados
     const dbBanners = await prisma.heroBanner.findMany({
@@ -143,6 +150,9 @@ async function getDefaultCta(): Promise<CtaContent> {
 }
 
 export default async function Home() {
+  // Garante que os diretórios de imagens existam
+  await ensureImageDirectories();
+  
   const config = await getEmpresaConfig();
   const DEFAULT_CTA = await getDefaultCta();
   
@@ -337,6 +347,11 @@ async function PaymentMethodsSection() {
   try {
     const { readdir } = await import("fs/promises");
     const path = await import("path");
+    
+    // Garante que o diretório existe
+    const { ensureDirectory } = await import("@/lib/ensure-directories");
+    const paymentDir = path.join(process.cwd(), "public", "images", "formas-pagamento");
+    await ensureDirectory(paymentDir);
     
     const paymentDir = path.join(process.cwd(), "public", "images", "formas-pagamento");
     const files = await readdir(paymentDir);
