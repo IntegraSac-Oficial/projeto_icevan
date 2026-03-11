@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight, MessageCircle, ArrowRight } from "lucide-rea
 
 interface Slide {
   image: string;
-  mobileImage?: string;
+  // mobileImage?: string; // TEMPORARIAMENTE DESABILITADO
   alt: string;
   headline: string;
   sub: string;
@@ -107,21 +107,12 @@ export function HeroSlider({
         <div className="embla__container h-full">
           {slides.map((slide, index) => (
             <div key={index} className="embla__slide relative h-full">
-              {/* Imagem de fundo - Desktop */}
+              {/* Imagem de fundo */}
               <Image
                 src={slide.image}
                 alt={slide.alt}
                 fill
-                className="object-cover hidden md:block"
-                priority={index === 0}
-                sizes="100vw"
-              />
-              {/* Imagem de fundo - Mobile */}
-              <Image
-                src={slide.mobileImage || slide.image}
-                alt={slide.alt}
-                fill
-                className="object-cover md:hidden"
+                className="object-cover"
                 priority={index === 0}
                 sizes="100vw"
               />

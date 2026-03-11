@@ -52,7 +52,7 @@ async function loadHeroBanners() {
     if (dbBanners.length > 0) {
       return dbBanners.map((banner) => ({
         image: `/images/hero/${banner.filename}`,
-        mobileImage: banner.mobileFilename ? `/images/hero/${banner.mobileFilename}` : undefined,
+        // mobileImage: banner.mobileFilename ? `/images/hero/${banner.mobileFilename}` : undefined, // TEMPORARIAMENTE DESABILITADO
         alt: `Banner — ${config.nome}`,
         headline: banner.titulo || "Sistemas de Refrigeração para Transporte",
         sub: banner.descricao || "Qualidade e eficiência para conservar sua carga perecível.",
@@ -73,7 +73,7 @@ async function loadHeroBanners() {
 
     return imageFiles.map((file, index) => ({
       image: `/images/hero/${file}`,
-      mobileImage: undefined,
+      // mobileImage: undefined, // TEMPORARIAMENTE DESABILITADO
       alt: `Banner ${index + 1} — ${config.nome}`,
       headline: "Sistemas de Refrigeração para Transporte",
       sub: "Qualidade e eficiência para conservar sua carga perecível do ponto de partida até a entrega.",
