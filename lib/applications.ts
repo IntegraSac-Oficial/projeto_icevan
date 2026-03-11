@@ -286,8 +286,13 @@ export async function loadApplicationImages(slug: string): Promise<Application |
   try {
     const { readdir } = await import("fs/promises");
     const path = await import("path");
+    const { ensureApplicationDirectory } = await import("@/lib/ensure-directories");
 
     const folderPath = path.join(process.cwd(), "public", "images", "aplicacoes", slug);
+    
+    // Garante que o diretório existe
+    await ensureApplicationDirectory(slug);
+    
     const files = await readdir(folderPath);
 
     const imageFiles = files
@@ -302,8 +307,9 @@ export async function loadApplicationImages(slug: string): Promise<Application |
         imagens,
       };
     }
-  } catch {
+  } catch (error) {
     // Se falhar, retorna a aplicação com imagens padrão
+    console.warn(`Aviso: Erro ao carregar imagens para ${slug}:`, error);
   }
 
   return app;
@@ -317,8 +323,13 @@ export async function loadEmpresaImages(): Promise<string[]> {
   try {
     const { readdir } = await import("fs/promises");
     const path = await import("path");
+    const { ensureDirectory } = await import("@/lib/ensure-directories");
     
     const folderPath = path.join(process.cwd(), "public", "images", "empresa");
+    
+    // Garante que o diretório existe
+    await ensureDirectory(folderPath);
+    
     const files = await readdir(folderPath);
     
     const imageFiles = files
@@ -326,8 +337,9 @@ export async function loadEmpresaImages(): Promise<string[]> {
       .sort((a, b) => a.localeCompare(b)); // Ordenar alfabeticamente (01-, 02-, 03-...)
     
     return imageFiles.map((f) => `/images/empresa/${f}`);
-  } catch {
+  } catch (error) {
     // Se falhar, retorna array vazio
+    console.warn("Aviso: Erro ao carregar imagens da empresa:", error);
     return [];
   }
 }

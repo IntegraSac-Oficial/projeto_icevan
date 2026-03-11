@@ -68,9 +68,7 @@ async function loadHeroBanners() {
 
     // Se não houver banners no banco, carrega do filesystem
     const { readdir } = await import("fs/promises");
-    const path = await import("path");
     
-    const heroDir = path.join(process.cwd(), "public", "images", "hero");
     const files = await readdir(heroDir);
     const imageFiles = files
       .filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
@@ -353,7 +351,6 @@ async function PaymentMethodsSection() {
     const paymentDir = path.join(process.cwd(), "public", "images", "formas-pagamento");
     await ensureDirectory(paymentDir);
     
-    const paymentDir = path.join(process.cwd(), "public", "images", "formas-pagamento");
     const files = await readdir(paymentDir);
     const imageFile = files
       .filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
