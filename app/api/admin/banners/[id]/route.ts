@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-/** PATCH /api/admin/banners/[id] - Atualiza título e descrição de um banner */
+/** PATCH /api/admin/banners/[id] - Atualiza título, descrição e imagens de um banner */
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -11,13 +11,23 @@ export async function PATCH(
   try {
     const id = parseInt(params.id);
     const body = await request.json();
-    const { titulo, descricao } = body;
+    const { titulo, descricao, filename, imageId, mobileFilename, mobileImageId } = body;
+
+    const updateData: any = {};
+    
+    if (titulo !== undefined) updateData.titulo = titulo || "";
+    if (descricao !== undefined) updateData.descricao = descricao || "";
+    if (filename !== undefined) updateData.filename = filename;
+    if (imageId !== undefined) updateData.imageId = imageId;
+    if (mobileFilename !== undefined) updateData.mobileFilename = mobileFilename;
+    if (mobileImageId !== undefined) updateData.mobileImageId = mobileImageId;
 
     const banner = await prisma.heroBanner.update({
       where: { id },
-      data: {
-        titulo: titulo || "",
-        descricao: descricao || "",
+      data: updateData,
+      include: {
+        image: true,
+        mobileImage: true,
       },
     });
 

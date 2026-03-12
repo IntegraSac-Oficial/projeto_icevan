@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "./db";
 import { getSetting } from "./settings";
@@ -57,6 +58,40 @@ export async function verifyToken(token: string): Promise<boolean> {
     return true;
   } catch {
     return false;
+  }
+}
+
+/** Verifica autenticação via cookie ou header Authorization */
+export async function verifyAuth(request: NextRequest): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Tenta verificar via cookie primeiro
+    const cookieStore = await cookies();
+    const cookieToken = cookieStore.get(COOKIE_NAME)?.value;
+    
+    if (cookieToken) {
+      try {
+        await jwtVerify(cookieToken, getSecret());
+        return { success: true };
+      } catch {
+        // Cookie inválido, tenta header
+      }
+    }
+
+    // Tenta verificar via header Authorization
+    const authHeader = request.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.substring(7);
+      try {
+        await jwtVerify(token, getSecret());
+        return { success: true };
+      } catch {
+        return { success: false, error: "Token inválido" };
+      }
+    }
+
+    return { success: false, error: "Token não encontrado" };
+  } catch (error) {
+    return { success: false, error: "Erro na verificação" };
   }
 }
 

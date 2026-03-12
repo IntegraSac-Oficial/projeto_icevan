@@ -9,7 +9,9 @@
     "lint": "next lint",
     "postinstall": "prisma generate",
     "prepare-dirs": "node scripts/ensure-directories.js",
-    "seed": "npx tsx scripts/seed-empresa-config.ts"
+    "seed": "npx tsx scripts/seed-empresa-config.ts",
+    "migrate-images": "npx tsx scripts/migrate-images-to-db.ts",
+    "migrate-banners": "npx tsx scripts/migrate-hero-banners.ts"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

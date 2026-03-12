@@ -124,24 +124,45 @@ export function Footer({ config, contatos: initialContatos = [], aplicacoes: ini
       }
     };
 
+    const fetchFooterTexts = async () => {
+      try {
+        const res = await fetch("/api/footer-settings");
+        const settings = await res.json();
+        
+        setTextos(prev => ({
+          ...prev,
+          footerCopyright: settings.footer_copyright || `© ${new Date().getFullYear()} ${config.nome}. Todos os direitos reservados.`,
+          footerRodape: settings.footer_rodape || "",
+        }));
+      } catch (error) {
+        console.error('Footer - Erro ao buscar textos do footer:', error);
+      }
+    };
+
     // Chama imediatamente para corrigir o caminho da logo e carregar aplicações
     fetchLogo();
     fetchAplicacoes();
+    fetchFooterTexts();
 
     // Escuta eventos de atualização do admin
     const handleVehiclesUpdate = () => {
       console.log('Footer - Evento de atualização de veículos recebido');
       fetchAplicacoes(); // Re-fetch aplicações quando houver atualização
     };
+
+    const handleSettingsUpdate = () => {
+      console.log('Footer - Evento de atualização de configurações recebido');
+      fetchFooterTexts(); // Re-fetch textos do footer quando houver atualização
+    };
     
     eventBus.on(EVENTS.VEHICLES_UPDATED, handleVehiclesUpdate);
-    eventBus.on(EVENTS.SETTINGS_UPDATED, handleVehiclesUpdate);
+    eventBus.on(EVENTS.SETTINGS_UPDATED, handleSettingsUpdate);
     
     return () => {
       eventBus.off(EVENTS.VEHICLES_UPDATED, handleVehiclesUpdate);
-      eventBus.off(EVENTS.SETTINGS_UPDATED, handleVehiclesUpdate);
+      eventBus.off(EVENTS.SETTINGS_UPDATED, handleSettingsUpdate);
     };
-  }, []);
+  }, [config.nome]);
 
   return (
     <footer className="bg-brand-primary text-white">

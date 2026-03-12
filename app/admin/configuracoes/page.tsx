@@ -992,34 +992,6 @@ export default function ConfiguracoesPage() {
                   placeholder="Seg a Sex: 8h às 18h | Sáb: 8h às 12h"
                 />
               </div>
-
-              <div className="border-t border-border pt-5 space-y-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Barra inferior do rodapé</p>
-
-                <div>
-                  <label className="form-label">Texto de copyright (lado esquerdo)</label>
-                  <p className="text-xs text-muted-foreground mb-1.5">Ex: © 2026 Ice Van. Todos os direitos reservados.</p>
-                  <input
-                    type="text"
-                    value={settings.footer_copyright}
-                    onChange={(e) => setSettings((s) => ({ ...s, footer_copyright: e.target.value }))}
-                    className="form-input"
-                    placeholder="© 2026 Empresa. Todos os direitos reservados."
-                  />
-                </div>
-
-                <div>
-                  <label className="form-label">Texto do rodapé (lado direito)</label>
-                  <p className="text-xs text-muted-foreground mb-1.5">Ex: CNPJ — Refrigeração para Transporte | São Paulo, SP</p>
-                  <input
-                    type="text"
-                    value={settings.footer_rodape}
-                    onChange={(e) => setSettings((s) => ({ ...s, footer_rodape: e.target.value }))}
-                    className="form-input"
-                    placeholder="CNPJ 00.000.000/0001-00 | São Paulo, SP"
-                  />
-                </div>
-              </div>
             </CardContent>
           </Card>
 

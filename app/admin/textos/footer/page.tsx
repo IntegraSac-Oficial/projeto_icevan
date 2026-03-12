@@ -63,6 +63,12 @@ export default function FooterPage() {
       });
       setSaveStatus("saved");
       setTimeout(() => setSaveStatus("idle"), 2500);
+
+      // Emite evento para atualizar o footer
+      if (typeof window !== "undefined") {
+        const { eventBus, EVENTS } = await import("@/lib/events");
+        eventBus.emit(EVENTS.SETTINGS_UPDATED);
+      }
     } catch {
       setSaveStatus("idle");
     }

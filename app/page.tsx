@@ -50,41 +50,72 @@ async function loadHeroBanners() {
     const heroDir = path.join(process.cwd(), "public", "images", "hero");
     await ensureDirectory(heroDir);
     
-    // Busca banners do banco de dados
+    // Busca banners do banco de dados com imagens relacionadas
     const dbBanners = await prisma.heroBanner.findMany({
       where: { visible: true },
       orderBy: { sortOrder: "asc" },
+      include: {
+        image: true,       // Imagem desktop do banco
+        mobileImage: true, // Imagem mobile do banco
+      },
     });
 
     if (dbBanners.length > 0) {
       return dbBanners.map((banner) => ({
-        image: `/images/hero/${banner.filename}`,
-        // mobileImage: banner.mobileFilename ? `/images/hero/${banner.mobileFilename}` : undefined, // TEMPORARIAMENTE DESABILITADO
+        // Prioriza imagem do banco, fallback para arquivo
+        image: banner.image 
+          ? `/api/images/${banner.image.filename}`
+          : `/images/hero/${banner.filename}`,
+        // mobileImage: banner.mobileImage 
+        //   ? `/api/images/${banner.mobileImage.filename}`
+        //   : banner.mobileFilename 
+        //     ? `/images/hero/${banner.mobileFilename}` 
+        //     : undefined, // TEMPORARIAMENTE DESABILITADO
         alt: `Banner — ${config.nome}`,
         headline: banner.titulo || "Sistemas de Refrigeração para Transporte",
         sub: banner.descricao || "Qualidade e eficiência para conservar sua carga perecível.",
       }));
     }
 
-    // Se não houver banners no banco, carrega do filesystem
-    const { readdir } = await import("fs/promises");
-    
-    const files = await readdir(heroDir);
-    const imageFiles = files
-      .filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
-      .sort((a, b) => a.localeCompare(b));
-
-    if (imageFiles.length === 0) return undefined;
-
-    return imageFiles.map((file, index) => ({
-      image: `/images/hero/${file}`,
-      // mobileImage: undefined, // TEMPORARIAMENTE DESABILITADO
-      alt: `Banner ${index + 1} — ${config.nome}`,
-      headline: "Sistemas de Refrigeração para Transporte",
-      sub: "Qualidade e eficiência para conservar sua carga perecível do ponto de partida até a entrega.",
-    }));
-  } catch {
-    return undefined;
+    // Se não houver banners no banco, usa banners padrão
+    return [
+      {
+        image: "/images/hero/banner-01.webp",
+        alt: `Banner — ${config.nome}`,
+        headline: "Sistemas de Refrigeração para Transporte",
+        sub: "Qualidade e eficiência para conservar sua carga perecível do ponto de partida até a entrega.",
+      },
+      {
+        image: "/images/hero/banner-02.webp", 
+        alt: `Banner — ${config.nome}`,
+        headline: "Isolamento Térmico Profissional",
+        sub: "Painéis de alta performance que mantêm a temperatura estável e reduzem o consumo do sistema de frio.",
+      },
+      {
+        image: "/images/hero/banner-03.webp",
+        alt: `Banner — ${config.nome}`,
+        headline: "Aparelhos de Refrigeração de Alta Performance", 
+        sub: "Equipamentos dimensionados para cada tipo de veículo, carga e faixa de temperatura.",
+      },
+      {
+        image: "/images/hero/banner-04.webp",
+        alt: `Banner — ${config.nome}`,
+        headline: "Solução Completa para Sua Frota",
+        sub: "Atendemos autônomos, pequenas e médias frotas com projetos personalizados e assistência técnica.",
+      },
+    ];
+  } catch (error) {
+    console.error("Erro ao carregar banners:", error);
+    // Fallback para banners padrão em caso de erro
+    const config = await getEmpresaConfig();
+    return [
+      {
+        image: "/images/hero/banner-01.webp",
+        alt: `Banner — ${config.nome}`,
+        headline: "Sistemas de Refrigeração para Transporte",
+        sub: "Qualidade e eficiência para conservar sua carga perecível do ponto de partida até a entrega.",
+      },
+    ];
   }
 }
 

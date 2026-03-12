@@ -40,11 +40,15 @@ model SeoSetting {
 model GalleryPhoto {
   id        Int      @id @default(autoincrement())
   filename  String
+  imageId   Int?     // Referência para imagem no banco
   alt       String
   category  String
   sortOrder Int      @default(0)
   visible   Boolean  @default(true)
   createdAt DateTime @default(now())
+
+  // Relacionamento
+  image ImageStorage? @relation("GalleryPhotoImage", fields: [imageId], references: [id])
 
   @@map("gallery_photos")
 }
@@ -89,6 +93,8 @@ model HeroBanner {
   id            Int      @id @default(autoincrement())
   filename      String
   mobileFilename String? // Imagem específica para mobile
+  imageId       Int?     // Referência para imagem no banco
+  mobileImageId Int?     // Referência para imagem mobile no banco
   titulo        String   @default("")
   descricao     String   @db.Text
   sortOrder     Int      @default(0)
@@ -96,5 +102,29 @@ model HeroBanner {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  // Relacionamentos
+  image       ImageStorage? @relation("HeroBannerImage", fields: [imageId], references: [id])
+  mobileImage ImageStorage? @relation("HeroBannerMobileImage", fields: [mobileImageId], references: [id])
+
   @@map("hero_banners")
+}
+
+// Armazenamento de imagens no banco de dados
+model ImageStorage {
+  id           Int      @id @default(autoincrement())
+  filename     String   @unique
+  originalName String
+  mimeType     String
+  size         Int
+  data         Bytes    // BLOB para armazenar a imagem
+  category     String   @default("general")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relacionamentos reversos
+  heroBanners       HeroBanner[] @relation("HeroBannerImage")
+  mobileHeroBanners HeroBanner[] @relation("HeroBannerMobileImage")
+  galleryPhotos     GalleryPhoto[] @relation("GalleryPhotoImage")
+
+  @@map("image_storage")
 }

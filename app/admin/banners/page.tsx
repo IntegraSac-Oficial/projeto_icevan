@@ -8,10 +8,14 @@ interface Banner {
   id: number;
   filename: string;
   mobileFilename?: string;
+  imageId?: number;
+  mobileImageId?: number;
   titulo: string;
   descricao: string;
   sortOrder: number;
   visible: boolean;
+  imageUrl?: string;
+  mobileImageUrl?: string;
 }
 
 export default function BannersPage() {
@@ -26,7 +30,6 @@ export default function BannersPage() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
-  const mobileInputRef = useRef<HTMLInputElement>(null);
   const replaceMobileInputRef = useRef<HTMLInputElement>(null);
   const [replaceTarget, setReplaceTarget] = useState<Banner | null>(null);
   const [uploadingMobile, setUploadingMobile] = useState(false);
@@ -100,7 +103,7 @@ export default function BannersPage() {
     }
   };
 
-  const uploadFile = async (file: File, saveas?: string, isMobile = false) => {
+  const uploadFile = async (file: File, saveas?: string, isMobile = false, targetBanner?: Banner) => {
     if (isMobile) {
       setUploadingMobile(true);
       setMobileUploadStatus("idle");
@@ -112,33 +115,71 @@ export default function BannersPage() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("folder", "images/hero");
-      if (saveas) {
-        formData.append("saveas", saveas);
-      }
+      formData.append("category", "hero");
 
-      const res = await fetch("/api/admin/images", {
+      // Upload da imagem para o banco de dados
+      const uploadRes = await fetch("/api/admin/images/upload", {
         method: "POST",
         body: formData,
       });
 
-      if (res.ok) {
-        if (isMobile) {
-          setMobileUploadStatus("success");
-          setTimeout(() => setMobileUploadStatus("idle"), 3000);
-        } else {
-          setUploadStatus("success");
-          setTimeout(() => setUploadStatus("idle"), 3000);
+      if (!uploadRes.ok) {
+        throw new Error("Erro no upload da imagem");
+      }
+
+      const uploadData = await uploadRes.json();
+      const savedImage = uploadData.image;
+
+      // Se é para substituir um banner existente
+      if (targetBanner) {
+        const updateData = isMobile 
+          ? { mobileImageId: savedImage.id, mobileFilename: savedImage.filename }
+          : { imageId: savedImage.id, filename: savedImage.filename };
+
+        const updateRes = await fetch(`/api/admin/banners/${targetBanner.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updateData),
+        });
+
+        if (!updateRes.ok) {
+          throw new Error("Erro ao atualizar banner");
         }
-        await syncBanners();
-        setReplaceTarget(null);
       } else {
-        if (isMobile) {
-          setMobileUploadStatus("error");
+        // Criar novo banner (apenas para desktop)
+        if (!isMobile) {
+          const bannerData = {
+            filename: savedImage.filename,
+            imageId: savedImage.id,
+            titulo: `Banner ${banners.length + 1}`,
+            descricao: "Novo banner adicionado",
+            sortOrder: banners.length,
+            visible: true,
+          };
+
+          const bannerRes = await fetch("/api/admin/banners", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(bannerData),
+          });
+
+          if (!bannerRes.ok) {
+            throw new Error("Erro ao criar banner");
+          }
         } else {
-          setUploadStatus("error");
+          throw new Error("Para adicionar imagem mobile, use a opção de substituir em um banner existente");
         }
       }
+
+      if (isMobile) {
+        setMobileUploadStatus("success");
+        setTimeout(() => setMobileUploadStatus("idle"), 3000);
+      } else {
+        setUploadStatus("success");
+        setTimeout(() => setUploadStatus("idle"), 3000);
+      }
+      await fetchBanners();
+      setReplaceTarget(null);
     } catch (error) {
       console.error("Erro no upload:", error);
       if (isMobile) {
@@ -166,19 +207,7 @@ export default function BannersPage() {
   const handleReplaceFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && replaceTarget) {
-      uploadFile(file, replaceTarget.filename);
-    }
-    e.target.value = "";
-  };
-
-  const handleMobileFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Gera nome do arquivo mobile baseado no próximo número
-      const nextNumber = String(banners.length + 1).padStart(2, '0');
-      const extension = file.name.split('.').pop();
-      const mobileFilename = `${nextNumber}-mobile.${extension}`;
-      uploadFile(file, mobileFilename, true);
+      uploadFile(file, replaceTarget.filename, false, replaceTarget);
     }
     e.target.value = "";
   };
@@ -188,7 +217,7 @@ export default function BannersPage() {
     if (file && replaceTarget) {
       const extension = file.name.split('.').pop();
       const mobileFilename = replaceTarget.filename.replace(/\.(jpg|jpeg|png|webp)$/i, `-mobile.${extension}`);
-      uploadFile(file, mobileFilename, true);
+      uploadFile(file, mobileFilename, true, replaceTarget);
     }
     e.target.value = "";
   };
@@ -257,13 +286,6 @@ export default function BannersPage() {
             className="hidden"
           />
           <input
-            ref={mobileInputRef}
-            type="file"
-            accept=".jpg,.jpeg,.png,.webp"
-            onChange={handleMobileFileChange}
-            className="hidden"
-          />
-          <input
             ref={replaceMobileInputRef}
             type="file"
             accept=".jpg,.jpeg,.png,.webp"
@@ -271,7 +293,7 @@ export default function BannersPage() {
             className="hidden"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {/* Upload Desktop */}
             <div
               onClick={() => fileInputRef.current?.click()}
@@ -295,37 +317,8 @@ export default function BannersPage() {
               ) : (
                 <div className="flex flex-col items-center justify-center gap-2 text-gray-500">
                   <Upload className="w-5 h-5 text-brand-secondary" />
-                  <span className="text-sm font-medium">Banner Desktop</span>
+                  <span className="text-sm font-medium">Novo Banner Desktop</span>
                   <span className="text-xs">1920×780px recomendado</span>
-                </div>
-              )}
-            </div>
-
-            {/* Upload Mobile */}
-            <div
-              onClick={() => mobileInputRef.current?.click()}
-              className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all"
-            >
-              {uploadingMobile ? (
-                <div className="flex items-center justify-center gap-2 text-blue-600">
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span className="text-sm font-medium">Enviando...</span>
-                </div>
-              ) : mobileUploadStatus === "success" ? (
-                <div className="flex items-center justify-center gap-2 text-green-600">
-                  <CheckCircle className="w-5 h-5" />
-                  <span className="text-sm font-medium">Banner mobile adicionado!</span>
-                </div>
-              ) : mobileUploadStatus === "error" ? (
-                <div className="flex items-center justify-center gap-2 text-red-500">
-                  <AlertCircle className="w-5 h-5" />
-                  <span className="text-sm font-medium">Erro no upload</span>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center gap-2 text-blue-600">
-                  <Upload className="w-5 h-5" />
-                  <span className="text-sm font-medium">Banner Mobile</span>
-                  <span className="text-xs">750×1000px recomendado</span>
                 </div>
               )}
             </div>
@@ -335,7 +328,7 @@ export default function BannersPage() {
             💡 Os banners são numerados automaticamente (01-, 02-, 03-...) e aparecem na ordem alfabética
           </p>
           <p className="text-xs text-blue-600 mt-1">
-            📱 Banners mobile são opcionais - se não enviados, será usado o banner desktop redimensionado
+            📱 Para adicionar imagens mobile, primeiro crie o banner desktop, depois use o botão de substituir mobile (📱)
           </p>
         </div>
 
@@ -365,7 +358,7 @@ export default function BannersPage() {
                       {/* Imagem Desktop */}
                       <div className="relative w-48 h-28 rounded-lg overflow-hidden bg-gray-100">
                         <Image
-                          src={`/images/hero/${banner.filename}?t=${Date.now()}`}
+                          src={banner.imageUrl || `/images/hero/${banner.filename}?t=${Date.now()}`}
                           alt={banner.titulo || "Banner"}
                           fill
                           className="object-cover"
@@ -383,7 +376,7 @@ export default function BannersPage() {
                       <div className="relative w-24 h-32 rounded-lg overflow-hidden bg-gray-100 border-2 border-blue-200">
                         {banner.mobileFilename ? (
                           <Image
-                            src={`/images/hero/${banner.mobileFilename}?t=${Date.now()}`}
+                            src={banner.mobileImageUrl || `/images/hero/${banner.mobileFilename}?t=${Date.now()}`}
                             alt={`${banner.titulo || "Banner"} - Mobile`}
                             fill
                             className="object-cover"
@@ -518,12 +511,11 @@ export default function BannersPage() {
             📌 Como funciona:
           </p>
           <ul className="text-sm text-blue-600 space-y-1 list-disc list-inside">
-            <li><strong>Desktop:</strong> Adicione banners desktop (1920×780px) na área cinza</li>
-            <li><strong>Mobile:</strong> Adicione banners mobile (750×1000px) na área azul - opcional</li>
-            <li>Clique no ícone de lápis (✏️) para editar título e descrição</li>
-            <li>Clique no ícone de substituir (↻) para trocar a imagem desktop</li>
-            <li>Clique no ícone de substituir com 📱 para trocar/adicionar imagem mobile</li>
-            <li>Clique no ícone de lixeira (🗑️) para deletar um banner</li>
+            <li><strong>Novo Banner:</strong> Clique na área cinza para adicionar um banner desktop</li>
+            <li><strong>Editar Texto:</strong> Clique no ícone de lápis (✏️) para editar título e descrição</li>
+            <li><strong>Substituir Desktop:</strong> Clique no ícone de substituir (↻) para trocar a imagem desktop</li>
+            <li><strong>Adicionar/Substituir Mobile:</strong> Clique no ícone com 📱 para adicionar ou trocar imagem mobile</li>
+            <li><strong>Deletar:</strong> Clique no ícone de lixeira (🗑️) para deletar um banner</li>
             <li>Os banners aparecem no slider da home na ordem alfabética (01-, 02-, 03-...)</li>
           </ul>
           
