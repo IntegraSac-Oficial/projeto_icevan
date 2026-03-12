@@ -20,7 +20,7 @@ export async function GET(
     }
 
     // Retorna a imagem com o tipo MIME correto
-    return new NextResponse(image.data, {
+    return new NextResponse(new Uint8Array(image.data), {
       status: 200,
       headers: {
         "Content-Type": image.mimeType,
