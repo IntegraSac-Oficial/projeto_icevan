@@ -50,27 +50,16 @@ async function loadHeroBanners() {
     const heroDir = path.join(process.cwd(), "public", "images", "hero");
     await ensureDirectory(heroDir);
     
-    // Busca banners do banco de dados com imagens relacionadas
+    // Busca banners do banco de dados
     const dbBanners = await prisma.heroBanner.findMany({
       where: { visible: true },
       orderBy: { sortOrder: "asc" },
-      include: {
-        image: true,       // Imagem desktop do banco
-        mobileImage: true, // Imagem mobile do banco
-      },
     });
 
     if (dbBanners.length > 0) {
       return dbBanners.map((banner) => ({
-        // Prioriza imagem do banco, fallback para arquivo
-        image: banner.image 
-          ? `/api/images/${banner.image.filename}`
-          : `/images/hero/${banner.filename}`,
-        // mobileImage: banner.mobileImage 
-        //   ? `/api/images/${banner.mobileImage.filename}`
-        //   : banner.mobileFilename 
-        //     ? `/images/hero/${banner.mobileFilename}` 
-        //     : undefined, // TEMPORARIAMENTE DESABILITADO
+        // Usa imagem do filesystem via API
+        image: `/api/images/${banner.filename}`,
         alt: `Banner — ${config.nome}`,
         headline: banner.titulo || "Sistemas de Refrigeração para Transporte",
         sub: banner.descricao || "Qualidade e eficiência para conservar sua carga perecível.",
