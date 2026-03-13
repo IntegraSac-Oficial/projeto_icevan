@@ -59,7 +59,7 @@ async function loadHeroBanners() {
     if (dbBanners.length > 0) {
       return dbBanners.map((banner) => ({
         // Usa imagem do filesystem via API
-        image: `/api/images/${banner.filename}`,
+        image: `/api/images/${banner.filename}?folder=images/hero`,
         alt: `Banner — ${config.nome}`,
         headline: banner.titulo || "Sistemas de Refrigeração para Transporte",
         sub: banner.descricao || "Qualidade e eficiência para conservar sua carga perecível.",
@@ -382,7 +382,7 @@ async function PaymentMethodsSection() {
       <section className="bg-brand-primary">
         <div className="container-site flex justify-center">
           <Image
-            src={`/images/formas-pagamento/${imageFile}`}
+            src={`/api/images/${imageFile}?folder=images/formas-pagamento`}
             alt="Formas de Pagamento Aceitas"
             width={900}
             height={200}

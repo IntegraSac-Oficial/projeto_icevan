@@ -377,7 +377,7 @@ export default function BannersPage() {
                       {/* Imagem Desktop */}
                       <div className="relative w-48 h-28 rounded-lg overflow-hidden bg-gray-100">
                         <Image
-                          src={banner.imageUrl || `/images/hero/${banner.filename}?t=${Date.now()}`}
+                          src={banner.imageUrl || `/api/images/${banner.filename}?folder=images/hero&t=${Date.now()}`}
                           alt={banner.titulo || "Banner"}
                           fill
                           className="object-cover"
@@ -395,7 +395,7 @@ export default function BannersPage() {
                       <div className="relative w-24 h-32 rounded-lg overflow-hidden bg-gray-100 border-2 border-blue-200">
                         {banner.mobileFilename ? (
                           <Image
-                            src={banner.mobileImageUrl || `/images/hero/${banner.mobileFilename}?t=${Date.now()}`}
+                            src={banner.mobileImageUrl || `/api/images/${banner.mobileFilename}?folder=images/hero&t=${Date.now()}`}
                             alt={`${banner.titulo || "Banner"} - Mobile`}
                             fill
                             className="object-cover"

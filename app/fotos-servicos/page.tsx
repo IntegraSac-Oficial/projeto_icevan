@@ -71,7 +71,7 @@ async function getGalleryData() {
       
       if (imageFiles.length > 0) {
         photos = imageFiles.map((f) => ({
-          src: `/images/fotos-servicos/${f}`,
+          src: `/api/images/${f}?folder=images/fotos-servicos`,
           alt: `Serviço de refrigeração Ice Van`,
           category: "Serviços"
         }));

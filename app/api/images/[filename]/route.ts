@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile } from "fs/promises";
+import { readFile, stat } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
 
@@ -11,17 +11,25 @@ export async function GET(
 ) {
   try {
     const { filename } = params;
+    const { searchParams } = new URL(request.url);
+    const folder = searchParams.get("folder") || "images/fotos-servicos";
+
+    console.log(`[IMAGE API] Serving: ${folder}/${filename}`);
 
     // Caminho para o arquivo no sistema de arquivos
-    const imagePath = join(process.cwd(), "public", "uploads", filename);
+    const imagePath = join(process.cwd(), "public", folder, filename);
 
     // Verifica se o arquivo existe
     if (!existsSync(imagePath)) {
+      console.error(`[IMAGE API] File not found: ${imagePath}`);
       return new NextResponse("Image not found", { status: 404 });
     }
 
-    // Lê o arquivo
-    const imageBuffer = await readFile(imagePath);
+    // Lê o arquivo e suas informações
+    const [imageBuffer, stats] = await Promise.all([
+      readFile(imagePath),
+      stat(imagePath)
+    ]);
 
     // Determina o tipo MIME baseado na extensão
     const extension = filename.split('.').pop()?.toLowerCase();
@@ -41,19 +49,26 @@ export async function GET(
       case "jpeg":
         mimeType = "image/jpeg";
         break;
+      case "svg":
+        mimeType = "image/svg+xml";
+        break;
     }
 
-    // Retorna a imagem
+    console.log(`[IMAGE API] Serving ${filename} (${imageBuffer.length} bytes, ${mimeType})`);
+
+    // Retorna a imagem com headers otimizados
     return new NextResponse(imageBuffer, {
       status: 200,
       headers: {
         "Content-Type": mimeType,
         "Content-Length": imageBuffer.length.toString(),
-        "Cache-Control": "public, max-age=31536000, immutable", // Cache por 1 ano
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Last-Modified": stats.mtime.toUTCString(),
+        "ETag": `"${stats.mtime.getTime()}-${stats.size}"`,
       },
     });
   } catch (error) {
-    console.error("Erro ao buscar imagem:", error);
+    console.error("[IMAGE API] Error serving image:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

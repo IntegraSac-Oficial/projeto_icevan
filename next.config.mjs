@@ -14,11 +14,22 @@ const nextConfig = {
   },
   // Compressão de assets
   compress: true,
-  // Headers para desabilitar cache em páginas dinâmicas
+  // Headers para cache otimizado
   async headers() {
     return [
       {
-        source: '/:path*',
+        // Cache para imagens estáticas
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Sem cache para páginas dinâmicas
+        source: '/((?!images).*)',
         headers: [
           {
             key: 'Cache-Control',

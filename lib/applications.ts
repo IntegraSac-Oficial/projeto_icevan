@@ -300,7 +300,7 @@ export async function loadApplicationImages(slug: string): Promise<Application |
       .sort((a, b) => a.localeCompare(b)); // Ordenar alfabeticamente
 
     if (imageFiles.length > 0) {
-      const imagens = imageFiles.map((f) => `/images/aplicacoes/${slug}/${f}`);
+      const imagens = imageFiles.map((f) => `/api/images/${f}?folder=images/aplicacoes/${slug}`);
       return {
         ...app,
         thumb: imagens[0] || app.thumb, // Primeira imagem é o thumbnail
@@ -336,7 +336,7 @@ export async function loadEmpresaImages(): Promise<string[]> {
       .filter((f) => /\.(jpg|jpeg|png|webp|svg)$/i.test(f))
       .sort((a, b) => a.localeCompare(b)); // Ordenar alfabeticamente (01-, 02-, 03-...)
     
-    return imageFiles.map((f) => `/images/empresa/${f}`);
+    return imageFiles.map((f) => `/api/images/${f}?folder=images/empresa`);
   } catch (error) {
     // Se falhar, retorna array vazio
     console.warn("Aviso: Erro ao carregar imagens da empresa:", error);
