@@ -69,25 +69,25 @@ async function loadHeroBanners() {
     // Se não houver banners no banco, usa banners padrão
     return [
       {
-        image: "/images/hero/banner-01.webp",
+        image: "/images/hero/banner_simples2.png",
         alt: `Banner — ${config.nome}`,
         headline: "Sistemas de Refrigeração para Transporte",
         sub: "Qualidade e eficiência para conservar sua carga perecível do ponto de partida até a entrega.",
       },
       {
-        image: "/images/hero/banner-02.webp", 
+        image: "/images/hero/banner_isolamento.jpeg", 
         alt: `Banner — ${config.nome}`,
         headline: "Isolamento Térmico Profissional",
         sub: "Painéis de alta performance que mantêm a temperatura estável e reduzem o consumo do sistema de frio.",
       },
       {
-        image: "/images/hero/banner-03.webp",
+        image: "/images/hero/banner_simples3.png",
         alt: `Banner — ${config.nome}`,
         headline: "Aparelhos de Refrigeração de Alta Performance", 
         sub: "Equipamentos dimensionados para cada tipo de veículo, carga e faixa de temperatura.",
       },
       {
-        image: "/images/hero/banner-04.webp",
+        image: "/images/hero/04-mobile.jpg",
         alt: `Banner — ${config.nome}`,
         headline: "Solução Completa para Sua Frota",
         sub: "Atendemos autônomos, pequenas e médias frotas com projetos personalizados e assistência técnica.",
@@ -99,7 +99,7 @@ async function loadHeroBanners() {
     const config = await getEmpresaConfig();
     return [
       {
-        image: "/images/hero/banner-01.webp",
+        image: "/images/hero/banner_simples2.png",
         alt: `Banner — ${config.nome}`,
         headline: "Sistemas de Refrigeração para Transporte",
         sub: "Qualidade e eficiência para conservar sua carga perecível do ponto de partida até a entrega.",

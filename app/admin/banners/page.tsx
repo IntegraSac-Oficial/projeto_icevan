@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { Upload, Trash2, Loader2, Edit3, Save, X, RefreshCw, CheckCircle, AlertCircle } from "lucide-react";
+import { Upload, Trash2, Loader2, Edit3, Save, X, RefreshCw, CheckCircle, AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
 
 interface Banner {
   id: number;
@@ -245,6 +245,28 @@ export default function BannersPage() {
     }
   };
 
+  const move = async (index: number, direction: "up" | "down") => {
+    const newBanners = [...banners];
+    const swapIndex = direction === "up" ? index - 1 : index + 1;
+    if (swapIndex < 0 || swapIndex >= newBanners.length) return;
+    
+    [newBanners[index], newBanners[swapIndex]] = [newBanners[swapIndex], newBanners[index]];
+    setBanners(newBanners);
+    
+    await Promise.all([
+      fetch(`/api/admin/banners/${newBanners[index].id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sortOrder: index }),
+      }),
+      fetch(`/api/admin/banners/${newBanners[swapIndex].id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sortOrder: swapIndex }),
+      }),
+    ]);
+  };
+
   return (
     <div className="p-6">
       <div className="max-w-5xl mx-auto">
@@ -341,7 +363,7 @@ export default function BannersPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {banners.map((banner) => {
+            {banners.map((banner, index) => {
               const isEditing = editingId === banner.id;
 
               return (
@@ -456,6 +478,22 @@ export default function BannersPage() {
                               </p>
                             </div>
                             <div className="flex items-center gap-1 flex-shrink-0">
+                              <button
+                                onClick={() => move(index, "up")}
+                                disabled={index === 0}
+                                title="Mover para cima"
+                                className="p-1.5 text-gray-400 hover:text-brand-primary hover:bg-gray-100 rounded-lg disabled:opacity-30"
+                              >
+                                <ChevronUp className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => move(index, "down")}
+                                disabled={index === banners.length - 1}
+                                title="Mover para baixo"
+                                className="p-1.5 text-gray-400 hover:text-brand-primary hover:bg-gray-100 rounded-lg disabled:opacity-30"
+                              >
+                                <ChevronDown className="w-4 h-4" />
+                              </button>
                               <button
                                 onClick={() => startEdit(banner)}
                                 className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"

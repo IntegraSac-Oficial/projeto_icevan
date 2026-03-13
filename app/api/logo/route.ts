@@ -22,16 +22,16 @@ export async function GET() {
     console.log('Logos encontradas:', { logoPrincipal, logoBranca, favicon });
     
     return NextResponse.json({
-      principal: logoPrincipal ? `/images/logo/${logoPrincipal}` : "/images/logo/logo.svg",
-      branca: logoBranca ? `/images/logo/${logoBranca}` : "/images/logo/logo-white.svg",
-      favicon: favicon ? `/images/logo/${favicon}` : "/images/logo/favicon.ico",
+      principal: logoPrincipal ? `/images/logo/${logoPrincipal}` : "/images/logo/logo.jpeg",
+      branca: logoBranca ? `/images/logo/${logoBranca}` : "/images/logo/logo-white.jpeg",
+      favicon: favicon ? `/images/logo/${favicon}` : "/images/logo/favicon.jpeg",
     });
   } catch (error) {
     console.error('Erro ao buscar logos:', error);
     return NextResponse.json({
-      principal: "/images/logo/logo.svg",
-      branca: "/images/logo/logo-white.svg",
-      favicon: "/images/logo/favicon.ico",
+      principal: "/images/logo/logo.jpeg",
+      branca: "/images/logo/logo-white.jpeg",
+      favicon: "/images/logo/favicon.jpeg",
     });
   }
 }

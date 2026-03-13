@@ -13,6 +13,8 @@ import {
   Tag,
   RefreshCw,
   Edit3,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -502,6 +504,63 @@ export default function ImagensPage() {
     );
     setImages((prev) => prev.filter((i) => i.filename !== img.filename));
   };
+
+  const moveImage = async (index: number, direction: "up" | "down") => {
+    const newImages = [...images];
+    const swapIndex = direction === "up" ? index - 1 : index + 1;
+    if (swapIndex < 0 || swapIndex >= newImages.length) return;
+
+    // Troca as posições no array local
+    [newImages[index], newImages[swapIndex]] = [newImages[swapIndex], newImages[index]];
+    setImages(newImages);
+
+    // Renomeia os arquivos para refletir a nova ordem
+    try {
+      const img1 = newImages[index];
+      const img2 = newImages[swapIndex];
+
+      // Gera novos nomes com os prefixos corretos
+      const getNewFilename = (originalFilename: string, newIndex: number) => {
+        const ext = originalFilename.split('.').pop()?.toLowerCase() || 'jpg';
+        const nameWithoutExt = originalFilename.replace(/\.[^/.]+$/, '');
+        const cleanName = nameWithoutExt.replace(/^\d+-/, '');
+        const prefix = String(newIndex + 1).padStart(2, '0');
+        return `${prefix}-${cleanName}.${ext}`;
+      };
+
+      const newFilename1 = getNewFilename(img1.filename, index);
+      const newFilename2 = getNewFilename(img2.filename, swapIndex);
+
+      // Renomeia os arquivos via API
+      await Promise.all([
+        fetch(`/api/admin/images/rename`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            folder: activeFolder,
+            oldFilename: img1.filename,
+            newFilename: newFilename1,
+          }),
+        }),
+        fetch(`/api/admin/images/rename`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            folder: activeFolder,
+            oldFilename: img2.filename,
+            newFilename: newFilename2,
+          }),
+        }),
+      ]);
+
+      // Recarrega a lista para refletir as mudanças
+      await fetchImages(activeFolder);
+    } catch (error) {
+      console.error("Erro ao reordenar imagens:", error);
+      // Reverte o estado local em caso de erro
+      await fetchImages(activeFolder);
+    }
+  };
   
   const handleRename = async () => {
     if (!renameTarget || !newFilename.trim()) return;
@@ -772,6 +831,23 @@ export default function ImagensPage() {
 
                       {/* Ações */}
                       <div className="flex items-center gap-1 flex-shrink-0">
+                        {/* Botões de reordenação */}
+                        <button
+                          onClick={() => moveImage(idx, "up")}
+                          disabled={idx === 0}
+                          title="Mover para cima"
+                          className="p-1.5 text-gray-400 hover:text-brand-primary hover:bg-gray-100 rounded-lg disabled:opacity-30"
+                        >
+                          <ChevronUp className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => moveImage(idx, "down")}
+                          disabled={idx === images.length - 1}
+                          title="Mover para baixo"
+                          className="p-1.5 text-gray-400 hover:text-brand-primary hover:bg-gray-100 rounded-lg disabled:opacity-30"
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                        </button>
                         {/* Botão Editar - apenas para Banner Hero */}
                         {activeFolder === "images/hero" && (
                           <button
