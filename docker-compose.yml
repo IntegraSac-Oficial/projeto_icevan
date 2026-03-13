@@ -1,31 +1,51 @@
-services:
-  db:
-    image: mysql:8.0
-    container_name: icevans_db
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: icevans123
-      MYSQL_DATABASE: icevans
-      MYSQL_USER: icevans
-      MYSQL_PASSWORD: icevans123
-    ports:
-      - "3307:3306"
-    volumes:
-      - icevans_db_data:/var/lib/mysql
+version: '3.8'
 
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: icevans_phpmyadmin
-    restart: unless-stopped
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD: icevans123
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8090:80"
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_FROM=${SMTP_FROM}
     depends_on:
       - db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-rootpassword}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-icevan}
+      - MYSQL_USER=${MYSQL_USER:-icevan}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
 volumes:
-  icevans_db_data:
+  mysql_data:

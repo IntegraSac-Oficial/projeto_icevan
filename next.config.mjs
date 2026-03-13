@@ -28,6 +28,27 @@ const nextConfig = {
       },
     ];
   },
+  // Configurações de build mais robustas
+  experimental: {
+    // Melhor handling de erros durante build
+    optimizePackageImports: ['@radix-ui/react-icons'],
+  },
+  // Configurações para produção
+  poweredByHeader: false,
+  reactStrictMode: true,
+  // Configurações de output para deployment
+  output: 'standalone',
+  // Configurações de webpack para melhor build
+  webpack: (config, { isServer }) => {
+    // Otimizações para build
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

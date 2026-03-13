@@ -11,8 +11,8 @@ function splitDatabaseSmart() {
   
   // Divide em partes de no máximo 2MB cada
   const maxSizeBytes = 2 * 1024 * 1024; // 2MB
-  const parts = [];
-  let currentPart = [];
+  const parts: string[] = [];
+  let currentPart: string[] = [];
   let currentSize = 0;
   
   for (const line of lines) {

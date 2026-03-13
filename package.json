@@ -11,7 +11,13 @@
     "prepare-dirs": "node scripts/ensure-directories.js",
     "seed": "npx tsx scripts/seed-empresa-config.ts",
     "migrate-images": "npx tsx scripts/migrate-images-to-db.ts",
-    "migrate-banners": "npx tsx scripts/migrate-hero-banners.ts"
+    "migrate-banners": "npx tsx scripts/migrate-hero-banners.ts",
+    "docker:build": "docker build -t ice-van-site .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env ice-van-site",
+    "docker:logs": "docker logs $(docker ps -q --filter ancestor=ice-van-site)",
+    "validate-env": "node scripts/validate-env.js",
+    "deployment-check": "node scripts/deployment-check.js",
+    "deploy": "npm run deployment-check && npm run docker:build"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
