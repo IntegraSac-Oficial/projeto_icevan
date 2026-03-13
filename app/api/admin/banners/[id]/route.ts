@@ -11,24 +11,18 @@ export async function PATCH(
   try {
     const id = parseInt(params.id);
     const body = await request.json();
-    const { titulo, descricao, filename, imageId, mobileFilename, mobileImageId } = body;
+    const { titulo, descricao, filename, mobileFilename } = body;
 
     const updateData: any = {};
     
     if (titulo !== undefined) updateData.titulo = titulo || "";
     if (descricao !== undefined) updateData.descricao = descricao || "";
     if (filename !== undefined) updateData.filename = filename;
-    if (imageId !== undefined) updateData.imageId = imageId;
     if (mobileFilename !== undefined) updateData.mobileFilename = mobileFilename;
-    if (mobileImageId !== undefined) updateData.mobileImageId = mobileImageId;
 
     const banner = await prisma.heroBanner.update({
       where: { id },
       data: updateData,
-      include: {
-        image: true,
-        mobileImage: true,
-      },
     });
 
     return NextResponse.json({ ok: true, banner });

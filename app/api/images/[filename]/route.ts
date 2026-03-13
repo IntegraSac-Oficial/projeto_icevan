@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { readFile } from "fs/promises";
+import { join } from "path";
+import { existsSync } from "fs";
 
 export const dynamic = "force-dynamic";
 
@@ -10,23 +12,44 @@ export async function GET(
   try {
     const { filename } = params;
 
-    // Busca a imagem no banco de dados
-    const image = await prisma.imageStorage.findUnique({
-      where: { filename },
-    });
+    // Caminho para o arquivo no sistema de arquivos
+    const imagePath = join(process.cwd(), "public", "uploads", filename);
 
-    if (!image) {
+    // Verifica se o arquivo existe
+    if (!existsSync(imagePath)) {
       return new NextResponse("Image not found", { status: 404 });
     }
 
-    // Retorna a imagem com o tipo MIME correto
-    return new NextResponse(new Uint8Array(image.data), {
+    // Lê o arquivo
+    const imageBuffer = await readFile(imagePath);
+
+    // Determina o tipo MIME baseado na extensão
+    const extension = filename.split('.').pop()?.toLowerCase();
+    let mimeType = "image/jpeg"; // padrão
+    
+    switch (extension) {
+      case "png":
+        mimeType = "image/png";
+        break;
+      case "webp":
+        mimeType = "image/webp";
+        break;
+      case "gif":
+        mimeType = "image/gif";
+        break;
+      case "jpg":
+      case "jpeg":
+        mimeType = "image/jpeg";
+        break;
+    }
+
+    // Retorna a imagem
+    return new NextResponse(imageBuffer, {
       status: 200,
       headers: {
-        "Content-Type": image.mimeType,
-        "Content-Length": image.size.toString(),
+        "Content-Type": mimeType,
+        "Content-Length": imageBuffer.length.toString(),
         "Cache-Control": "public, max-age=31536000, immutable", // Cache por 1 ano
-        "ETag": `"${image.id}-${image.updatedAt.getTime()}"`,
       },
     });
   } catch (error) {

@@ -8,8 +8,6 @@ interface Banner {
   id: number;
   filename: string;
   mobileFilename?: string;
-  imageId?: number;
-  mobileImageId?: number;
   titulo: string;
   descricao: string;
   sortOrder: number;
@@ -117,7 +115,7 @@ export default function BannersPage() {
       formData.append("file", file);
       formData.append("category", "hero");
 
-      // Upload da imagem para o banco de dados
+      // Upload da imagem para o filesystem
       const uploadRes = await fetch("/api/admin/images/upload", {
         method: "POST",
         body: formData,
@@ -133,8 +131,8 @@ export default function BannersPage() {
       // Se é para substituir um banner existente
       if (targetBanner) {
         const updateData = isMobile 
-          ? { mobileImageId: savedImage.id, mobileFilename: savedImage.filename }
-          : { imageId: savedImage.id, filename: savedImage.filename };
+          ? { mobileFilename: savedImage.filename }
+          : { filename: savedImage.filename };
 
         const updateRes = await fetch(`/api/admin/banners/${targetBanner.id}`, {
           method: "PATCH",
@@ -150,7 +148,6 @@ export default function BannersPage() {
         if (!isMobile) {
           const bannerData = {
             filename: savedImage.filename,
-            imageId: savedImage.id,
             titulo: `Banner ${banners.length + 1}`,
             descricao: "Novo banner adicionado",
             sortOrder: banners.length,

@@ -10,25 +10,17 @@ export async function GET() {
     const banners = await prisma.heroBanner.findMany({
       where: { visible: true },
       orderBy: { sortOrder: "asc" },
-      include: {
-        image: true,       // Inclui dados da imagem desktop
-        mobileImage: true, // Inclui dados da imagem mobile
-      },
     });
 
     // Mapeia os banners para incluir URLs das imagens
     const bannersWithUrls = banners.map(banner => ({
       ...banner,
-      imageUrl: banner.image 
-        ? `/api/images/${banner.image.filename}`
-        : banner.filename 
-          ? `/images/hero/${banner.filename}`
-          : null,
-      mobileImageUrl: banner.mobileImage 
-        ? `/api/images/${banner.mobileImage.filename}`
-        : banner.mobileFilename 
-          ? `/images/hero/${banner.mobileFilename}`
-          : null,
+      imageUrl: banner.filename 
+        ? `/api/images/${banner.filename}`
+        : null,
+      mobileImageUrl: banner.mobileFilename 
+        ? `/api/images/${banner.mobileFilename}`
+        : null,
     }));
 
     return NextResponse.json({ banners: bannersWithUrls });
@@ -48,21 +40,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { filename, imageId, mobileImageId, titulo, descricao, sortOrder, visible } = body;
+    const { filename, mobileFilename, titulo, descricao, sortOrder, visible } = body;
 
     const banner = await prisma.heroBanner.create({
       data: {
         filename,
-        imageId,
-        mobileImageId,
+        mobileFilename,
         titulo: titulo || "",
         descricao: descricao || "",
         sortOrder: sortOrder || 0,
         visible: visible !== false,
-      },
-      include: {
-        image: true,
-        mobileImage: true,
       },
     });
 

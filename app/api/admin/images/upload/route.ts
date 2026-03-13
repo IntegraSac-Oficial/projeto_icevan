@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { writeFile, mkdir } from "fs/promises";
+import { join } from "path";
+import { existsSync } from "fs";
 import { verifyAuth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -41,26 +43,23 @@ export async function POST(request: NextRequest) {
     const extension = file.name.split('.').pop();
     const filename = `${timestamp}-${randomSuffix}.${extension}`;
 
-    // Salva no banco de dados
-    const savedImage = await prisma.imageStorage.create({
-      data: {
-        filename,
-        originalName: file.name,
-        mimeType: file.type,
-        size: file.size,
-        data: buffer,
-        category,
-      },
-    });
+    // Garante que o diretório existe
+    const uploadsDir = join(process.cwd(), "public", "uploads");
+    if (!existsSync(uploadsDir)) {
+      await mkdir(uploadsDir, { recursive: true });
+    }
+
+    // Salva o arquivo no sistema de arquivos
+    const filePath = join(uploadsDir, filename);
+    await writeFile(filePath, buffer);
 
     return NextResponse.json({
       success: true,
       image: {
-        id: savedImage.id,
-        filename: savedImage.filename,
-        originalName: savedImage.originalName,
-        size: savedImage.size,
-        url: `/api/images/${savedImage.filename}`,
+        filename,
+        originalName: file.name,
+        size: file.size,
+        url: `/api/images/${filename}`,
       },
     });
   } catch (error) {
