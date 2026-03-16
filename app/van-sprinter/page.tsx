@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ApplicationDetailPage } from "@/components/ApplicationDetailPage";
-import { loadApplicationImages } from "@/lib/applications";
+import { loadApplicationWithVideos } from "@/lib/applications";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const app = await loadApplicationImages("van-sprinter");
-  return app
+  const result = await loadApplicationWithVideos("van-sprinter");
+  return result?.app
     ? {
-        title: app.metaTitulo,
-        description: app.metaDescricao,
+        title: result.app.metaTitulo,
+        description: result.app.metaDescricao,
         alternates: { canonical: "/van-sprinter" },
       }
     : {};
 }
 
 export default async function VanSprinterPage() {
-  const app = await loadApplicationImages("van-sprinter");
-  if (!app) notFound();
-  return <ApplicationDetailPage application={app} />;
+  const result = await loadApplicationWithVideos("van-sprinter");
+  if (!result) notFound();
+  return <ApplicationDetailPage application={result.app} videos={result.videos} />;
 }

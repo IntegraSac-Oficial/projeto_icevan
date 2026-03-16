@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ApplicationDetailPage } from "@/components/ApplicationDetailPage";
-import { loadApplicationImages } from "@/lib/applications";
+import { loadApplicationWithVideos } from "@/lib/applications";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const app = await loadApplicationImages("van-ducato");
-  return app
+  const result = await loadApplicationWithVideos("van-ducato");
+  return result?.app
     ? {
-        title: app.metaTitulo,
-        description: app.metaDescricao,
+        title: result.app.metaTitulo,
+        description: result.app.metaDescricao,
         alternates: { canonical: "/van-ducato" },
       }
     : {};
 }
 
 export default async function VanDucatoPage() {
-  const app = await loadApplicationImages("van-ducato");
-  if (!app) notFound();
-  return <ApplicationDetailPage application={app} />;
+  const result = await loadApplicationWithVideos("van-ducato");
+  if (!result) notFound();
+  return <ApplicationDetailPage application={result.app} videos={result.videos} />;
 }

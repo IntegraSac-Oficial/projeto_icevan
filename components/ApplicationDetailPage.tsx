@@ -2,14 +2,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, MessageCircle, CheckSquare, ArrowLeft } from "lucide-react";
 import { PhotoGallery } from "@/components/PhotoGallery";
+import { VideoGrid } from "@/components/VideoGrid";
 import { whatsappUrl } from "@/lib/utils";
 import type { Application } from "@/lib/applications";
 
-interface ApplicationDetailPageProps {
-  application: Application;
+interface Video {
+  youtubeId?: string;
+  src?: string;
+  titulo: string;
+  categoria?: string;
 }
 
-export function ApplicationDetailPage({ application }: ApplicationDetailPageProps) {
+interface ApplicationDetailPageProps {
+  application: Application;
+  videos?: Video[];
+}
+
+export function ApplicationDetailPage({ application, videos = [] }: ApplicationDetailPageProps) {
   const { titulo, subtitulo, tituloSecao, conteudo, specs, imagens } = application;
 
   // Remove a primeira imagem (thumbnail) da galeria - mostra apenas fotos de galeria
@@ -127,6 +136,21 @@ export function ApplicationDetailPage({ application }: ApplicationDetailPageProp
               Galeria — {titulo}
             </h2>
             <PhotoGallery photos={photos} />
+          </div>
+        </section>
+      )}
+
+      {/* Vídeos dos serviços */}
+      {videos.length > 0 && (
+        <section className="section-padding bg-white">
+          <div className="container-site">
+            <h2 className="text-brand-primary mb-4">
+              Vídeos dos Serviços
+            </h2>
+            <p className="text-gray-600 mb-8 max-w-2xl">
+              Assista ao processo de instalação e veja a qualidade do nosso trabalho em {titulo}.
+            </p>
+            <VideoGrid videos={videos} />
           </div>
         </section>
       )}

@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ApplicationDetailPage } from "@/components/ApplicationDetailPage";
-import { loadApplicationImages } from "@/lib/applications";
+import { loadApplicationWithVideos } from "@/lib/applications";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const app = await loadApplicationImages("fiorinos");
-  return app
+  const result = await loadApplicationWithVideos("fiorinos");
+  return result?.app
     ? {
-        title: app.metaTitulo,
-        description: app.metaDescricao,
+        title: result.app.metaTitulo,
+        description: result.app.metaDescricao,
         alternates: { canonical: "/fiorinos" },
       }
     : {};
 }
 
 export default async function FiorinosPage() {
-  const app = await loadApplicationImages("fiorinos");
-  if (!app) notFound();
-  return <ApplicationDetailPage application={app} />;
+  const result = await loadApplicationWithVideos("fiorinos");
+  if (!result) notFound();
+  return <ApplicationDetailPage application={result.app} videos={result.videos} />;
 }

@@ -314,6 +314,36 @@ export async function loadApplicationImages(slug: string): Promise<Application |
 
   return app;
 }
+/**
+ * Carrega imagens e vídeos para uma aplicação
+ * Retorna a aplicação com imagens do disco e vídeos filtrados por categoria
+ */
+export async function loadApplicationWithVideos(slug: string): Promise<{ app: Application; videos: any[] } | undefined> {
+  const app = await loadApplicationImages(slug);
+  if (!app) return undefined;
+
+  try {
+    const { getVideosByCategory } = await import("@/lib/videos");
+
+    // Mapear slug para categoria de vídeo
+    const categoryMap: Record<string, string> = {
+      "fiorinos": "fiorino",
+      "van-ducato": "ducato",
+      "van-sprinter": "sprinter",
+      "van-master": "master",
+      "expert-porta-frigorifica": "expert",
+      "fiorino-porta-frigorifica": "fiorino"
+    };
+
+    const categoria = categoryMap[slug] || slug;
+    const videos = await getVideosByCategory(categoria);
+
+    return { app, videos };
+  } catch (error) {
+    console.warn(`Aviso: Erro ao carregar vídeos para ${slug}:`, error);
+    return { app, videos: [] };
+  }
+}
 
 /**
  * Carrega imagens dinamicamente da pasta empresa
