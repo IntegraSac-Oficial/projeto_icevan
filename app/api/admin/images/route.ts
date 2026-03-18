@@ -48,11 +48,13 @@ export async function GET(request: NextRequest) {
           try {
             const filePath = path.join(dirPath, f);
             const stats = await stat(filePath);
+            // Usa Math.floor para remover decimais e garantir consistência
+            const timestamp = Math.floor(stats.mtimeMs);
             return {
               filename: f,
               url: `/${folder}/${f}`,
               folder,
-              timestamp: stats.mtimeMs, // Timestamp único baseado na modificação do arquivo
+              timestamp,
             };
           } catch {
             // Se falhar ao obter stats, usa timestamp atual
@@ -174,7 +176,13 @@ export async function POST(request: NextRequest) {
     
     await writeFile(filePath, buffer);
     
-    const timestamp = Date.now();
+    // Aguarda um pouco para garantir que o arquivo foi escrito
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Pega o timestamp real do arquivo para consistência
+    const { stat } = await import("fs/promises");
+    const stats = await stat(filePath);
+    const timestamp = Math.floor(stats.mtimeMs);
     const resultUrl = `/${folder}/${safeName}`;
     
     console.log('');
