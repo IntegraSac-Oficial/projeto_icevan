@@ -170,22 +170,44 @@ export async function POST(request: NextRequest) {
     const filePath = path.join(dirPath, safeName);
     console.log('');
     console.log('💾 Salvando arquivo em:', filePath);
+    console.log('📂 Diretório absoluto:', dirPath);
+    console.log('📄 Nome do arquivo:', safeName);
+    console.log('🔍 process.cwd():', process.cwd());
     
     const buffer = Buffer.from(await file.arrayBuffer());
     console.log('📊 Buffer criado:', buffer.length, 'bytes');
     
     await writeFile(filePath, buffer);
+    console.log('✅ writeFile() concluído');
     
     // Aguarda um pouco para garantir que o arquivo foi escrito
     await new Promise(resolve => setTimeout(resolve, 200));
+    console.log('⏳ Aguardou 200ms');
     
     // VERIFICA se o arquivo realmente existe
     const { existsSync } = await import("fs");
-    if (!existsSync(filePath)) {
-      console.error('❌ ERRO CRÍTICO: Arquivo não foi salvo!', filePath);
+    const fileExists = existsSync(filePath);
+    console.log('🔍 Arquivo existe?', fileExists);
+    console.log('🔍 Caminho verificado:', filePath);
+    
+    if (!fileExists) {
+      console.error('❌ ERRO CRÍTICO: Arquivo não foi salvo!');
+      console.error('   Caminho tentado:', filePath);
+      console.error('   Diretório:', dirPath);
+      console.error('   Nome arquivo:', safeName);
+      
+      // Tenta listar o diretório para debug
+      try {
+        const filesInDir = await readdir(dirPath);
+        console.error('   Arquivos no diretório:', filesInDir.join(', '));
+      } catch (listError) {
+        console.error('   Erro ao listar diretório:', listError);
+      }
+      
       return NextResponse.json({ 
         error: "Arquivo não foi salvo no servidor", 
-        path: filePath 
+        path: filePath,
+        exists: false
       }, { status: 500 });
     }
     
