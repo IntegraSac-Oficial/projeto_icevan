@@ -804,24 +804,18 @@ export default function ImagensPage() {
                     >
                       {/* Preview */}
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
-                        <Image
+                        <img
                           src={`${img.url}?t=${img.timestamp || Date.now()}`}
                           alt={img.filename}
-                          fill
-                          className="object-cover"
-                          sizes="64px"
-                          unoptimized
-                          key={`${img.filename}-${img.timestamp || Date.now()}`}
+                          className="w-full h-full object-cover"
                           onError={(e) => {
+                            const imgElement = e.currentTarget;
                             console.error(`[IMAGE ERROR] Failed to load: ${img.url}`);
-                            console.error(`  Filename: ${img.filename}`);
-                            console.error(`  Timestamp: ${img.timestamp}`);
-                            console.error(`  Full URL: ${img.url}?t=${img.timestamp || Date.now()}`);
-                            // Tenta recarregar após 1 segundo
-                            setTimeout(() => {
-                              console.log(`[IMAGE RETRY] Retrying load for: ${img.filename}`);
-                              fetchImages(activeFolder);
-                            }, 1000);
+                            // Tenta sem cache-busting
+                            if (imgElement.src.includes('?t=')) {
+                              console.log(`[IMAGE RETRY] Trying without cache-busting...`);
+                              imgElement.src = img.url;
+                            }
                           }}
                         />
                       </div>
