@@ -6,10 +6,11 @@ export const dynamic = "force-dynamic";
 /** PATCH /api/admin/banners/[id] - Atualiza título, descrição e imagens de um banner */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id: idStr } = await params;
+    const id = parseInt(idStr);
     const body = await request.json();
     const { titulo, descricao, filename, mobileFilename } = body;
 
@@ -35,10 +36,11 @@ export async function PATCH(
 /** DELETE /api/admin/banners/[id] - Deleta um banner do banco */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id: idStr } = await params;
+    const id = parseInt(idStr);
 
     await prisma.heroBanner.delete({
       where: { id },

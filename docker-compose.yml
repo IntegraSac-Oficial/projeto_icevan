@@ -29,14 +29,15 @@ services:
       start_period: 40s
 
   db:
+    container_name: icevans_db
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-rootpassword}
-      - MYSQL_DATABASE=${MYSQL_DATABASE:-icevan}
-      - MYSQL_USER=${MYSQL_USER:-icevan}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-icevans123}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-icevans}
+      - MYSQL_USER=${MYSQL_USER:-icevans}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-icevans123}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     restart: unless-stopped
@@ -46,6 +47,19 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+
+  phpmyadmin:
+    container_name: icevans_phpmyadmin
+    image: phpmyadmin:latest
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=icevans123
+    ports:
+      - "8090:80"
+    depends_on:
+      - db
+    restart: unless-stopped
 
 volumes:
   mysql_data:

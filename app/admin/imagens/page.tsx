@@ -465,12 +465,20 @@ export default function ImagensPage() {
         console.log('📤 Arquivo criado:', newFilename);
         console.log('📍 Posição mantida:', oldIndex + 1);
         console.log('🌐 URL:', uploadData.url);
+        console.log('⏰ Timestamp:', uploadData.timestamp);
         console.log('═══════════════════════════════════════════════════════════');
         console.log('');
         
         setUploadStatus("success");
+        
+        // Aguarda um pouco para garantir que o arquivo foi escrito no disco
         await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Força reload completo da lista de imagens para pegar os novos timestamps
+        console.log('🔄 Recarregando lista de imagens...');
         await fetchImages(activeFolder);
+        console.log('✅ Lista recarregada com novos timestamps');
+        
         setTimeout(() => setUploadStatus("idle"), 3000);
       } else {
         console.error('');
@@ -804,6 +812,17 @@ export default function ImagensPage() {
                           sizes="64px"
                           unoptimized
                           key={`${img.filename}-${img.timestamp || Date.now()}`}
+                          onError={(e) => {
+                            console.error(`[IMAGE ERROR] Failed to load: ${img.url}`);
+                            console.error(`  Filename: ${img.filename}`);
+                            console.error(`  Timestamp: ${img.timestamp}`);
+                            console.error(`  Full URL: ${img.url}?t=${img.timestamp || Date.now()}`);
+                            // Tenta recarregar após 1 segundo
+                            setTimeout(() => {
+                              console.log(`[IMAGE RETRY] Retrying load for: ${img.filename}`);
+                              fetchImages(activeFolder);
+                            }, 1000);
+                          }}
                         />
                       </div>
 

@@ -37,17 +37,36 @@ export async function GET(request: NextRequest) {
 
   try {
     const files = await readdir(dirPath);
-    const timestamp = Date.now(); // Timestamp para cache-busting
-    const images = files
-      .filter((f) => ALLOWED_EXTENSIONS.includes(path.extname(f).toLowerCase()))
-      .sort((a, b) => a.localeCompare(b)) // Ordenar alfabeticamente
-      .map((f) => ({
-        filename: f,
-        url: `/${folder}/${f}`,
-        folder,
-        timestamp, // Adiciona timestamp para forçar reload
-      }));
-    return NextResponse.json({ images, folders: ALLOWED_FOLDERS });
+    
+    // Obter timestamp individual de cada arquivo (data de modificação)
+    const { stat } = await import("fs/promises");
+    const imagesWithTimestamps = await Promise.all(
+      files
+        .filter((f) => ALLOWED_EXTENSIONS.includes(path.extname(f).toLowerCase()))
+        .sort((a, b) => a.localeCompare(b)) // Ordenar alfabeticamente
+        .map(async (f) => {
+          try {
+            const filePath = path.join(dirPath, f);
+            const stats = await stat(filePath);
+            return {
+              filename: f,
+              url: `/${folder}/${f}`,
+              folder,
+              timestamp: stats.mtimeMs, // Timestamp único baseado na modificação do arquivo
+            };
+          } catch {
+            // Se falhar ao obter stats, usa timestamp atual
+            return {
+              filename: f,
+              url: `/${folder}/${f}`,
+              folder,
+              timestamp: Date.now(),
+            };
+          }
+        })
+    );
+    
+    return NextResponse.json({ images: imagesWithTimestamps, folders: ALLOWED_FOLDERS });
   } catch {
     return NextResponse.json({ images: [], folders: ALLOWED_FOLDERS });
   }

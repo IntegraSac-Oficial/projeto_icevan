@@ -65,7 +65,7 @@
       "command": "npx",
       "args": ["-y", "@masonator/coolify-mcp"],
       "env": {
-        "COOLIFY_ACCESS_TOKEN": "3|DQTWnoK78ZfA3Q0yotZJx3L670FSzOeI8WDA6hg01efe5991",
+        "COOLIFY_ACCESS_TOKEN": "4|PHkeIyk2gTNU0CuCmlmCpTe1upLq8Der18I29eVleaff6627",
         "COOLIFY_BASE_URL": "https://coolify.integrasac.com.br"
       },
       "disabled": false

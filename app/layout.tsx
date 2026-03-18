@@ -184,7 +184,8 @@ export default async function RootLayout({
   const config = await getEmpresaConfig();
   const localBusinessSchema = await getLocalBusinessSchema();
   // Detecta rotas admin via header injetado pelo middleware
-  const isAdmin = headers().get("x-is-admin") === "1";
+  const headersList = await headers();
+  const isAdmin = headersList.get("x-is-admin") === "1";
 
   // Lê todas as settings de uma vez para injetar CSS custom properties
   const s = await getAllSettings();
@@ -249,7 +250,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen flex flex-col">
+      <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         {/* Google Analytics 4 — apenas no site público */}
         {!isAdmin && config.ga4Id && config.ga4Id !== "G-XXXXXXXXXX" && (
           <>

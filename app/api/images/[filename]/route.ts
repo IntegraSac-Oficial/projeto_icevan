@@ -7,10 +7,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { filename: string } }
+  { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const { filename } = params;
+    const { filename } = await params;
     const { searchParams } = new URL(request.url);
     const folder = searchParams.get("folder") || "images/fotos-servicos";
 
@@ -30,6 +30,22 @@ export async function GET(
       readFile(imagePath),
       stat(imagePath)
     ]);
+
+    // Gera ETag baseado no timestamp de modificação e tamanho
+    const etag = `"${stats.mtime.getTime()}-${stats.size}"`;
+    
+    // Verifica se o cliente já tem a versão mais recente (conditional request)
+    const ifNoneMatch = request.headers.get("if-none-match");
+    if (ifNoneMatch === etag) {
+      console.log(`[IMAGE API] 304 Not Modified: ${filename}`);
+      return new NextResponse(null, {
+        status: 304,
+        headers: {
+          "ETag": etag,
+          "Cache-Control": "public, max-age=3600, must-revalidate",
+        },
+      });
+    }
 
     // Determina o tipo MIME baseado na extensão
     const extension = filename.split('.').pop()?.toLowerCase();
@@ -57,14 +73,17 @@ export async function GET(
     console.log(`[IMAGE API] Serving ${filename} (${imageBuffer.length} bytes, ${mimeType})`);
 
     // Retorna a imagem com headers otimizados
+    // Cache mais curto para permitir atualizações rápidas no admin
+    // O parâmetro ?t= no URL força bypass do cache quando necessário
     return new NextResponse(imageBuffer, {
       status: 200,
       headers: {
         "Content-Type": mimeType,
         "Content-Length": imageBuffer.length.toString(),
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Cache-Control": "public, max-age=3600, must-revalidate", // 1 hora com revalidação
         "Last-Modified": stats.mtime.toUTCString(),
-        "ETag": `"${stats.mtime.getTime()}-${stats.size}"`,
+        "ETag": etag,
+        "Vary": "Accept-Encoding", // Importante para compressão
       },
     });
   } catch (error) {

@@ -49,17 +49,8 @@ const nextConfig = {
   reactStrictMode: true,
   // Configurações de output para deployment
   output: 'standalone',
-  // Configurações de webpack para melhor build
-  webpack: (config, { isServer }) => {
-    // Otimizações para build
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-      };
-    }
-    return config;
-  },
+  // Configuração do Turbopack (Next.js 16+)
+  turbopack: {},
 };
 
 export default nextConfig;
