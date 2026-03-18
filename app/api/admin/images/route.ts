@@ -177,13 +177,32 @@ export async function POST(request: NextRequest) {
     await writeFile(filePath, buffer);
     
     // Aguarda um pouco para garantir que o arquivo foi escrito
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    // VERIFICA se o arquivo realmente existe
+    const { existsSync } = await import("fs");
+    if (!existsSync(filePath)) {
+      console.error('❌ ERRO CRÍTICO: Arquivo não foi salvo!', filePath);
+      return NextResponse.json({ 
+        error: "Arquivo não foi salvo no servidor", 
+        path: filePath 
+      }, { status: 500 });
+    }
     
     // Pega o timestamp real do arquivo para consistência
     const { stat } = await import("fs/promises");
     const stats = await stat(filePath);
     const timestamp = Math.floor(stats.mtimeMs);
     const resultUrl = `/${folder}/${safeName}`;
+    
+    // CRÍTICO: Revalida o cache do Next.js para o arquivo estático
+    try {
+      const { revalidatePath } = await import("next/cache");
+      revalidatePath(resultUrl);
+      console.log('🔄 Cache revalidado para:', resultUrl);
+    } catch (revalidateError) {
+      console.warn('⚠️  Não foi possível revalidar cache:', revalidateError);
+    }
     
     console.log('');
     console.log('✅✅✅ ARQUIVO SALVO COM SUCESSO! ✅✅✅');
