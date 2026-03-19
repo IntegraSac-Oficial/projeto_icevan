@@ -198,7 +198,7 @@ export default async function Home() {
   );
 
   return (
-    <main>
+    <main suppressHydrationWarning>
       {/* Hero Slider */}
       <div className="pt-16 md:pt-[88px]">
         <HeroSlider 
