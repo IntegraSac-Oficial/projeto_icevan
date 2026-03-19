@@ -10,14 +10,6 @@ function getSecret(): Uint8Array {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
-  // Redirect permanente: sem www → com www
-  const host = request.headers.get("host") || "";
-  if (host === "icevanisolamento.com.br" || host.startsWith("icevanisolamento.com.br:")) {
-    const url = request.nextUrl.clone();
-    url.host = "www.icevanisolamento.com.br";
-    return NextResponse.redirect(url, { status: 301 });
-  }
 
   // Propagar header x-is-admin para o root layout suprimir Header/Footer do site
   const requestHeaders = new Headers(request.headers);
@@ -59,11 +51,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    // Redirect www em todas as rotas públicas
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-    // Proteção admin
-    "/admin/:path*",
-    "/api/admin/:path*"
-  ],
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
 };

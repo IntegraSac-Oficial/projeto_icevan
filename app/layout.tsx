@@ -72,7 +72,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    metadataBase: new URL(config.siteUrl || "https://www.icevanisolamento.com.br"),
+    metadataBase: new URL(config.siteUrl || "https://icevanisolamento.com.br"),
     title: {
       default: globalTitle,
       template: `%s | ${config.nome}`,
@@ -95,7 +95,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "pt_BR",
-      url: config.siteUrl || "https://www.icevanisolamento.com.br",
+      url: config.siteUrl || "https://icevanisolamento.com.br",
       siteName: config.nome,
       title: globalTitle,
       description: globalDescription,
@@ -115,7 +115,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [globalOgImage],
     },
     alternates: {
-      canonical: config.siteUrl || "https://www.icevanisolamento.com.br",
+      canonical: config.siteUrl || "https://icevanisolamento.com.br",
     },
     robots: {
       index: true,
