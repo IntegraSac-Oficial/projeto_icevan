@@ -262,13 +262,10 @@ export default function ContatosPage() {
                   <p className="text-xs text-muted-foreground uppercase tracking-wider mb-0.5">
                     Telefone
                   </p>
-                  <a
-                    href={`tel:${selected.telefone}`}
-                    className="font-medium text-primary hover:text-primary/80 flex items-center gap-1"
-                  >
+                  <p className="font-medium text-foreground flex items-center gap-1">
                     <Phone className="w-3.5 h-3.5" />
                     {selected.telefone}
-                  </a>
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wider mb-0.5">

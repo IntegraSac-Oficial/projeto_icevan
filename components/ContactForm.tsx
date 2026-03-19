@@ -70,8 +70,29 @@ export function ContactForm({
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  // Função para formatar telefone
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    
+    if (numbers.length <= 2) {
+      return numbers;
+    } else if (numbers.length <= 7) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    } else if (numbers.length <= 11) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+    } else {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+    }
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setValue('telefone', formatted);
+  };
 
   const onSubmit = async (data: FormData) => {
     setStatus("loading");
@@ -178,9 +199,11 @@ export function ContactForm({
             {...register("telefone")}
             id="telefone"
             type="tel"
-            placeholder="(11) 9xxxx-xxxx"
+            placeholder="(11) 98765-4321"
             className="form-input"
             autoComplete="tel"
+            onChange={handlePhoneChange}
+            maxLength={15}
           />
           {errors.telefone && (
             <p className="form-error">{errors.telefone.message}</p>

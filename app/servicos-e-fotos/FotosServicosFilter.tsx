@@ -22,11 +22,18 @@ interface Video {
 interface Props {
   photos: Photo[];
   videos: Video[];
+  galeriaFotosTitulo?: string;
+  galeriaFotosDescricao?: string;
 }
 
 type Filter = "todos" | "fotos" | "videos";
 
-export function FotosServicosFilter({ photos, videos }: Props) {
+export function FotosServicosFilter({ 
+  photos, 
+  videos,
+  galeriaFotosTitulo = "Galeria de Fotos",
+  galeriaFotosDescricao = "Registros reais dos nossos serviços de instalação e acabamento."
+}: Props) {
   const [filter, setFilter] = useState<Filter>("todos");
 
   return (
@@ -59,8 +66,8 @@ export function FotosServicosFilter({ photos, videos }: Props) {
         <section className="section-padding bg-white">
           <div className="container-site">
             <SectionTitle
-              title="Galeria de Fotos"
-              subtitle="Registros reais dos nossos serviços de instalação e acabamento."
+              title={galeriaFotosTitulo}
+              subtitle={galeriaFotosDescricao}
               centered={false}
             />
             <PhotoGallery photos={photos} />

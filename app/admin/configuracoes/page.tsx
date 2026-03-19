@@ -386,7 +386,7 @@ function LogoUpload({
   return (
     <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50">
       <div className="w-16 h-16 rounded-lg bg-white border border-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
-        {preview ? (
+        {preview && !label.includes("Favicon") ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img 
             src={preview} 
@@ -395,7 +395,7 @@ function LogoUpload({
             key={preview}
             onError={(e) => {
               console.error('Erro ao carregar preview da logo:', preview);
-              e.currentTarget.src = currentSrc;
+              e.currentTarget.style.display = 'none';
             }}
           />
         ) : (

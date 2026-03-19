@@ -10,7 +10,7 @@ import type { EmpresaConfig } from "@/lib/empresa-config";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/empresa", label: "Empresa" },
-  { href: "/fotos-servicos", label: "Serviços e Fotos" },
+  { href: "/servicos-e-fotos", label: "Serviços e Fotos" },
   { href: "/contato", label: "Contato" },
 ];
 

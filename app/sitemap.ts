@@ -4,7 +4,7 @@ import { applications } from "@/lib/applications";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const config = await getEmpresaConfig();
-  const baseUrl = config.siteUrl || "https://icevanisolamento.com.br";
+  const baseUrl = config.siteUrl || "https://www.icevanisolamento.com.br";
   const now = new Date();
 
   // Páginas estáticas principais
@@ -28,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/fotos-servicos`,
+      url: `${baseUrl}/servicos-e-fotos`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.7,

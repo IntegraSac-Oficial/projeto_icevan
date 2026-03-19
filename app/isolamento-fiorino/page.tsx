@@ -4,18 +4,18 @@ import { ApplicationDetailPage } from "@/components/ApplicationDetailPage";
 import { loadApplicationWithVideos } from "@/lib/applications";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const result = await loadApplicationWithVideos("fiorino-porta-frigorifica");
+  const result = await loadApplicationWithVideos("isolamento-fiorino");
   return result?.app
     ? {
         title: result.app.metaTitulo,
         description: result.app.metaDescricao,
-        alternates: { canonical: "/fiorino-porta-frigorifica" },
+        alternates: { canonical: "/isolamento-fiorino" },
       }
     : {};
 }
 
-export default async function FiorinoPortaFrigorificaPage() {
-  const result = await loadApplicationWithVideos("fiorino-porta-frigorifica");
+export default async function IsolamentoFiorinoPage() {
+  const result = await loadApplicationWithVideos("isolamento-fiorino");
   if (!result) notFound();
   return <ApplicationDetailPage application={result.app} videos={result.videos} />;
 }

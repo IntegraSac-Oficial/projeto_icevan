@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import Image from "next/image";
 import { Upload, Trash2, Loader2, Edit3, Save, X, RefreshCw, CheckCircle, AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
 
 interface Banner {
@@ -25,6 +24,7 @@ export default function BannersPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
+  const [imageTimestamp, setImageTimestamp] = useState(Date.now());
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
@@ -39,6 +39,7 @@ export default function BannersPage() {
       const res = await fetch("/api/admin/banners");
       const data = await res.json();
       setBanners(data.banners || []);
+      setImageTimestamp(Date.now()); // Atualiza timestamp após carregar
     } catch (error) {
       console.error("Erro ao carregar banners:", error);
     } finally {
@@ -113,10 +114,15 @@ export default function BannersPage() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("category", "hero");
+      formData.append("folder", "images/hero");
+      
+      // Se está substituindo, usa o nome do arquivo existente
+      if (targetBanner && saveas) {
+        formData.append("saveas", saveas);
+      }
 
-      // Upload da imagem para o filesystem
-      const uploadRes = await fetch("/api/admin/images/upload", {
+      // Upload da imagem
+      const uploadRes = await fetch("/api/admin/images", {
         method: "POST",
         body: formData,
       });
@@ -126,13 +132,13 @@ export default function BannersPage() {
       }
 
       const uploadData = await uploadRes.json();
-      const savedImage = uploadData.image;
+      const savedFilename = uploadData.filename;
 
       // Se é para substituir um banner existente
       if (targetBanner) {
         const updateData = isMobile 
-          ? { mobileFilename: savedImage.filename }
-          : { filename: savedImage.filename };
+          ? { mobileFilename: savedFilename }
+          : { filename: savedFilename };
 
         const updateRes = await fetch(`/api/admin/banners/${targetBanner.id}`, {
           method: "PATCH",
@@ -147,7 +153,7 @@ export default function BannersPage() {
         // Criar novo banner (apenas para desktop)
         if (!isMobile) {
           const bannerData = {
-            filename: savedImage.filename,
+            filename: savedFilename,
             titulo: `Banner ${banners.length + 1}`,
             descricao: "Novo banner adicionado",
             sortOrder: banners.length,
@@ -212,8 +218,9 @@ export default function BannersPage() {
   const handleReplaceMobileFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && replaceTarget) {
-      const extension = file.name.split('.').pop();
-      const mobileFilename = replaceTarget.filename.replace(/\.(jpg|jpeg|png|webp)$/i, `-mobile.${extension}`);
+      // Se já tem mobile filename, usa ele; senão cria um novo baseado no desktop
+      const mobileFilename = replaceTarget.mobileFilename || 
+        replaceTarget.filename.replace(/(\.[^.]+)$/, '-mobile$1');
       uploadFile(file, mobileFilename, true, replaceTarget);
     }
     e.target.value = "";
@@ -376,12 +383,15 @@ export default function BannersPage() {
                     <div className="flex gap-3 flex-shrink-0">
                       {/* Imagem Desktop */}
                       <div className="relative w-48 h-28 rounded-lg overflow-hidden bg-gray-100">
-                        <Image
-                          src={banner.imageUrl || `/api/images/${banner.filename}?folder=images/hero&t=${Date.now()}`}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`/api/images/${banner.filename}?folder=images/hero&t=${imageTimestamp}`}
                           alt={banner.titulo || "Banner"}
-                          fill
-                          className="object-cover"
-                          sizes="192px"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            console.error('Erro ao carregar banner desktop:', banner.filename);
+                            e.currentTarget.style.opacity = '0.3';
+                          }}
                         />
                         <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
                           #{banner.sortOrder}
@@ -394,13 +404,18 @@ export default function BannersPage() {
                       {/* Imagem Mobile */}
                       <div className="relative w-24 h-32 rounded-lg overflow-hidden bg-gray-100 border-2 border-blue-200">
                         {banner.mobileFilename ? (
-                          <Image
-                            src={banner.mobileImageUrl || `/api/images/${banner.mobileFilename}?folder=images/hero&t=${Date.now()}`}
-                            alt={`${banner.titulo || "Banner"} - Mobile`}
-                            fill
-                            className="object-cover"
-                            sizes="96px"
-                          />
+                          <>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={`/api/images/${banner.mobileFilename}?folder=images/hero&t=${imageTimestamp}`}
+                              alt={`${banner.titulo || "Banner"} - Mobile`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                console.error('Erro ao carregar banner mobile:', banner.mobileFilename);
+                                e.currentTarget.style.opacity = '0.3';
+                              }}
+                            />
+                          </>
                         ) : (
                           <div className="flex items-center justify-center h-full text-gray-400">
                             <div className="text-center">

@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import StructuredData from "@/components/StructuredData";
 import { getEmpresaConfig } from "@/lib/empresa-config";
 import { prisma } from "@/lib/db";
 import { getAllSettings } from "@/lib/settings";
@@ -71,7 +72,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    metadataBase: new URL(config.siteUrl || "https://icevanisolamento.com.br"),
+    metadataBase: new URL(config.siteUrl || "https://www.icevanisolamento.com.br"),
     title: {
       default: globalTitle,
       template: `%s | ${config.nome}`,
@@ -94,7 +95,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "pt_BR",
-      url: config.siteUrl || "https://icevanisolamento.com.br",
+      url: config.siteUrl || "https://www.icevanisolamento.com.br",
       siteName: config.nome,
       title: globalTitle,
       description: globalDescription,
@@ -114,7 +115,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [globalOgImage],
     },
     alternates: {
-      canonical: config.siteUrl || "https://icevanisolamento.com.br",
+      canonical: config.siteUrl || "https://www.icevanisolamento.com.br",
     },
     robots: {
       index: true,
@@ -249,6 +250,8 @@ export default async function RootLayout({
             __html: JSON.stringify(localBusinessSchema),
           }}
         />
+        {/* Schema.org Structured Data (para Google AI/Gemini) */}
+        <StructuredData />
       </head>
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         {/* Google Analytics 4 — apenas no site público */}

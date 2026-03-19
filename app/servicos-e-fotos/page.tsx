@@ -32,12 +32,13 @@ const videosDefault = [
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const seo = await prisma.seoSetting.findUnique({
-      where: { pageSlug: "/fotos-servicos" },
+      where: { pageSlug: "/servicos-e-fotos" },
     });
     if (seo) {
       return {
         title: seo.metaTitulo,
         description: seo.metaDescricao,
+        alternates: { canonical: "/servicos-e-fotos" },
         ...(seo.ogImage && {
           openGraph: { images: [{ url: seo.ogImage }] },
           twitter: { images: [seo.ogImage] },
@@ -48,9 +49,10 @@ export async function generateMetadata(): Promise<Metadata> {
     // Banco indisponível — usa fallback
   }
   return {
-    title: "Fotos e Serviços",
+    title: "Serviços e Fotos",
     description:
       "Confira o portfólio de serviços da Ice Van: instalações de refrigeração e isolamento térmico para furgões e vans.",
+    alternates: { canonical: "/servicos-e-fotos" },
   };
 }
 
@@ -104,8 +106,45 @@ async function getGalleryData() {
   }
 }
 
+async function getTextos() {
+  try {
+    const settings = await prisma.setting.findMany({
+      where: {
+        key: {
+          startsWith: "servicosFotos_"
+        }
+      }
+    });
+    
+    const textos: Record<string, string> = {};
+    settings.forEach(s => {
+      const key = s.key.replace("servicosFotos_", "");
+      textos[key] = s.value;
+    });
+    
+    return {
+      heroTitulo: textos.heroTitulo || "Fotos e Serviços",
+      heroSubtitulo: textos.heroSubtitulo || "Confira nossos trabalhos e serviços realizados. Cada instalação é executada com cuidado, precisão técnica e materiais de primeira linha.",
+      galeriaFotosTitulo: textos.galeriaFotosTitulo || "Galeria de Fotos",
+      galeriaFotosDescricao: textos.galeriaFotosDescricao || "Registros reais dos nossos serviços de instalação e acabamento.",
+      ctaTitulo: textos.ctaTitulo || "Gostou do que viu?",
+      ctaDescricao: textos.ctaDescricao || "Solicite um orçamento agora e transforme seu veículo em uma plataforma de refrigeração profissional.",
+    };
+  } catch {
+    return {
+      heroTitulo: "Fotos e Serviços",
+      heroSubtitulo: "Confira nossos trabalhos e serviços realizados. Cada instalação é executada com cuidado, precisão técnica e materiais de primeira linha.",
+      galeriaFotosTitulo: "Galeria de Fotos",
+      galeriaFotosDescricao: "Registros reais dos nossos serviços de instalação e acabamento.",
+      ctaTitulo: "Gostou do que viu?",
+      ctaDescricao: "Solicite um orçamento agora e transforme seu veículo em uma plataforma de refrigeração profissional.",
+    };
+  }
+}
+
 export default async function FotosServicosPage() {
   const { photos, videos } = await getGalleryData();
+  const textos = await getTextos();
 
   return (
     <main className="pt-24 md:pt-28">
@@ -116,25 +155,28 @@ export default async function FotosServicosPage() {
             <p className="text-brand-secondary text-sm font-semibold uppercase tracking-wider mb-3">
               Portfólio
             </p>
-            <h1 className="text-white mb-5">Fotos e Serviços</h1>
+            <h1 className="text-white mb-5">{textos.heroTitulo}</h1>
             <p className="text-white/80 text-xl leading-relaxed">
-              Confira nossos trabalhos e serviços realizados. Cada instalação é
-              executada com cuidado, precisão técnica e materiais de primeira linha.
+              {textos.heroSubtitulo}
             </p>
           </div>
         </div>
       </section>
 
       {/* Filtro + Galeria + Vídeos (Client Component) */}
-      <FotosServicosFilter photos={photos} videos={videos} />
+      <FotosServicosFilter 
+        photos={photos} 
+        videos={videos}
+        galeriaFotosTitulo={textos.galeriaFotosTitulo}
+        galeriaFotosDescricao={textos.galeriaFotosDescricao}
+      />
 
       {/* CTA */}
       <section className="py-16 bg-brand-secondary">
         <div className="container-site text-center">
-          <h2 className="text-white mb-4">Gostou do que viu?</h2>
+          <h2 className="text-white mb-4">{textos.ctaTitulo}</h2>
           <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
-            Solicite um orçamento agora e transforme seu veículo em uma
-            plataforma de refrigeração profissional.
+            {textos.ctaDescricao}
           </p>
           <a
             href={whatsappUrl(

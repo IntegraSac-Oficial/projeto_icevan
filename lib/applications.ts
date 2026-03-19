@@ -39,7 +39,7 @@ const DEFAULT_REGISTRY: VehicleRegistryItem[] = [
   { slug: "van-sprinter",              label: "Van Sprinter",                   href: "/van-sprinter",              ordem: 3 },
   { slug: "van-master",                label: "Van Master",                     href: "/van-master",                ordem: 4 },
   { slug: "expert-porta-frigorifica",  label: "Expert c/ Porta Frigorífica",   href: "/expert-porta-frigorifica",  ordem: 5 },
-  { slug: "fiorino-porta-frigorifica", label: "Fiorino c/ Porta Frigorífica",  href: "/fiorino-porta-frigorifica", ordem: 6 },
+  { slug: "isolamento-fiorino", label: "Isolamento Fiorino",            href: "/isolamento-fiorino", ordem: 6 },
 ];
 
 /** Lê o registro de veículos do banco, com fallback para os 6 padrão */
@@ -200,10 +200,10 @@ export const applications: Application[] = [
       "Adaptação da Citroën/Peugeot Expert com porta frigorífica de alta vedação e isolamento térmico profissional. Ideal para transporte de perecíveis.",
   },
   {
-    slug: "fiorino-porta-frigorifica",
-    titulo: "Fiorino com Porta Frigorífica",
+    slug: "isolamento-fiorino",
+    titulo: "Isolamento Fiorino",
     subtitulo:
-      "Fiat Fiorino com porta frigorífica integrada para operações que exigem mais isolamento.",
+      "Fiat Fiorino com isolamento térmico e porta frigorífica integrada para operações que exigem mais eficiência.",
     conteudo: [
       "O Fiat Fiorino com porta frigorífica é a solução ideal para pequenos negócios que necessitam de um veículo compacto, ágil e com alto grau de isolamento térmico. Perfeito para roteiros urbanos com múltiplas paradas, este equipamento garante que a temperatura interna seja mantida mesmo durante as aberturas frequentes do compartimento de carga.",
       "A versão com porta frigorífica se diferencia da conversão padrão pela instalação de uma porta de alto desempenho com vedação reforçada, juntas magnéticas flexíveis e perfis de alumínio que garantem o mínimo de troca térmica a cada abertura. Esta solução é especialmente recomendada para entrega de sorvetes, produtos lácteos, carnes frescas e produtos farmacêuticos.",
@@ -219,14 +219,14 @@ export const applications: Application[] = [
       { label: "Porta frigorífica", valor: "Vedação reforçada, junta magnética" },
       { label: "Acabamento interno", valor: "PVC alimentício" },
     ],
-    thumb: "/images/aplicacoes/fiorino-porta-frigorifica/thumb.webp",
+    thumb: "/images/aplicacoes/isolamento-fiorino/thumb.webp",
     imagens: [
-      "/images/aplicacoes/fiorino-porta-frigorifica/foto-01.webp",
-      "/images/aplicacoes/fiorino-porta-frigorifica/foto-02.webp",
+      "/images/aplicacoes/isolamento-fiorino/foto-01.webp",
+      "/images/aplicacoes/isolamento-fiorino/foto-02.webp",
     ],
-    metaTitulo: "Fiorino com Porta Frigorífica | Isolamento e Refrigeração — Ice Van",
+    metaTitulo: "Isolamento Fiorino | Isolamento e Refrigeração — Ice Van",
     metaDescricao:
-      "Fiat Fiorino adaptado com porta frigorífica de alta vedação e isolamento térmico profissional. Ideal para pequenas entregas urbanas de perecíveis.",
+      "Fiat Fiorino com isolamento térmico profissional e porta frigorífica de alta vedação. Ideal para pequenas entregas urbanas de perecíveis.",
   },
 ];
 
@@ -332,7 +332,7 @@ export async function loadApplicationWithVideos(slug: string): Promise<{ app: Ap
       "van-sprinter": "sprinter",
       "van-master": "master",
       "expert-porta-frigorifica": "expert",
-      "fiorino-porta-frigorifica": "fiorino"
+      "isolamento-fiorino": "fiorino"
     };
 
     const categoria = categoryMap[slug] || slug;

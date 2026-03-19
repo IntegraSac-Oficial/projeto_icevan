@@ -112,10 +112,10 @@ const STATIC_DEFAULTS: Record<string, { titulo: string; subtitulo: string; titul
       { label: "Acabamento interno", valor: "PVC alimentício branco" },
     ],
   },
-  "fiorino-porta-frigorifica": {
-    titulo: "Fiorino com Porta Frigorífica",
-    subtitulo: "Fiat Fiorino com porta frigorífica integrada para operações que exigem mais isolamento.",
-    tituloSecao: "Refrigeração para Fiorino com Porta Frigorífica",
+  "isolamento-fiorino": {
+    titulo: "Isolamento Fiorino",
+    subtitulo: "Fiat Fiorino com isolamento térmico e porta frigorífica integrada para operações que exigem mais eficiência.",
+    tituloSecao: "Isolamento Fiorino",
     conteudo: [
       "O Fiat Fiorino com porta frigorífica é a solução ideal para pequenos negócios que necessitam de um veículo compacto, ágil e com alto grau de isolamento térmico. Perfeito para roteiros urbanos com múltiplas paradas, este equipamento garante que a temperatura interna seja mantida mesmo durante as aberturas frequentes do compartimento de carga.",
       "A versão com porta frigorífica se diferencia da conversão padrão pela instalação de uma porta de alto desempenho com vedação reforçada, juntas magnéticas flexíveis e perfis de alumínio que garantem o mínimo de troca térmica a cada abertura.",

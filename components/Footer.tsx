@@ -19,7 +19,7 @@ import type { EmpresaConfig } from "@/lib/empresa-config";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/empresa", label: "Empresa" },
-  { href: "/fotos-servicos", label: "Serviços e Fotos" },
+  { href: "/servicos-e-fotos", label: "Serviços e Fotos" },
   { href: "/contato", label: "Contato" },
 ];
 
@@ -29,7 +29,7 @@ const DEFAULT_APLICACOES = [
   { href: "/van-sprinter",              label: "Van Sprinter" },
   { href: "/van-master",                label: "Van Master" },
   { href: "/expert-porta-frigorifica",  label: "Expert c/ Porta Frigorífica" },
-  { href: "/fiorino-porta-frigorifica", label: "Fiorino c/ Porta Frigorífica" },
+  { href: "/isolamento-fiorino", label: "Isolamento Fiorino" },
 ];
 
 interface Aplicacao {

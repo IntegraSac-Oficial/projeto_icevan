@@ -109,8 +109,8 @@ const FOLDER_GROUPS: FolderGroup[] = [
         description: "Thumbnail aparece no card da página /aplicacoes. Fotos da galeria aparecem na página de detalhe.",
       },
       {
-        value: "images/aplicacoes/fiorino-porta-frigorifica",
-        label: "Fiorino c/ Porta",
+        value: "images/aplicacoes/isolamento-fiorino",
+        label: "Isolamento Fiorino",
         slotLabels: [
           "Thumbnail (card do veículo)",
           "Galeria — Foto 1",

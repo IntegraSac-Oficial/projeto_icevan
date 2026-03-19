@@ -12,6 +12,7 @@ import {
   PanelBottom,
   Phone,
   Building2,
+  Camera,
 } from "lucide-react";
 
 const navItems = [
@@ -35,6 +36,11 @@ const navItems = [
     href: "/admin/textos/aplicacoes",
     icon: Car,
     startsWith: true,
+  },
+  {
+    label: "Serviços e Fotos",
+    href: "/admin/textos/servicos-fotos",
+    icon: Camera,
   },
   {
     label: "Empresa",

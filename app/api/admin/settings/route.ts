@@ -18,3 +18,15 @@ export async function POST(request: NextRequest) {
   
   return NextResponse.json({ ok: true });
 }
+
+export async function PUT(request: NextRequest) {
+  const body = await request.json() as { key: string; value: string };
+  
+  // Salva uma única configuração
+  await saveSettings({ [body.key]: body.value });
+  
+  // Revalida todas as páginas que usam settings
+  revalidatePath("/", "layout");
+  
+  return NextResponse.json({ ok: true });
+}

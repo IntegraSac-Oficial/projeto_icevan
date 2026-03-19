@@ -24,13 +24,13 @@ const DEFAULT_REGISTRY: VehicleRegistryItem[] = [
   { slug: "van-sprinter",              label: "Van Sprinter",                   href: "/van-sprinter",              ordem: 3 },
   { slug: "van-master",                label: "Van Master",                     href: "/van-master",                ordem: 4 },
   { slug: "expert-porta-frigorifica",  label: "Expert c/ Porta Frigorífica",   href: "/expert-porta-frigorifica",  ordem: 5 },
-  { slug: "fiorino-porta-frigorifica", label: "Fiorino c/ Porta Frigorífica",  href: "/fiorino-porta-frigorifica", ordem: 6 },
+  { slug: "isolamento-fiorino", label: "Isolamento Fiorino",            href: "/isolamento-fiorino", ordem: 6 },
 ];
 
 // Slugs dos veículos originais que têm rota estática própria
 const STATIC_SLUGS = new Set([
   "fiorinos", "van-ducato", "van-sprinter", "van-master",
-  "expert-porta-frigorifica", "fiorino-porta-frigorifica",
+  "expert-porta-frigorifica", "isolamento-fiorino",
 ]);
 
 type SaveStatus = "idle" | "saving" | "saved";
