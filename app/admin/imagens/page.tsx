@@ -674,6 +674,7 @@ export default function ImagensPage() {
                 <strong>Upload Novo:</strong> Arraste ou clique na área acima. O sistema vai:
               </p>
               <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>Converter automaticamente para WebP (formato otimizado, 30-70% menor)</li>
                 <li>Adicionar automaticamente o prefixo numérico (01-, 02-, 03-...)</li>
                 <li>Colocar a imagem na próxima posição disponível</li>
                 <li>Manter a ordem alfabética (01- é sempre thumbnail, 02+ é galeria)</li>
@@ -683,19 +684,86 @@ export default function ImagensPage() {
               </p>
               <ul className="list-disc list-inside ml-4 space-y-1">
                 <li>DELETAR o arquivo antigo</li>
-                <li>SALVAR o novo arquivo com NOVO NOME</li>
+                <li>CONVERTER para WebP e SALVAR com NOVO NOME</li>
                 <li>MANTER A MESMA POSIÇÃO na lista (usando o mesmo prefixo)</li>
               </ul>
               <p className="text-amber-600 mt-2">
-                💡 Exemplo Upload: Você adiciona &quot;van03.webp&quot; → Sistema salva como &quot;03-van03.webp&quot; (posição 3)
+                💡 Exemplo Upload: Você adiciona &quot;van03.jpg&quot; → Sistema salva como &quot;03-van03.webp&quot; (posição 3, convertido)
               </p>
               <p className="text-amber-600">
-                💡 Exemplo Substituição: Você substitui &quot;01-thumb.jpg&quot; com &quot;nova.webp&quot; → Resultado: &quot;01-nova.webp&quot; (mantém posição 1)
+                💡 Exemplo Substituição: Você substitui &quot;01-thumb.jpg&quot; com &quot;nova.png&quot; → Resultado: &quot;01-nova.webp&quot; (mantém posição 1, convertido)
               </p>
               <p className="text-xs text-gray-500 mt-2">
                 ✅ A primeira imagem (01-) é sempre a thumbnail do card<br/>
-                ✅ As demais (02-, 03-...) aparecem na galeria na ordem
+                ✅ As demais (02-, 03-...) aparecem na galeria na ordem<br/>
+                ✅ Todas as imagens são automaticamente convertidas para WebP (mais leves e rápidas)
               </p>
+            </div>
+          </div>
+
+          {/* Botão de conversão em lote para WebP */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-green-700 mb-1 flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4" />
+                  Converter Imagens Existentes para WebP
+                </h3>
+                <p className="text-xs text-green-600 leading-relaxed">
+                  Converte todas as imagens desta pasta para o formato WebP (mais leve e otimizado). 
+                  As imagens originais serão substituídas. Esta operação pode levar alguns segundos.
+                </p>
+              </div>
+              <button
+                onClick={async () => {
+                  if (!confirm(`Converter todas as ${images.length} imagens de "${folderDef.label}" para WebP?\n\nAs imagens originais serão substituídas. Esta ação não pode ser desfeita.`)) {
+                    return;
+                  }
+                  
+                  setUploading(true);
+                  setUploadStatus("idle");
+                  
+                  try {
+                    const res = await fetch("/api/admin/images/convert-to-webp", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ folder: activeFolder }),
+                    });
+                    
+                    const data = await res.json();
+                    
+                    if (res.ok && data.ok) {
+                      alert(`✅ Conversão concluída!\n\n${data.converted} imagens convertidas\n${data.skipped} já eram WebP\n${data.failed} falharam\n\nRedução total: ${data.totalReduction}`);
+                      setUploadStatus("success");
+                      await fetchImages(activeFolder);
+                      setTimeout(() => setUploadStatus("idle"), 3000);
+                    } else {
+                      alert(`❌ Erro na conversão: ${data.error || "Erro desconhecido"}`);
+                      setUploadStatus("error");
+                    }
+                  } catch (error) {
+                    console.error("Erro ao converter imagens:", error);
+                    alert("❌ Erro ao converter imagens. Verifique o console.");
+                    setUploadStatus("error");
+                  } finally {
+                    setUploading(false);
+                  }
+                }}
+                disabled={uploading || images.length === 0}
+                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Convertendo...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    Converter para WebP
+                  </>
+                )}
+              </button>
             </div>
           </div>
 

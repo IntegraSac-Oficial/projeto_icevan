@@ -10,7 +10,6 @@ const navItems = [
   { href: "/admin/contatos",      label: "Contatos" },
   { href: "/admin/imagens",       label: "Imagens" },
   { href: "/admin/banners",       label: "Banners Hero" },
-  { href: "/admin/galeria",       label: "Galeria" },
   { href: "/admin/videos",        label: "Vídeos" },
   { href: "/admin/seo",           label: "SEO" },
   { href: "/admin/configuracoes", label: "Configurações" },

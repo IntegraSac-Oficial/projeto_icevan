@@ -62,6 +62,10 @@ export async function DELETE(
 
   try {
     console.log('🗑️  Deletando arquivo...');
+    
+    // Aguarda um pouco para garantir que não há handles abertos
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     await unlink(filePath);
     console.log('');
     console.log('✅✅✅ ARQUIVO DELETADO COM SUCESSO! ✅✅✅');
@@ -84,6 +88,38 @@ export async function DELETE(
       return NextResponse.json({ ok: true, message: 'Arquivo já não existe' });
     }
     
+    // Se o arquivo está em uso (EPERM, EBUSY), tenta novamente após delay
+    if (err.code === 'EPERM' || err.code === 'EBUSY') {
+      console.warn('');
+      console.warn('⚠️  ARQUIVO EM USO - Tentando novamente após 500ms...');
+      console.warn('');
+      
+      try {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await unlink(filePath);
+        
+        console.log('');
+        console.log('✅✅✅ ARQUIVO DELETADO COM SUCESSO (2ª tentativa)! ✅✅✅');
+        console.log('📝 Arquivo:', safeName);
+        console.log('📁 Pasta:', folder);
+        console.log('═══════════════════════════════════════════════════════════');
+        console.log('');
+        return NextResponse.json({ ok: true });
+      } catch (retryError) {
+        console.error('');
+        console.error('❌ FALHA NA 2ª TENTATIVA');
+        console.error('O arquivo pode estar bloqueado por outro processo.');
+        console.error('Tente fechar o navegador ou reiniciar o servidor.');
+        console.error('═══════════════════════════════════════════════════════════');
+        console.error('');
+        return NextResponse.json({ 
+          ok: false, 
+          error: "Arquivo está em uso e não pode ser deletado. Tente novamente em alguns segundos.",
+          code: err.code
+        }, { status: 423 }); // 423 Locked
+      }
+    }
+    
     console.error('');
     console.error('❌❌❌ ERRO AO DELETAR ARQUIVO ❌❌❌');
     console.error('Tipo:', error instanceof Error ? error.name : typeof error);
@@ -93,9 +129,14 @@ export async function DELETE(
     console.error('Possíveis causas:');
     console.error('  - Arquivo não existe');
     console.error('  - Sem permissão para deletar');
-    console.error('  - Arquivo está em uso');
+    console.error('  - Arquivo está em uso por outro processo');
     console.error('═══════════════════════════════════════════════════════════');
     console.error('');
-    return NextResponse.json({ error: "Arquivo não encontrado ou não pode ser deletado", details: String(error) }, { status: 404 });
+    return NextResponse.json({ 
+      ok: false,
+      error: "Arquivo não encontrado ou não pode ser deletado", 
+      details: String(error),
+      code: err.code
+    }, { status: 404 });
   }
 }

@@ -4,6 +4,7 @@ import { readdir } from "fs/promises";
 export const dynamic = "force-dynamic";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import sharp from "sharp";
 
 const PUBLIC_DIR = path.join(process.cwd(), "public");
 
@@ -167,18 +168,37 @@ export async function POST(request: NextRequest) {
     await mkdir(dirPath, { recursive: true });
     console.log('✅ Diretório pronto');
 
-    const filePath = path.join(dirPath, safeName);
+    // Converter nome do arquivo para .webp
+    const safeNameWebP = safeName.replace(/\.(jpg|jpeg|png|gif)$/i, '.webp');
+    const filePath = path.join(dirPath, safeNameWebP);
+    
     console.log('');
-    console.log('💾 Salvando arquivo em:', filePath);
-    console.log('📂 Diretório absoluto:', dirPath);
-    console.log('📄 Nome do arquivo:', safeName);
+    console.log('🔄 CONVERSÃO PARA WEBP');
+    console.log('📄 Nome original:', safeName);
+    console.log('📄 Nome WebP:', safeNameWebP);
+    console.log('💾 Salvando em:', filePath);
     console.log('🔍 process.cwd():', process.cwd());
     
     const buffer = Buffer.from(await file.arrayBuffer());
-    console.log('📊 Buffer criado:', buffer.length, 'bytes');
+    console.log('📊 Buffer original:', buffer.length, 'bytes');
     
-    await writeFile(filePath, buffer);
-    console.log('✅ writeFile() concluído');
+    // Converter para WebP usando sharp
+    try {
+      const webpBuffer = await sharp(buffer)
+        .webp({ quality: 85 }) // Qualidade 85% (ótimo balanço)
+        .toBuffer();
+      
+      console.log('📊 Buffer WebP:', webpBuffer.length, 'bytes');
+      console.log('📉 Redução:', ((1 - webpBuffer.length / buffer.length) * 100).toFixed(1), '%');
+      
+      await writeFile(filePath, webpBuffer);
+      console.log('✅ Arquivo WebP salvo com sucesso');
+    } catch (conversionError) {
+      console.error('❌ Erro na conversão WebP:', conversionError);
+      // Fallback: salvar arquivo original se conversão falhar
+      await writeFile(filePath, buffer);
+      console.log('⚠️  Salvou arquivo original (conversão falhou)');
+    }
     
     // Aguarda um pouco para garantir que o arquivo foi escrito
     await new Promise(resolve => setTimeout(resolve, 200));
@@ -215,7 +235,7 @@ export async function POST(request: NextRequest) {
     const { stat } = await import("fs/promises");
     const stats = await stat(filePath);
     const timestamp = Math.floor(stats.mtimeMs);
-    const resultUrl = `/${folder}/${safeName}`;
+    const resultUrl = `/${folder}/${safeNameWebP}`;
     
     // CRÍTICO: Revalida o cache do Next.js para o arquivo estático
     try {
@@ -229,7 +249,7 @@ export async function POST(request: NextRequest) {
     console.log('');
     console.log('✅✅✅ ARQUIVO SALVO COM SUCESSO! ✅✅✅');
     console.log('🌐 URL:', resultUrl);
-    console.log('📝 Nome do arquivo:', safeName);
+    console.log('📝 Nome do arquivo:', safeNameWebP);
     console.log('⏰ Timestamp:', timestamp);
     console.log('═══════════════════════════════════════════════════════════');
     console.log('');
@@ -237,7 +257,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       ok: true,
       url: resultUrl,
-      filename: safeName,
+      filename: safeNameWebP,
       timestamp,
     });
   } catch (error) {

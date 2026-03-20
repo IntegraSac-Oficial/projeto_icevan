@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation"
 import {
   LayoutDashboard,
   Image,
-  GalleryHorizontalEnd,
   Video,
   MessageSquare,
   Search,
@@ -40,7 +39,6 @@ const navMain = [
 
 const navContent = [
   { title: "Banners Hero", url: "/admin/banners",  icon: Megaphone },
-  { title: "Galeria",      url: "/admin/galeria",  icon: GalleryHorizontalEnd },
   { title: "Imagens",      url: "/admin/imagens",  icon: Image },
   { title: "Vídeos",       url: "/admin/videos",   icon: Video },
   { title: "Veículos",     url: "/admin/veiculos", icon: Truck },
