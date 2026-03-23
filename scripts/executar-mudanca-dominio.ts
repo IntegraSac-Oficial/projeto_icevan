@@ -162,7 +162,7 @@ async function atualizarDominio() {
 
     if (oldDomainCheck.length > 0) {
       console.log('   ⚠️  Ainda há referências ao domínio antigo:');
-      oldDomainCheck.forEach(row => {
+      oldDomainCheck.forEach((row: any) => {
         console.log(`      - ${row.tabela}.${row.key}: ${row.value.substring(0, 100)}...`);
       });
     } else {
