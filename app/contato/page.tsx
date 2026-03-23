@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
   
   return {
     title: "Contato — Solicite um Orçamento",
-    description: `Entre em contato com ${config.nome} para solicitar orçamento de refrigeração para seu veículo. Atendemos por WhatsApp, telefone e formulário.`,
+    description: `Entre em contato com ${config.nome} para solicitar orçamento de isolamento térmico para seu veículo. Atendemos por WhatsApp, telefone e formulário.`,
     alternates: { canonical: "/contato" },
   };
 }
@@ -56,7 +56,7 @@ export default async function ContatoPage() {
             <p className="text-white/80 text-xl leading-relaxed">
               Preencha o formulário abaixo ou entre em contato diretamente pelo
               WhatsApp. Nossa equipe retorna rapidamente com a melhor solução
-              para o seu veículo.
+              de isolamento térmico para o seu veículo.
             </p>
           </div>
         </div>
@@ -107,7 +107,7 @@ export default async function ContatoPage() {
                   {contatos.map((c, i) => {
                     const digits = c.numero.replace(/\D/g, "");
                     const num = digits.startsWith("55") ? digits : `55${digits}`;
-                    const waUrl = `https://wa.me/${num}?text=${encodeURIComponent("Olá! Gostaria de solicitar um orçamento para refrigeração de veículo.")}`;
+                    const waUrl = `https://wa.me/${num}?text=${encodeURIComponent("Olá! Gostaria de solicitar um orçamento para isolamento térmico de veículo.")}`;
                     return (
                       <li key={i}>
                         <a

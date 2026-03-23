@@ -7,9 +7,9 @@ import { getVehicleRegistry, loadApplicationImages } from "@/lib/applications";
 import { whatsappUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Aplicações — Refrigeração por Tipo de Veículo",
+  title: "Aplicações — Isolamento Térmico por Tipo de Veículo",
   description:
-    "Soluções de refrigeração e isolamento térmico para Fiorino, Van Ducato, Sprinter, Master, Expert e mais. Projetos personalizados para cada veículo.",
+    "Soluções de isolamento térmico e adaptação interna para Fiorino, Van Ducato, Sprinter, Master, Expert e mais. Projetos personalizados para cada veículo.",
   alternates: { canonical: "/aplicacoes" },
 };
 
@@ -34,12 +34,12 @@ export default async function AplicacoesPage() {
               Soluções por veículo
             </p>
             <h1 className="text-white mb-5">
-              Aplicações de Refrigeração para Transporte
+              Aplicações de Isolamento Térmico para Veículos Utilitários
             </h1>
             <p className="text-white/80 text-xl leading-relaxed">
-              Instalamos sistemas de isolamento térmico e refrigeração nos principais
+              Instalamos sistemas de isolamento térmico e revestimento interno nos principais
               furgões e vans do mercado. Cada projeto é dimensionado conforme o
-              veículo, o produto transportado e a faixa de temperatura necessária.
+              veículo, o produto transportado e as necessidades operacionais do cliente.
             </p>
           </div>
         </div>
@@ -72,7 +72,7 @@ export default async function AplicacoesPage() {
           </p>
           <a
             href={whatsappUrl(
-              "Olá! Preciso de refrigeração para um veículo que não vi nas aplicações do site. Pode me ajudar?"
+              "Olá! Preciso de isolamento térmico para um veículo que não vi nas aplicações do site. Pode me ajudar?"
             )}
             target="_blank"
             rel="noopener noreferrer"

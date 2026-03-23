@@ -16,25 +16,25 @@ const DEFAULT_SOLUTIONS: SolutionCard[] = [
   {
     title: "Isolamento Térmico",
     description:
-      "O isolamento térmico é a base para garantir a eficiência da cadeia de frio no transporte de perecíveis. Aplicado em vans, furgões e utilitários, impede a troca de calor entre o interior e o exterior do veículo, mantendo a temperatura estável por mais tempo.",
+      "O isolamento térmico é essencial para proteger cargas sensíveis à temperatura e garantir eficiência no transporte. Aplicado em vans, furgões e utilitários, impede a troca de calor entre o interior e o exterior do veículo, mantendo a temperatura interna estável por mais tempo.",
     features: [
       "Painéis de poliuretano injetado de alta densidade",
       "Acabamento em PVC alimentício ou alumínio",
       "Conformidade com normas sanitárias da ANVISA",
       "Máxima eficiência térmica e durabilidade",
-      "Reduz consumo do sistema de refrigeração",
+      "Reduz necessidade de controle térmico ativo",
     ],
   },
   {
-    title: "Aparelho de Refrigeração",
+    title: "Revestimento e Acabamento Interno",
     description:
-      "Os aparelhos de refrigeração são instalados em vans, furgões e caminhões para manter a temperatura ideal no transporte de cargas perecíveis. Trabalhamos com equipamentos de alta tecnologia, dimensionados conforme o tipo de veículo e a faixa de temperatura exigida.",
+      "O revestimento interno completa a adaptação do veículo, oferecendo proteção, higiene e durabilidade. Utilizamos materiais de alta qualidade que facilitam a limpeza e garantem conformidade sanitária para transporte de alimentos e produtos sensíveis.",
     features: [
-      "Compressores e componentes de primeira linha",
-      "Dimensionamento por volume e temperatura",
-      "Resfriados, climatizados ou congelados",
-      "Painel de controle digital",
-      "Suporte técnico e manutenção preventiva",
+      "Revestimento em PVC alimentício ou alumínio",
+      "Piso antiderrapante e impermeável",
+      "Vedação reforçada em portas e junções",
+      "Proteção de cantos em aço inox",
+      "Fácil higienização e manutenção",
     ],
   },
 ];
@@ -48,7 +48,7 @@ interface SolucoesContent {
 const DEFAULT_CONTENT: SolucoesContent = {
   titulo_secao: "Nossas Soluções",
   subtitulo_secao:
-    "Oferecemos dois serviços principais para transformar seu veículo em uma plataforma completa de transporte refrigerado.",
+    "Oferecemos soluções completas de isolamento térmico e adaptação interna para transformar seu veículo em uma plataforma profissional de transporte.",
   cards: DEFAULT_SOLUTIONS,
 };
 

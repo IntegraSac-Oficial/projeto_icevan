@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   
   return {
     title: "Empresa — Quem Somos",
-    description: `Conheça ${config.nome}: missão, visão, valores e diferenciais de uma empresa especializada em refrigeração para transporte de perecíveis.`,
+    description: `Conheça ${config.nome}: missão, visão, valores e diferenciais de uma empresa especializada em isolamento térmico para veículos utilitários.`,
     alternates: { canonical: "/empresa" },
   };
 }
@@ -55,24 +55,24 @@ export default async function EmpresaPage() {
   
   const DEFAULTS: EmpresaContent = {
     heroLabel: "Quem somos",
-    heroTitulo: "Especialistas em Refrigeração para Transporte",
+    heroTitulo: "Especialistas em Isolamento Térmico para Veículos Utilitários",
     heroSubtitulo:
-      `Há anos no mercado, a ${config.nome} é referência em soluções de isolamento térmico e refrigeração para veículos de transporte de perecíveis.`,
+      `Há anos no mercado, a ${config.nome} é referência em soluções de isolamento térmico e adaptação interna para vans, furgões e utilitários.`,
     historiaTitle: "Nossa História",
     historiaParagrafos: [
-      `A ${config.nome} nasceu da necessidade de oferecer soluções profissionais de refrigeração para o crescente mercado de transporte de perecíveis no Brasil. Desde o início, nossa proposta foi clara: entregar qualidade técnica, materiais de primeira linha e atendimento consultivo que realmente ajude o cliente a tomar a melhor decisão para o seu negócio.`,
-      `Ao longo dos anos, instalamos sistemas de refrigeração e isolamento térmico em centenas de veículos — desde Fiorinos para pequenas distribuidoras até Sprinters e Ducatos para grandes frotas. Cada projeto é único e desenvolvido conforme as necessidades específicas de temperatura, volume de carga e perfil de operação do cliente.`,
+      `A ${config.nome} nasceu da necessidade de oferecer soluções profissionais de isolamento térmico para o crescente mercado de transporte de produtos sensíveis à temperatura no Brasil. Desde o início, nossa proposta foi clara: entregar qualidade técnica, materiais de primeira linha e atendimento consultivo que realmente ajude o cliente a tomar a melhor decisão para o seu negócio.`,
+      `Ao longo dos anos, realizamos adaptações internas em centenas de veículos — desde Fiorinos para pequenas distribuidoras até Sprinters e Ducatos para grandes frotas. Cada projeto é único e desenvolvido conforme as necessidades específicas de proteção térmica, volume de carga e perfil de operação do cliente.`,
       `Hoje, a ${config.nome} atua com agilidade, seriedade e o mesmo compromisso com a qualidade que sempre nos diferenciou no mercado.`,
     ],
     mvvTitle: "Missão, Visão e Valores",
     mvvSubtitulo: "Os pilares que orientam cada projeto e cada relação com nossos clientes.",
     missao: {
       titulo: "Missão",
-      descricao: "Oferecer soluções completas de refrigeração e isolamento térmico para veículos de transporte, garantindo a integridade dos produtos perecíveis e a satisfação total dos nossos clientes.",
+      descricao: "Oferecer soluções completas de isolamento térmico e adaptação interna para veículos utilitários, garantindo proteção eficiente de cargas sensíveis e a satisfação total dos nossos clientes.",
     },
     visao: {
       titulo: "Visão",
-      descricao: "Ser referência nacional no segmento de refrigeração veicular, reconhecidos pela qualidade técnica, inovação e pelo relacionamento de longo prazo com nossos parceiros e clientes.",
+      descricao: "Ser referência nacional no segmento de isolamento térmico veicular, reconhecidos pela qualidade técnica, inovação e pelo relacionamento de longo prazo com nossos parceiros e clientes.",
     },
     valores: {
       titulo: "Valores",
@@ -91,7 +91,7 @@ export default async function EmpresaPage() {
     ],
     ctaTitle: "Vamos conversar sobre seu projeto?",
     ctaSubtitulo:
-      "Entre em contato agora e descubra como podemos ajudar a transformar seu veículo em uma plataforma de refrigeração profissional.",
+      "Entre em contato agora e descubra como podemos ajudar a transformar seu veículo em uma plataforma profissional de transporte.",
   };
   
   const [empresaImages, content] = await Promise.all([

@@ -9,9 +9,9 @@ export interface Video {
 
 // Vídeos padrão caso o banco esteja vazio
 const videosDefault: Video[] = [
-  { youtubeId: "dQw4w9WgXcQ", titulo: "Instalação Completa — Fiat Fiorino Frigorífico", categoria: "fiorino" },
+  { youtubeId: "dQw4w9WgXcQ", titulo: "Instalação Completa de Isolamento Térmico — Fiat Fiorino", categoria: "fiorino" },
   { youtubeId: "dQw4w9WgXcQ", titulo: "Isolamento Térmico em Van Ducato — Passo a Passo", categoria: "ducato" },
-  { youtubeId: "dQw4w9WgXcQ", titulo: "Sprinter com Sistema de Refrigeração de Alta Capacidade", categoria: "sprinter" },
+  { youtubeId: "dQw4w9WgXcQ", titulo: "Sprinter com Isolamento Térmico de Alta Performance", categoria: "sprinter" },
   { youtubeId: "dQw4w9WgXcQ", titulo: "Instalação de Porta Frigorífica com Vedação Magnética", categoria: "expert" },
   { youtubeId: "dQw4w9WgXcQ", titulo: "Acabamento Interno em Alumínio — Van Master", categoria: "master" },
   { youtubeId: "dQw4w9WgXcQ", titulo: "Fiorino com Porta Frigorífica — Processo Completo", categoria: "fiorino" },

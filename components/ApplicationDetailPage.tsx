@@ -50,7 +50,7 @@ export function ApplicationDetailPage({ application, videos = [] }: ApplicationD
             </p>
             <a
               href={whatsappUrl(
-                `Olá! Tenho interesse em refrigeração para ${titulo}. Gostaria de um orçamento.`
+                `Olá! Tenho interesse em isolamento térmico para ${titulo}. Gostaria de um orçamento.`
               )}
               target="_blank"
               rel="noopener noreferrer"
@@ -70,7 +70,7 @@ export function ApplicationDetailPage({ application, videos = [] }: ApplicationD
             {/* Texto — 2/3 */}
             <div className="lg:col-span-2">
               <h2 className="text-brand-primary mb-6">
-                {tituloSecao || `Refrigeração para ${titulo}`}
+                {tituloSecao || `Isolamento Térmico para ${titulo}`}
               </h2>
               <div className="space-y-5 text-gray-700 leading-relaxed">
                 {conteudo.map((paragrafo, i) => (
@@ -106,7 +106,7 @@ export function ApplicationDetailPage({ application, videos = [] }: ApplicationD
                 <div className="mt-6 pt-5 border-t border-gray-100 space-y-3">
                   <a
                     href={whatsappUrl(
-                      `Olá! Quero saber mais sobre refrigeração para ${titulo}.`
+                      `Olá! Quero saber mais sobre isolamento térmico para ${titulo}.`
                     )}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -167,7 +167,7 @@ export function ApplicationDetailPage({ application, videos = [] }: ApplicationD
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href={whatsappUrl(
-                `Olá! Gostaria de um orçamento para refrigeração de ${titulo}.`
+                `Olá! Gostaria de um orçamento para isolamento térmico de ${titulo}.`
               )}
               target="_blank"
               rel="noopener noreferrer"

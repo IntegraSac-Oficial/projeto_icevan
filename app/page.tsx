@@ -71,20 +71,20 @@ async function loadHeroBanners() {
       {
         image: "/images/hero/banner_simples2.png",
         alt: `Banner — ${config.nome}`,
-        headline: "Sistemas de Refrigeração para Transporte",
-        sub: "Qualidade e eficiência para conservar sua carga perecível do ponto de partida até a entrega.",
+        headline: "Isolamento Térmico Profissional para Veículos Utilitários",
+        sub: "Proteção térmica de alta performance para vans, furgões e utilitários. Revestimento interno, vedação e acabamento de qualidade.",
       },
       {
         image: "/images/hero/banner_isolamento.jpeg", 
         alt: `Banner — ${config.nome}`,
-        headline: "Isolamento Térmico Profissional",
-        sub: "Painéis de alta performance que mantêm a temperatura estável e reduzem o consumo do sistema de frio.",
+        headline: "Adaptação Interna Completa",
+        sub: "Painéis de poliuretano de alta densidade, acabamento em PVC ou alumínio e conformidade com normas sanitárias.",
       },
       {
         image: "/images/hero/banner_simples3.png",
         alt: `Banner — ${config.nome}`,
-        headline: "Aparelhos de Refrigeração de Alta Performance", 
-        sub: "Equipamentos dimensionados para cada tipo de veículo, carga e faixa de temperatura.",
+        headline: "Revestimento e Vedação de Alta Qualidade", 
+        sub: "Materiais de primeira linha que garantem durabilidade, higiene e eficiência térmica para o seu veículo.",
       },
       {
         image: "/images/hero/04-mobile.jpg",
@@ -101,8 +101,8 @@ async function loadHeroBanners() {
       {
         image: "/images/hero/banner_simples2.png",
         alt: `Banner — ${config.nome}`,
-        headline: "Sistemas de Refrigeração para Transporte",
-        sub: "Qualidade e eficiência para conservar sua carga perecível do ponto de partida até a entrega.",
+        headline: "Isolamento Térmico Profissional para Veículos Utilitários",
+        sub: "Proteção térmica de alta performance para vans, furgões e utilitários. Revestimento interno, vedação e acabamento de qualidade.",
       },
     ];
   }
@@ -121,7 +121,7 @@ const DEFAULT_DIFERENCIAIS = [
   },
   {
     title: "Experiência Comprovada",
-    desc: "Anos de atuação no mercado de refrigeração veicular com centenas de instalações realizadas.",
+    desc: "Anos de atuação no mercado de isolamento térmico veicular com centenas de instalações realizadas.",
   },
   {
     title: "Atendimento Personalizado",
@@ -138,7 +138,7 @@ interface DiferenciaisContent {
 const DEFAULT_DIFERENCIAIS_CONTENT: DiferenciaisContent = {
   titulo_secao: "Por que escolher a",
   subtitulo_secao:
-    "Somos especialistas em refrigeração veicular com foco em qualidade, pontualidade e satisfação total do cliente.",
+    "Somos especialistas em isolamento térmico veicular com foco em qualidade, pontualidade e satisfação total do cliente.",
   cards: DEFAULT_DIFERENCIAIS,
 };
 

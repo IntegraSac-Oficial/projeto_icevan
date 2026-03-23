@@ -51,7 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Serviços e Fotos",
     description:
-      "Confira o portfólio de serviços da Ice Van: instalações de refrigeração e isolamento térmico para furgões e vans.",
+      "Confira o portfólio de serviços da Ice Van: instalações de isolamento térmico e adaptação interna para furgões e vans.",
     alternates: { canonical: "/servicos-e-fotos" },
   };
 }
@@ -135,9 +135,9 @@ async function getTextos() {
       heroTitulo: "Fotos e Serviços",
       heroSubtitulo: "Confira nossos trabalhos e serviços realizados. Cada instalação é executada com cuidado, precisão técnica e materiais de primeira linha.",
       galeriaFotosTitulo: "Galeria de Fotos",
-      galeriaFotosDescricao: "Registros reais dos nossos serviços de instalação e acabamento.",
+      galeriaFotosDescricao: "Registros reais dos nossos serviços de isolamento térmico e adaptação interna.",
       ctaTitulo: "Gostou do que viu?",
-      ctaDescricao: "Solicite um orçamento agora e transforme seu veículo em uma plataforma de refrigeração profissional.",
+      ctaDescricao: "Solicite um orçamento agora e transforme seu veículo em uma plataforma profissional de transporte.",
     };
   }
 }

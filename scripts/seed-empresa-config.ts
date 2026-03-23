@@ -19,8 +19,8 @@ import { prisma } from "../lib/db";
 const INITIAL_CONFIG = {
   // Identidade
   empresa_nome: "Ice Van",
-  empresa_slogan: "Refrigeração para Transporte com Qualidade e Eficiência",
-  empresa_descricao: "Especialistas em sistemas de refrigeração e isolamento térmico para veículos de transporte. Atendemos transportadoras, frotas e autônomos em todo o Brasil.",
+  empresa_slogan: "Isolamento Térmico Profissional para Veículos Utilitários",
+  empresa_descricao: "Especialistas em isolamento térmico e adaptação interna para vans, furgões e utilitários. Soluções personalizadas de revestimento, vedação e proteção térmica para transporte.",
 
   // Contato
   empresa_telefone: "(11) 94824-2999",
@@ -73,7 +73,7 @@ const INITIAL_CONFIG = {
 
   // Footer
   footer_copyright: "© 2026 Ice Van. Todos os direitos reservados.",
-  footer_rodape: "CNPJ — Refrigeração para Transporte | São Paulo, SP",
+  footer_rodape: "CNPJ — Isolamento Térmico Veicular | São Paulo, SP",
 };
 
 async function seed() {
