@@ -16,11 +16,12 @@ const ALLOWED_FOLDERS = [
   "images/logo",
   "images/formas-pagamento",
   "images/aplicacoes/fiorinos",
+  "images/aplicacoes/isolamento-fiorino",
   "images/aplicacoes/van-ducato",
   "images/aplicacoes/van-sprinter",
   "images/aplicacoes/van-master",
   "images/aplicacoes/expert-porta-frigorifica",
-  "images/aplicacoes/isolamento-fiorino",
+  "images/aplicacoes/fiorino-porta-frigorifica",
 ];
 
 const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif"];
