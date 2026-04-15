@@ -13,6 +13,7 @@ import {
   Phone,
   Building2,
   Camera,
+  ImageIcon,
 } from "lucide-react";
 
 const navItems = [
@@ -36,6 +37,11 @@ const navItems = [
     href: "/admin/textos/aplicacoes",
     icon: Car,
     startsWith: true,
+  },
+  {
+    label: "Legendas das Fotos",
+    href: "/admin/textos/legendas-fotos",
+    icon: ImageIcon,
   },
   {
     label: "Serviços e Fotos",

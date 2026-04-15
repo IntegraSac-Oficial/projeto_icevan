@@ -236,7 +236,7 @@ export default async function RootLayout({
     }`;
 
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" data-scroll-behavior="smooth">
       <head>
         {/* CSS Custom Properties — cores editáveis pelo painel admin */}
         <style dangerouslySetInnerHTML={{ __html: cssVars }} />

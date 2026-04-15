@@ -8,21 +8,32 @@ import sharp from "sharp";
 
 const PUBLIC_DIR = path.join(process.cwd(), "public");
 
-const ALLOWED_FOLDERS = [
+// Pastas fixas do site (não mudam)
+const STATIC_ALLOWED_FOLDERS = [
   "images/hero",
   "images/fotos-servicos",
   "images/empresa",
   "images/og",
   "images/logo",
   "images/formas-pagamento",
-  "images/aplicacoes/fiorinos",
-  "images/aplicacoes/isolamento-fiorino",
-  "images/aplicacoes/van-ducato",
-  "images/aplicacoes/van-sprinter",
-  "images/aplicacoes/van-master",
-  "images/aplicacoes/expert-porta-frigorifica",
-  "images/aplicacoes/fiorino-porta-frigorifica",
 ];
+
+// Função para obter todas as pastas permitidas (estáticas + veículos dinâmicos)
+async function getAllowedFolders(): Promise<string[]> {
+  try {
+    const { getVehicleRegistry } = await import("@/lib/applications");
+    const registry = await getVehicleRegistry();
+    
+    // Gera pastas de veículos dinamicamente
+    const vehicleFolders = registry.map((v) => `images/aplicacoes/${v.slug}`);
+    
+    return [...STATIC_ALLOWED_FOLDERS, ...vehicleFolders];
+  } catch (error) {
+    console.error("[getAllowedFolders] Erro ao carregar pastas de veículos:", error);
+    // Fallback: retorna apenas pastas estáticas
+    return STATIC_ALLOWED_FOLDERS;
+  }
+}
 
 const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif"];
 
@@ -31,7 +42,9 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const folder = searchParams.get("folder") ?? "images/fotos-servicos";
 
-  if (!ALLOWED_FOLDERS.includes(folder)) {
+  const allowedFolders = await getAllowedFolders();
+  
+  if (!allowedFolders.includes(folder)) {
     return NextResponse.json({ error: "Pasta não permitida" }, { status: 400 });
   }
 
@@ -70,9 +83,9 @@ export async function GET(request: NextRequest) {
         })
     );
     
-    return NextResponse.json({ images: imagesWithTimestamps, folders: ALLOWED_FOLDERS });
+    return NextResponse.json({ images: imagesWithTimestamps, folders: allowedFolders });
   } catch {
-    return NextResponse.json({ images: [], folders: ALLOWED_FOLDERS });
+    return NextResponse.json({ images: [], folders: allowedFolders });
   }
 }
 
@@ -102,9 +115,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Arquivo e pasta são obrigatórios" }, { status: 400 });
     }
 
-    if (!ALLOWED_FOLDERS.includes(folder)) {
+    const allowedFolders = await getAllowedFolders();
+    
+    if (!allowedFolders.includes(folder)) {
       console.error('❌ Validação falhou: pasta não permitida:', folder);
-      console.error('   Pastas permitidas:', ALLOWED_FOLDERS.join(', '));
+      console.error('   Pastas permitidas:', allowedFolders.join(', '));
       return NextResponse.json({ error: "Pasta não permitida" }, { status: 400 });
     }
 

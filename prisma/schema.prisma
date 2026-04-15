@@ -98,3 +98,16 @@ model HeroBanner {
 
   @@map("hero_banners")
 }
+
+// Legendas personalizadas para fotos das aplicações
+model ApplicationPhotoCaption {
+  id          Int      @id @default(autoincrement())
+  aplicacao   String   // slug da aplicação (ex: "fiorinos", "van-ducato")
+  filename    String   // nome do arquivo da foto
+  legenda     String   @default("") // texto que aparece no canto da foto
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([aplicacao, filename])
+  @@map("application_photo_captions")
+}

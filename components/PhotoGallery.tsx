@@ -8,6 +8,7 @@ interface Photo {
   src: string;
   alt: string;
   category?: string;
+  caption?: string; // Legenda personalizada que aparece no canto da foto
 }
 
 interface PhotoGalleryProps {
@@ -77,10 +78,10 @@ export function PhotoGallery({ photos }: PhotoGalleryProps) {
               <ZoomIn className="w-10 h-10 text-white opacity-0 group-hover:opacity-100
                                  transition-opacity duration-300 drop-shadow-lg" />
             </div>
-            {/* Badge de categoria */}
-            {photo.category && (
-              <span className="absolute bottom-3 left-3 badge bg-brand-primary/80 text-white text-xs">
-                {photo.category}
+            {/* Badge de categoria ou legenda personalizada */}
+            {(photo.caption || photo.category) && (
+              <span className="absolute bottom-3 left-3 badge bg-brand-primary/80 text-white text-xs px-3 py-1.5">
+                {photo.caption || photo.category}
               </span>
             )}
           </button>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ApplicationDetailPage } from "@/components/ApplicationDetailPage";
-import { loadApplicationWithVideos } from "@/lib/applications";
+import { loadApplicationWithVideos, loadPhotoCaptions } from "@/lib/applications";
 
 export async function generateMetadata(): Promise<Metadata> {
   const result = await loadApplicationWithVideos("van-sprinter");
@@ -17,5 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function VanSprinterPage() {
   const result = await loadApplicationWithVideos("van-sprinter");
   if (!result) notFound();
-  return <ApplicationDetailPage application={result.app} videos={result.videos} />;
+  
+  // Carrega legendas personalizadas das fotos
+  const captions = await loadPhotoCaptions("van-sprinter");
+  
+  return <ApplicationDetailPage application={result.app} videos={result.videos} photoCaptions={captions} />;
 }

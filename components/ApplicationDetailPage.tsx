@@ -16,19 +16,29 @@ interface Video {
 interface ApplicationDetailPageProps {
   application: Application;
   videos?: Video[];
+  photoCaptions?: Map<string, string>; // Mapa de filename -> legenda personalizada
 }
 
-export function ApplicationDetailPage({ application, videos = [] }: ApplicationDetailPageProps) {
+export function ApplicationDetailPage({ application, videos = [], photoCaptions = new Map() }: ApplicationDetailPageProps) {
   const { titulo, subtitulo, tituloSecao, conteudo, specs, imagens } = application;
 
   // Remove a primeira imagem (thumbnail) da galeria - mostra apenas fotos de galeria
   const galleryImages = imagens.slice(1);
   
-  const photos = galleryImages.map((img) => ({
-    src: img,
-    alt: `${titulo} — Ice Van`,
-    category: titulo,
-  }));
+  const photos = galleryImages.map((img) => {
+    // Extrai o filename da URL da imagem
+    // URL format: /api/images/FILENAME.webp?folder=images/aplicacoes/fiorinos
+    const urlParts = img.split('?')[0]; // Remove query params primeiro
+    const filename = urlParts.split('/').pop() || ''; // Pega o último segmento
+    const caption = photoCaptions.get(filename) || '';
+    
+    return {
+      src: img,
+      alt: `${titulo} — Ice Van`,
+      category: titulo,
+      caption, // Legenda personalizada do banco de dados
+    };
+  });
 
   return (
     <main className="pt-24 md:pt-28">

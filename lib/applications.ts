@@ -275,6 +275,26 @@ export async function loadApplicationContent(slug: string): Promise<Application 
 }
 
 /**
+ * Carrega legendas personalizadas das fotos de uma aplicação
+ * Retorna um mapa de filename -> legenda
+ */
+export async function loadPhotoCaptions(slug: string): Promise<Map<string, string>> {
+  try {
+    const { prisma } = await import("@/lib/db");
+    
+    const captions = await prisma.applicationPhotoCaption.findMany({
+      where: { aplicacao: slug },
+    });
+
+    const captionsMap = new Map(captions.map((c) => [c.filename, c.legenda]));
+    return captionsMap;
+  } catch (error) {
+    console.warn(`Aviso: Erro ao carregar legendas para ${slug}:`, error);
+    return new Map();
+  }
+}
+
+/**
  * Carrega imagens dinamicamente do filesystem para uma aplicação
  * Retorna a aplicação com as imagens atualizadas do disco
  */

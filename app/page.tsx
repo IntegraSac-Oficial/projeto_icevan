@@ -198,9 +198,9 @@ export default async function Home() {
   );
 
   return (
-    <main suppressHydrationWarning>
+    <main>
       {/* Hero Slider */}
-      <div className="pt-16 md:pt-[88px]">
+      <div className="pt-16 md:pt-[88px]" suppressHydrationWarning>
         <HeroSlider 
           slides={heroBanners}
           filtroCor={heroConfig.filtroCor}
