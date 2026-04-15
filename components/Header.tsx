@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, X, Phone, MessageCircle } from "lucide-react";
-import { cn, trackWhatsAppClick } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import type { EmpresaConfig } from "@/lib/empresa-config";
 
 const navLinks = [
@@ -88,7 +88,6 @@ export function Header({ config }: HeaderProps) {
               href={whatsappUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={trackWhatsAppClick}
               className="flex items-center gap-1.5 hover:text-[#25D366] transition-colors"
             >
               <MessageCircle className="w-3.5 h-3.5" />
@@ -133,7 +132,6 @@ export function Header({ config }: HeaderProps) {
                 href={whatsappUrl("Olá! Gostaria de solicitar um orçamento.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={trackWhatsAppClick}
                 className="ml-3 btn-accent text-sm py-2 px-4"
               >
                 <MessageCircle className="w-4 h-4" />
@@ -188,10 +186,7 @@ export function Header({ config }: HeaderProps) {
                     href={whatsappUrl()}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => {
-                      trackWhatsAppClick();
-                      closeMenu();
-                    }}
+                    onClick={closeMenu}
                     className="btn-accent w-full justify-center"
                   >
                     <MessageCircle className="w-4 h-4" />

@@ -254,42 +254,28 @@ export default async function RootLayout({
         <StructuredData />
       </head>
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
-        {/* Google Analytics 4 — apenas no site público */}
-        {!isAdmin && config.ga4Id && config.ga4Id !== "G-XXXXXXXXXX" && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${config.ga4Id}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga4-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${config.ga4Id}', {
-                  page_path: window.location.pathname,
-                });
-              `}
-            </Script>
-          </>
-        )}
-
-        {/* Google Ads (gtag.js) — apenas no site público */}
+        {/* Google Tag Manager (noscript) — apenas no site público */}
         {!isAdmin && (
-          <>
-            <Script
-              src="https://www.googletagmanager.com/gtag/js?id=AW-18056785768"
-              strategy="afterInteractive"
+          <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-5T4N72JG"
+              height="0"
+              width="0"
+              style={{ display: 'none', visibility: 'hidden' }}
             />
-            <Script id="google-ads-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', 'AW-18056785768');
-              `}
-            </Script>
-          </>
+          </noscript>
+        )}
+        {/* Google Tag Manager — apenas no site público */}
+        {!isAdmin && (
+          <Script id="gtm-script" strategy="afterInteractive">
+            {`
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','GTM-5T4N72JG');
+            `}
+          </Script>
         )}
 
         {!isAdmin && <Header config={config} />}

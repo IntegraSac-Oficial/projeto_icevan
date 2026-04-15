@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import { trackWhatsAppClick } from "@/lib/utils";
 import {
   IconWhatsApp,
   IconInstagram,
@@ -198,7 +197,6 @@ export function Footer({ config, contatos: initialContatos = [], aplicacoes: ini
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="WhatsApp"
-                  onClick={trackWhatsAppClick}
                   className="p-2 rounded-full bg-white/10 hover:bg-[#25D366]
                              transition-colors duration-200"
                 >

@@ -5,7 +5,6 @@ import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, MessageCircle, ArrowRight } from "lucide-react";
-import { trackWhatsAppClick } from "@/lib/utils";
 
 interface Slide {
   image: string;
@@ -140,7 +139,6 @@ export function HeroSlider({
                         href={whatsappUrl("Olá! Gostaria de solicitar um orçamento para refrigeração de veículo.")}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={trackWhatsAppClick}
                         className="btn-accent text-sm sm:text-lg px-5 py-2.5 sm:px-8 sm:py-4 shadow-lg"
                       >
                         <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
