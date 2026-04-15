@@ -1,14 +1,19 @@
 "use client";
 
-import { whatsappUrl } from "@/lib/utils";
+import { whatsappUrl, trackWhatsAppClick } from "@/lib/utils";
 
 export function WhatsAppButton() {
+  const handleClick = () => {
+    trackWhatsAppClick();
+  };
+
   return (
     <a
       href={whatsappUrl()}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Fale conosco pelo WhatsApp"
+      onClick={handleClick}
       className="fixed bottom-6 right-6 z-50
                  bg-[#25D366] text-white rounded-full shadow-2xl
                  hover:bg-[#20bc5a] hover:shadow-[0_0_30px_rgba(37,211,102,0.5)]

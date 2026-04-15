@@ -274,6 +274,24 @@ export default async function RootLayout({
           </>
         )}
 
+        {/* Google Ads (gtag.js) — apenas no site público */}
+        {!isAdmin && (
+          <>
+            <Script
+              src="https://www.googletagmanager.com/gtag/js?id=AW-18056785768"
+              strategy="afterInteractive"
+            />
+            <Script id="google-ads-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'AW-18056785768');
+              `}
+            </Script>
+          </>
+        )}
+
         {!isAdmin && <Header config={config} />}
         {isAdmin ? children : <div className="flex-1">{children}</div>}
         {!isAdmin && <Footer config={config} contatos={contatos} aplicacoes={aplicacoes} />}
