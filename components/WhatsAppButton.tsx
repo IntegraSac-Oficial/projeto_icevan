@@ -1,11 +1,26 @@
 "use client";
 
 import { whatsappUrl } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 export function WhatsAppButton() {
+  const [whatsappNumber, setWhatsappNumber] = useState<string>("");
+
+  useEffect(() => {
+    // Busca o número do WhatsApp da configuração
+    fetch("/api/admin/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        // Tenta pegar o número apenas dígitos primeiro, senão pega o formatado
+        const numero = data.empresa_whatsapp_numero || data.empresa_whatsapp || "";
+        setWhatsappNumber(numero);
+      })
+      .catch((err) => console.error("Erro ao carregar WhatsApp:", err));
+  }, []);
+
   return (
     <a
-      href={whatsappUrl()}
+      href={whatsappUrl(undefined, whatsappNumber)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Fale conosco pelo WhatsApp"

@@ -154,7 +154,7 @@ export function HeroSlider({
                     </div>
 
                     {/* Telefone em destaque - escondido no mobile/tablet */}
-                    {bannerTelefone && (
+                    {bannerTelefone && whatsappNumero && (
                       <div className="mt-8 hidden lg:flex items-center gap-3 text-white/80">
                         <div className="w-px h-8 bg-white/30" />
                         <div>
@@ -162,9 +162,12 @@ export function HeroSlider({
                             Fale conosco
                           </p>
                           <a
-                            href={`tel:${bannerTelefone.replace(/\D/g, "")}`}
-                            className="text-xl font-bold text-white hover:text-brand-accent transition-colors"
+                            href={whatsappUrl("Olá! Gostaria de mais informações.")}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xl font-bold text-white hover:text-brand-accent transition-colors flex items-center gap-2"
                           >
+                            <MessageCircle className="w-5 h-5" />
                             {bannerTelefone}
                           </a>
                         </div>

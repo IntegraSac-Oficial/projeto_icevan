@@ -7,8 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /** Formata número de WhatsApp para URL de deep link */
-export function whatsappUrl(message?: string): string {
-  const number = "5511948242999";
+export function whatsappUrl(message?: string, phoneNumber?: string): string {
+  // Usa o número fornecido ou fallback para o número padrão
+  const number = phoneNumber || "5511948242999";
   const text = message
     ? encodeURIComponent(message)
     : encodeURIComponent(

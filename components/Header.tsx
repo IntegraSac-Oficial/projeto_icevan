@@ -31,24 +31,39 @@ export function Header({ config }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   
-  // Atualiza logo quando houver mudanças no admin
+  // Atualiza logo e configurações quando houver mudanças no admin
   useEffect(() => {
-    const fetchLogo = async () => {
+    const fetchConfig = async () => {
       try {
-        const logoRes = await fetch("/api/logo");
+        const [logoRes, settingsRes] = await Promise.all([
+          fetch("/api/logo"),
+          fetch("/api/admin/settings")
+        ]);
+        
         const logoData = await logoRes.json();
+        const settingsData = await settingsRes.json();
+        
+        // Atualiza logo
         if (logoData.branca) {
           setLogoSrc(logoData.branca);
         } else if (logoData.principal) {
           setLogoSrc(logoData.principal);
         }
+        
+        // Atualiza telefone e WhatsApp
+        if (settingsData.header_telefone) {
+          setHeaderTelefone(settingsData.header_telefone);
+        }
+        // Pega o número apenas dígitos para WhatsApp
+        if (settingsData.empresa_whatsapp_numero) {
+          setWhatsappNumero(settingsData.empresa_whatsapp_numero);
+        }
       } catch (error) {
-        console.error('Header - Erro ao buscar logo:', error);
+        console.error('Header - Erro ao buscar configurações:', error);
       }
     };
     
-    // Chama imediatamente para corrigir o caminho da logo
-    fetchLogo();
+    fetchConfig();
   }, []);
 
   // Fecha o menu ao mudar de rota
@@ -71,9 +86,11 @@ export function Header({ config }: HeaderProps) {
       {/* Top bar — telefone e WhatsApp */}
       <div className="hidden md:block bg-black/20 border-b border-white/10">
         <div className="container-site flex items-center justify-end gap-4 py-1.5 text-sm text-white/80">
-          {headerTelefone && (
+          {headerTelefone && whatsappNumero && (
             <a
-              href={`tel:${headerTelefone.replace(/\D/g, "")}`}
+              href={whatsappUrl("Olá! Gostaria de mais informações.")}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-1.5 hover:text-white transition-colors"
             >
               <Phone className="w-3.5 h-3.5" />
