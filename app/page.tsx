@@ -22,8 +22,8 @@ import { whatsappUrl } from "@/lib/utils";
 import { getSettingJSON } from "@/lib/settings";
 import { ensureImageDirectories } from "@/lib/ensure-directories";
 
-// Desabilita cache para sempre buscar dados atualizados do banco
-export const dynamic = 'force-dynamic';
+// Cache configurado para desenvolvimento rápido (revalida a cada 5 minutos)
+export const revalidate = 300; // 5 minutos
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getEmpresaConfig();
@@ -34,9 +34,6 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: { canonical: "/" },
   };
 }
-
-// Revalidar a página a cada 60 segundos (ISR - Incremental Static Regeneration)
-export const revalidate = 60;
 
 // Carregar banners dinamicamente do banco de dados
 async function loadHeroBanners() {
@@ -136,7 +133,7 @@ interface DiferenciaisContent {
 }
 
 const DEFAULT_DIFERENCIAIS_CONTENT: DiferenciaisContent = {
-  titulo_secao: "Por que escolher a",
+  titulo_secao: "Por que escolher a [Ice Van]",
   subtitulo_secao:
     "Somos especialistas em isolamento térmico veicular com foco em qualidade, pontualidade e satisfação total do cliente.",
   cards: DEFAULT_DIFERENCIAIS,
@@ -280,7 +277,6 @@ export default async function Home() {
         <div className="container-site">
           <SectionTitle
             title={difContent.titulo_secao || DEFAULT_DIFERENCIAIS_CONTENT.titulo_secao}
-            accent={config.nome}
             subtitle={difContent.subtitulo_secao || DEFAULT_DIFERENCIAIS_CONTENT.subtitulo_secao}
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

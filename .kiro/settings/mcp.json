@@ -1,11 +1,13 @@
 {
   "mcpServers": {
-    "fetch": {
-      "command": "uvx",
-      "args": ["mcp-server-fetch"],
-      "env": {},
-      "disabled": true,
-      "autoApprove": []
+    "coolify": {
+      "command": "npx",
+      "args": ["-y", "coolify-mcp-server-kof70"],
+      "env": {
+        "COOLIFY_BASE_URL": "https://coolify.integrasac.com.br",
+        "COOLIFY_TOKEN": "8|t7dkHLVrGHCUH1ntIaD6UJrsFcf52cFy6Zg8pK9ac8a05a2d"
+      },
+      "disabled": false
     }
   }
 }

@@ -15,8 +15,8 @@ import { whatsappUrl } from "@/lib/utils";
 import { loadEmpresaImages } from "@/lib/applications";
 import { getSettingJSON } from "@/lib/settings";
 
-// Desabilita cache para sempre buscar dados atualizados do banco
-export const dynamic = 'force-dynamic';
+// Cache configurado para desenvolvimento rápido
+export const revalidate = 300; // 5 minutos
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getEmpresaConfig();
@@ -27,9 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: { canonical: "/empresa" },
   };
 }
-
-// Revalidar a página a cada 60 segundos
-export const revalidate = 60;
 
 interface MvvCard { titulo: string; descricao: string; }
 

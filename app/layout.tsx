@@ -10,8 +10,8 @@ import { prisma } from "@/lib/db";
 import { getAllSettings } from "@/lib/settings";
 import "./globals.css";
 
-// Desabilita cache para sempre buscar dados atualizados do banco
-export const dynamic = 'force-dynamic';
+// Cache habilitado para melhor performance em desenvolvimento
+export const revalidate = 300; // 5 minutos
 
 /** Converte hex (#RRGGBB) para string de componentes HSL usada pelas CSS vars do shadcn ("H S% L%"). */
 function hexToHslStr(hex: string): string {

@@ -12,8 +12,8 @@ import { getEmpresaConfig } from "@/lib/empresa-config";
 import { getSetting, getSettingJSON } from "@/lib/settings";
 import { whatsappUrl } from "@/lib/utils";
 
-// Desabilita cache para sempre buscar dados atualizados do banco
-export const dynamic = 'force-dynamic';
+// Cache configurado para desenvolvimento rápido
+export const revalidate = 300; // 5 minutos
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getEmpresaConfig();
@@ -24,9 +24,6 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: { canonical: "/contato" },
   };
 }
-
-// Revalidar a página a cada 60 segundos
-export const revalidate = 60;
 
 interface ContatoItem { label: string; numero: string; }
 

@@ -122,14 +122,14 @@ export default function DiferenciaisPage() {
           <div>
             <Label>
               Título{" "}
-              <span className="text-muted-foreground font-normal">
-                (o nome &quot;Ice Van&quot; aparece em laranja automaticamente após este texto)
+              <span className="text-muted-foreground font-normal text-xs">
+                (coloque [texto] entre colchetes para destacar em laranja. Ex: &quot;Por que escolher a [Ice Van]&quot;)
               </span>
             </Label>
             <Input
               value={data.titulo_secao}
               onChange={(e) => setData((p) => ({ ...p, titulo_secao: e.target.value }))}
-              placeholder="Por que escolher a"
+              placeholder="Por que escolher a [Ice Van]"
             />
           </div>
           <div>

@@ -6,7 +6,52 @@ interface SectionTitleProps {
   centered?: boolean;
   className?: string;
   titleClassName?: string;
-  accent?: string; // parte do título em cor de destaque
+  accent?: string; // parte do título em cor de destaque (deprecated, use [texto] no title)
+}
+
+/**
+ * Processa o texto do título para destacar partes entre colchetes [texto]
+ * Exemplo: "Por que escolher a [Ice Van]" -> "Por que escolher a " + <span>Ice Van</span>
+ */
+function parseTitle(title: string) {
+  const parts: (string | JSX.Element)[] = [];
+  let currentText = "";
+  let insideBrackets = false;
+  let bracketText = "";
+  let key = 0;
+
+  for (let i = 0; i < title.length; i++) {
+    const char = title[i];
+
+    if (char === "[") {
+      if (currentText) {
+        parts.push(currentText);
+        currentText = "";
+      }
+      insideBrackets = true;
+      bracketText = "";
+    } else if (char === "]" && insideBrackets) {
+      parts.push(
+        <span key={key++} className="text-brand-accent">
+          {bracketText}
+        </span>
+      );
+      insideBrackets = false;
+      bracketText = "";
+    } else {
+      if (insideBrackets) {
+        bracketText += char;
+      } else {
+        currentText += char;
+      }
+    }
+  }
+
+  if (currentText) {
+    parts.push(currentText);
+  }
+
+  return parts.length > 0 ? parts : title;
 }
 
 export function SectionTitle({
@@ -17,6 +62,8 @@ export function SectionTitle({
   titleClassName,
   accent,
 }: SectionTitleProps) {
+  const processedTitle = parseTitle(title);
+
   return (
     <div className={cn(centered && "text-center", "mb-10 md:mb-14", className)}>
       <h2
@@ -26,12 +73,14 @@ export function SectionTitle({
         )}
       >
         {accent ? (
+          // Modo antigo (compatibilidade)
           <>
             {title}{" "}
-            <span className="text-brand-secondary">{accent}</span>
+            <span className="text-brand-accent">{accent}</span>
           </>
         ) : (
-          title
+          // Modo novo: processa [texto] automaticamente
+          processedTitle
         )}
       </h2>
       {subtitle && (

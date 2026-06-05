@@ -1,7 +1,8 @@
 import { getVehicleRegistry } from "@/lib/applications";
 import VideosPageClient from "./VideosPageClient";
 
-export const dynamic = "force-dynamic";
+// Cache habilitado para melhor performance
+export const revalidate = 300;
 
 export default async function VideosPage() {
   // Busca veículos dinâmicos do banco

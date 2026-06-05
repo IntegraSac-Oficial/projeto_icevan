@@ -14,26 +14,16 @@ const nextConfig = {
   },
   // Compressão de assets
   compress: true,
-  // Headers para cache otimizado
+  // Headers para cache otimizado - CACHE AGRESSIVO PARA DESENVOLVIMENTO
   async headers() {
     return [
       {
-        // Cache para imagens estáticas
-        source: '/images/:path*',
+        // Cache FORTE para todas as páginas em desenvolvimento
+        source: '/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        // Sem cache para páginas dinâmicas
-        source: '/((?!images).*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+            value: 'public, max-age=300, stale-while-revalidate=600',
           },
         ],
       },
@@ -43,14 +33,17 @@ const nextConfig = {
   experimental: {
     // Melhor handling de erros durante build
     optimizePackageImports: ['@radix-ui/react-icons'],
+    // Limitar workers para reduzir consumo de memória
+    workerThreads: false,
+    cpus: 1,
   },
+  // Configuração Turbopack vazia para compatibilidade Next.js 16
+  turbopack: {},
   // Configurações para produção
   poweredByHeader: false,
   reactStrictMode: true,
   // Configurações de output para deployment
   output: 'standalone',
-  // Configuração do Turbopack (Next.js 16+)
-  turbopack: {},
 };
 
 export default nextConfig;
