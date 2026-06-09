@@ -3,38 +3,59 @@
 import { whatsappUrl } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
-export function WhatsAppButton() {
-  const [whatsappNumber, setWhatsappNumber] = useState<string>("");
-  const [whatsappMessage, setWhatsappMessage] = useState<string>("");
-  const [enabled, setEnabled] = useState<boolean>(true);
+interface WhatsAppButtonProps {
+  initialNumber?: string;
+  initialMessage?: string;
+  initialEnabled?: boolean;
+}
+
+export function WhatsAppButton({
+  initialNumber = "",
+  initialMessage = "",
+  initialEnabled = true,
+}: WhatsAppButtonProps) {
+  const [whatsappNumber, setWhatsappNumber] = useState<string>(initialNumber);
+  const [whatsappMessage, setWhatsappMessage] = useState<string>(initialMessage);
+  const [enabled, setEnabled] = useState<boolean>(initialEnabled);
 
   useEffect(() => {
     fetch("/api/admin/settings")
       .then((res) => res.json())
       .then((data) => {
         const isEnabled =
-          data.whatsapp_floating_enabled === true ||
-          data.whatsapp_floating_enabled === "true" ||
-          data.whatsapp_floating_enabled === "1";
+          data.whatsapp_floating_enabled === false ||
+          data.whatsapp_floating_enabled === "false" ||
+          data.whatsapp_floating_enabled === "0"
+            ? false
+            : (data.whatsapp_floating_enabled === true ||
+                data.whatsapp_floating_enabled === "true" ||
+                data.whatsapp_floating_enabled === "1" ||
+                initialEnabled);
 
         const numero =
           data.whatsapp_floating_numero ||
           data.empresa_whatsapp_numero ||
           data.empresa_whatsapp ||
+          initialNumber ||
           "";
 
         setEnabled(isEnabled);
         setWhatsappNumber(numero);
-        setWhatsappMessage(data.whatsapp_floating_mensagem ?? data.whatsapp_mensagem_padrao ?? "");
+        setWhatsappMessage(
+          data.whatsapp_floating_mensagem ?? data.whatsapp_mensagem_padrao ?? initialMessage ?? ""
+        );
       })
       .catch((err) => console.error("Erro ao carregar WhatsApp:", err));
-  }, []);
+  }, [initialEnabled, initialMessage, initialNumber]);
 
-  if (!enabled || !whatsappNumber) return null;
+  if (!enabled) return null;
+
+  const resolvedNumber = whatsappNumber || initialNumber || "5511948242999";
+  const resolvedMessage = whatsappMessage || initialMessage || "";
 
   return (
     <a
-      href={whatsappUrl(whatsappMessage, whatsappNumber)}
+      href={whatsappUrl(resolvedMessage, resolvedNumber)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Fale conosco pelo WhatsApp"

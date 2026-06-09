@@ -281,7 +281,13 @@ export default async function RootLayout({
         {!isAdmin && <Header config={config} />}
         {isAdmin ? children : <div className="flex-1">{children}</div>}
         {!isAdmin && <Footer config={config} contatos={contatos} aplicacoes={aplicacoes} />}
-        {!isAdmin && <WhatsAppButton />}
+        {!isAdmin && (
+          <WhatsAppButton
+            initialNumber={config.whatsappNumero || config.whatsapp || ""}
+            initialMessage=""
+            initialEnabled={true}
+          />
+        )}
       </body>
     </html>
   );
