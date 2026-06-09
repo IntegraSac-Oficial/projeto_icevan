@@ -3,7 +3,8 @@ import Link from "next/link";
 import { ChevronRight, MessageCircle, CheckSquare, ArrowLeft } from "lucide-react";
 import { PhotoGallery } from "@/components/PhotoGallery";
 import { VideoGrid } from "@/components/VideoGrid";
-import { whatsappUrl } from "@/lib/utils";
+import { getEmpresaConfig } from "@/lib/empresa-config";
+import { buildWhatsAppUrl, getConfiguredWhatsAppMessage } from "@/lib/whatsapp-config";
 import type { Application } from "@/lib/applications";
 
 interface Video {
@@ -19,8 +20,12 @@ interface ApplicationDetailPageProps {
   photoCaptions?: Map<string, string>; // Mapa de filename -> legenda personalizada
 }
 
-export function ApplicationDetailPage({ application, videos = [], photoCaptions = new Map() }: ApplicationDetailPageProps) {
+export async function ApplicationDetailPage({ application, videos = [], photoCaptions = new Map() }: ApplicationDetailPageProps) {
   const { titulo, subtitulo, tituloSecao, conteudo, specs, imagens } = application;
+  const [config, sharedMessage] = await Promise.all([
+    getEmpresaConfig(),
+    getConfiguredWhatsAppMessage(),
+  ]);
 
   // Remove a primeira imagem (thumbnail) da galeria - mostra apenas fotos de galeria
   const galleryImages = imagens.slice(1);
@@ -59,9 +64,7 @@ export function ApplicationDetailPage({ application, videos = [], photoCaptions 
               {subtitulo}
             </p>
             <a
-              href={whatsappUrl(
-                `Olá! Tenho interesse em isolamento térmico para ${titulo}. Gostaria de um orçamento.`
-              )}
+              href={buildWhatsAppUrl(config.whatsappNumero || config.whatsapp, sharedMessage ?? `Olá! Tenho interesse em isolamento térmico para ${titulo}. Gostaria de um orçamento.`)}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-accent text-lg px-8 py-4"
@@ -115,9 +118,7 @@ export function ApplicationDetailPage({ application, videos = [], photoCaptions 
                 {/* CTA no sidebar */}
                 <div className="mt-6 pt-5 border-t border-gray-100 space-y-3">
                   <a
-                    href={whatsappUrl(
-                      `Olá! Quero saber mais sobre isolamento térmico para ${titulo}.`
-                    )}
+                    href={buildWhatsAppUrl(config.whatsappNumero || config.whatsapp, sharedMessage ?? `Olá! Quero saber mais sobre isolamento térmico para ${titulo}.`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-accent w-full justify-center text-sm"
@@ -176,9 +177,7 @@ export function ApplicationDetailPage({ application, videos = [], photoCaptions 
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href={whatsappUrl(
-                `Olá! Gostaria de um orçamento para isolamento térmico de ${titulo}.`
-              )}
+              href={buildWhatsAppUrl(config.whatsappNumero || config.whatsapp, sharedMessage ?? `Olá! Gostaria de um orçamento para isolamento térmico de ${titulo}.`)}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-accent px-10 py-4 text-lg shadow-lg"

@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronRight, MessageCircle } from "lucide-react";
 import { FotosServicosFilter } from "./FotosServicosFilter";
-import { whatsappUrl } from "@/lib/utils";
 import { prisma } from "@/lib/db";
+import { getEmpresaConfig } from "@/lib/empresa-config";
+import { buildWhatsAppUrl, getConfiguredWhatsAppMessage } from "@/lib/whatsapp-config";
 
 // Fallback — exibido enquanto o banco estiver vazio
 const fotosDefault = [
@@ -143,8 +144,14 @@ async function getTextos() {
 }
 
 export default async function FotosServicosPage() {
-  const { photos, videos } = await getGalleryData();
-  const textos = await getTextos();
+  const [galleryData, textos, config, sharedMessage] = await Promise.all([
+    getGalleryData(),
+    getTextos(),
+    getEmpresaConfig(),
+    getConfiguredWhatsAppMessage(),
+  ]);
+  const { photos, videos } = galleryData;
+  const whatsappHref = buildWhatsAppUrl(config.whatsappNumero || config.whatsapp, sharedMessage);
 
   return (
     <main className="pt-24 md:pt-28">
@@ -179,9 +186,7 @@ export default async function FotosServicosPage() {
             {textos.ctaDescricao}
           </p>
           <a
-            href={whatsappUrl(
-              "Olá! Vi o portfólio no site e gostaria de solicitar um orçamento."
-            )}
+            href={buildWhatsAppUrl(config.whatsappNumero || config.whatsapp, sharedMessage ?? "Olá! Vi o portfólio no site e gostaria de solicitar um orçamento.")}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-accent px-10 py-4 text-lg shadow-lg"

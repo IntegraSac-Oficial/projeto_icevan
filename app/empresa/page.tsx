@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { getEmpresaConfig } from "@/lib/empresa-config";
-import { whatsappUrl } from "@/lib/utils";
 import { loadEmpresaImages } from "@/lib/applications";
 import { getSettingJSON } from "@/lib/settings";
+import { buildWhatsAppUrl, getConfiguredWhatsAppMessage } from "@/lib/whatsapp-config";
 
 // Cache configurado para desenvolvimento rápido
 export const revalidate = 300; // 5 minutos
@@ -48,7 +48,10 @@ interface EmpresaContent {
 }
 
 export default async function EmpresaPage() {
-  const config = await getEmpresaConfig();
+  const [config, sharedMessage] = await Promise.all([
+    getEmpresaConfig(),
+    getConfiguredWhatsAppMessage(),
+  ]);
   
   const DEFAULTS: EmpresaContent = {
     heroLabel: "Quem somos",
@@ -98,6 +101,7 @@ export default async function EmpresaPage() {
 
   const imagemEscritorio = empresaImages[0] || "/images/empresa/instalacoes.webp";
   const imagemDiferenciais = empresaImages[1] || "/images/empresa/equipe.webp";
+  const whatsappHref = buildWhatsAppUrl(config.whatsappNumero || config.whatsapp, sharedMessage);
 
   const mvvIcons = { missao: Target, visao: Eye, valores: Heart };
   const mvvColors = {
@@ -225,7 +229,7 @@ export default async function EmpresaPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href={whatsappUrl()}
+              href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-accent px-10 py-4 text-lg"

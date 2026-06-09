@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, Phone, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { EmpresaConfig } from "@/lib/empresa-config";
+import { useWhatsAppConfig } from "@/hooks/useWhatsAppConfig";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -23,7 +24,7 @@ export function Header({ config }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [logoSrc, setLogoSrc] = useState(config.logo.branca || config.logo.principal);
   const [headerTelefone, setHeaderTelefone] = useState(config.telefone);
-  const [whatsappNumero, setWhatsappNumero] = useState(config.whatsappNumero);
+  const { message: whatsappMessage, number: whatsappNumero, buildUrl } = useWhatsAppConfig(config.whatsappNumero);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -54,10 +55,6 @@ export function Header({ config }: HeaderProps) {
         if (settingsData.header_telefone) {
           setHeaderTelefone(settingsData.header_telefone);
         }
-        // Pega o número apenas dígitos para WhatsApp
-        if (settingsData.empresa_whatsapp_numero) {
-          setWhatsappNumero(settingsData.empresa_whatsapp_numero);
-        }
       } catch (error) {
         console.error('Header - Erro ao buscar configurações:', error);
       }
@@ -70,11 +67,7 @@ export function Header({ config }: HeaderProps) {
   const closeMenu = () => setMenuOpen(false);
 
   // Gera URL do WhatsApp
-  const whatsappUrl = (msg = "") => {
-    if (!whatsappNumero) return "#";
-    const text = encodeURIComponent(msg || "Olá! Gostaria de mais informações.");
-    return `https://wa.me/${whatsappNumero}?text=${text}`;
-  };
+  const whatsappUrl = (msg?: string | null) => buildUrl(msg ?? whatsappMessage, whatsappNumero);
 
   return (
     <header
@@ -88,7 +81,7 @@ export function Header({ config }: HeaderProps) {
         <div className="container-site flex items-center justify-end gap-4 py-1.5 text-sm text-white/80">
           {headerTelefone && whatsappNumero && (
             <a
-              href={whatsappUrl("Olá! Gostaria de mais informações.")}
+              href={whatsappUrl(whatsappMessage)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 hover:text-white transition-colors"
@@ -146,7 +139,7 @@ export function Header({ config }: HeaderProps) {
             {/* CTA WhatsApp no nav desktop */}
             {whatsappNumero && (
               <a
-                href={whatsappUrl("Olá! Gostaria de solicitar um orçamento.")}
+                href={whatsappUrl(whatsappMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ml-3 btn-accent text-sm py-2 px-4"

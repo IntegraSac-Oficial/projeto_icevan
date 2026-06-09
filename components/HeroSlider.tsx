@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, MessageCircle, ArrowRight } from "lucide-react";
+import { useWhatsAppConfig } from "@/hooks/useWhatsAppConfig";
 
 interface Slide {
   image: string;
@@ -66,16 +67,12 @@ export function HeroSlider({
   const [filtroCor, setFiltroCor] = useState(initialFiltroCor);
   const [filtroOpacidade, setFiltroOpacidade] = useState(initialFiltroOpacidade);
   const [bannerTelefone, setBannerTelefone] = useState(initialBannerTelefone);
-  const [whatsappNumero, setWhatsappNumero] = useState(initialWhatsappNumero);
+  const { message: whatsappMessage, number: whatsappNumero, buildUrl } = useWhatsAppConfig(initialWhatsappNumero);
 
   // Removido useEffect que fazia fetch para /api/admin/settings
   // Os dados agora vêm via props do servidor
 
-  const whatsappUrl = (msg = "") => {
-    if (!whatsappNumero) return "#";
-    const text = encodeURIComponent(msg || "Olá! Gostaria de mais informações.");
-    return `https://wa.me/${whatsappNumero}?text=${text}`;
-  };
+  const whatsappUrl = (msg?: string | null) => buildUrl(msg ?? whatsappMessage, whatsappNumero);
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -136,7 +133,7 @@ export function HeroSlider({
                     </p>
                     <div className="flex flex-col items-start sm:flex-row gap-3 sm:gap-4">
                       <a
-                        href={whatsappUrl("Olá! Gostaria de solicitar um orçamento para refrigeração de veículo.")}
+                        href={whatsappUrl(whatsappMessage)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn-accent text-sm sm:text-lg px-5 py-2.5 sm:px-8 sm:py-4 shadow-lg"
@@ -162,7 +159,7 @@ export function HeroSlider({
                             Fale conosco
                           </p>
                           <a
-                            href={whatsappUrl("Olá! Gostaria de mais informações.")}
+                            href={whatsappUrl(whatsappMessage)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xl font-bold text-white hover:text-brand-accent transition-colors flex items-center gap-2"

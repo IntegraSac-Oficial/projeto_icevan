@@ -7,13 +7,14 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /** Formata número de WhatsApp para URL de deep link */
-export function whatsappUrl(message?: string, phoneNumber?: string): string {
-  // Usa o número fornecido ou fallback para o número padrão
+export function whatsappUrl(message?: string | null, phoneNumber?: string): string {
   const number = phoneNumber || "5511948242999";
-  const text = message
-    ? encodeURIComponent(message)
-    : encodeURIComponent(
-        "Olá! Gostaria de solicitar um orçamento para refrigeração de veículo."
-      );
-  return `https://wa.me/${number}?text=${text}`;
+  const defaultMessage = "Olá! Gostaria de solicitar um orçamento para refrigeração de veículo.";
+  const text = message === undefined ? defaultMessage : message ?? "";
+
+  if (!text) {
+    return `https://wa.me/${number}`;
+  }
+
+  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 }

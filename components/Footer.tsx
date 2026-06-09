@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/social-icons";
 import { eventBus, EVENTS } from "@/lib/events";
 import type { EmpresaConfig } from "@/lib/empresa-config";
+import { useWhatsAppConfig } from "@/hooks/useWhatsAppConfig";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -88,13 +89,10 @@ export function Footer({ config, contatos: initialContatos = [], aplicacoes: ini
   });
 
   const [nomeEmpresa, setNomeEmpresa] = useState(config.nome);
-  const [whatsappNumero, setWhatsappNumero] = useState(config.whatsappNumero);
+  const { message: whatsappMessage, number: whatsappNumero, buildUrl } = useWhatsAppConfig(config.whatsappNumero);
 
   // Função para gerar URL do WhatsApp
-  const whatsappUrl = () => {
-    const numero = whatsappNumero.replace(/\D/g, "");
-    return `https://wa.me/${numero}`;
-  };
+  const whatsappUrl = () => buildUrl(whatsappMessage, whatsappNumero);
 
   // Atualiza logo e textos quando houver mudanças no admin
   useEffect(() => {

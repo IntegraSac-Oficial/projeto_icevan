@@ -4,7 +4,8 @@ import { ChevronRight, MessageCircle } from "lucide-react";
 import { ApplicationCard } from "@/components/ApplicationCard";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { getVehicleRegistry, loadApplicationImages } from "@/lib/applications";
-import { whatsappUrl } from "@/lib/utils";
+import { getEmpresaConfig } from "@/lib/empresa-config";
+import { buildWhatsAppUrl, getConfiguredWhatsAppMessage } from "@/lib/whatsapp-config";
 
 export const metadata: Metadata = {
   title: "Aplicações — Isolamento Térmico por Tipo de Veículo",
@@ -18,11 +19,16 @@ export const revalidate = 300; // 5 minutos
 
 export default async function AplicacoesPage() {
   // Carrega a lista de veículos do registro (banco ou padrão)
-  const registry = await getVehicleRegistry();
+  const [registry, config, sharedMessage] = await Promise.all([
+    getVehicleRegistry(),
+    getEmpresaConfig(),
+    getConfiguredWhatsAppMessage(),
+  ]);
   const applicationsWithImages = await Promise.all(
     registry.map((v) => loadApplicationImages(v.slug))
   );
   const validApplications = applicationsWithImages.filter((app) => app !== undefined);
+  const whatsappHref = buildWhatsAppUrl(config.whatsappNumero || config.whatsapp, sharedMessage);
 
   return (
     <main className="pt-24 md:pt-28">
@@ -71,9 +77,7 @@ export default async function AplicacoesPage() {
             Fale com nossos especialistas e descreva sua necessidade.
           </p>
           <a
-            href={whatsappUrl(
-              "Olá! Preciso de isolamento térmico para um veículo que não vi nas aplicações do site. Pode me ajudar?"
-            )}
+            href={buildWhatsAppUrl(config.whatsappNumero || config.whatsapp, sharedMessage ?? "Olá! Preciso de isolamento térmico para um veículo que não vi nas aplicações do site. Pode me ajudar?")}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-accent px-10 py-4 text-lg"

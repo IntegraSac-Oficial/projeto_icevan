@@ -18,9 +18,9 @@ import { ContactForm } from "@/components/ContactForm";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { applications, loadApplicationImages } from "@/lib/applications";
 import { getEmpresaConfig } from "@/lib/empresa-config";
-import { whatsappUrl } from "@/lib/utils";
 import { getSettingJSON } from "@/lib/settings";
 import { ensureImageDirectories } from "@/lib/ensure-directories";
+import { buildWhatsAppUrl, getConfiguredWhatsAppMessage } from "@/lib/whatsapp-config";
 
 // Cache configurado para desenvolvimento rápido (revalida a cada 5 minutos)
 export const revalidate = 300; // 5 minutos
@@ -182,11 +182,12 @@ export default async function Home() {
     whatsappNumero: config.whatsappNumero,
   };
   
-  const [heroBanners, difContent, ctaContent, firstThreeApps] = await Promise.all([
+  const [heroBanners, difContent, ctaContent, firstThreeApps, sharedMessage] = await Promise.all([
     loadHeroBanners(),
     getSettingJSON<DiferenciaisContent>("content_diferenciais", DEFAULT_DIFERENCIAIS_CONTENT),
     getSettingJSON<CtaContent>("content_cta", DEFAULT_CTA),
     Promise.all(applications.slice(0, 3).map(app => loadApplicationImages(app.slug))),
+    getConfiguredWhatsAppMessage(),
   ]);
 
   const validApps = firstThreeApps.filter(app => app !== undefined);
@@ -313,14 +314,14 @@ export default async function Home() {
               </p>
               <div className="space-y-4">
                 {(ctaContent.contatos ?? DEFAULT_CTA.contatos).map((c, i) => {
-                  const digits = c.numero.replace(/\D/g, "");
+                  const whatsappHref = buildWhatsAppUrl(c.numero, sharedMessage);
                   return (
                     <div key={i} className="space-y-0.5">
                       {c.label && (
                         <p className="text-white/60 text-xs uppercase tracking-wider">{c.label}</p>
                       )}
                       <a
-                        href={`https://wa.me/${digits}`}
+                        href={whatsappHref}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-3 text-white hover:text-brand-accent transition-colors"

@@ -10,7 +10,7 @@ import { ContactForm } from "@/components/ContactForm";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { getEmpresaConfig } from "@/lib/empresa-config";
 import { getSetting, getSettingJSON } from "@/lib/settings";
-import { whatsappUrl } from "@/lib/utils";
+import { buildWhatsAppUrl, getConfiguredWhatsAppMessage } from "@/lib/whatsapp-config";
 
 // Cache configurado para desenvolvimento rápido
 export const revalidate = 300; // 5 minutos
@@ -30,7 +30,7 @@ interface ContatoItem { label: string; numero: string; }
 export default async function ContatoPage() {
   const config = await getEmpresaConfig();
   
-  const [mapsUrl, endereco, email, horario, contatos] = await Promise.all([
+  const [mapsUrl, endereco, email, horario, contatos, sharedMessage] = await Promise.all([
     getSetting("empresa_maps_embed", ""),
     getSetting("empresa_endereco", config.enderecoCompleto),
     getSetting("empresa_email", config.email),
@@ -38,6 +38,7 @@ export default async function ContatoPage() {
     getSettingJSON<ContatoItem[]>("empresa_contatos", [
       { label: "WhatsApp", numero: config.whatsapp || "" },
     ]),
+    getConfiguredWhatsAppMessage(),
   ]);
 
   return (
@@ -102,9 +103,7 @@ export default async function ContatoPage() {
                 </h3>
                 <ul className="space-y-4">
                   {contatos.map((c, i) => {
-                    const digits = c.numero.replace(/\D/g, "");
-                    const num = digits.startsWith("55") ? digits : `55${digits}`;
-                    const waUrl = `https://wa.me/${num}?text=${encodeURIComponent("Olá! Gostaria de solicitar um orçamento para isolamento térmico de veículo.")}`;
+                    const waUrl = buildWhatsAppUrl(c.numero, sharedMessage);
                     return (
                       <li key={i}>
                         <a
@@ -160,7 +159,7 @@ export default async function ContatoPage() {
               </div>
 
               <a
-                href={whatsappUrl()}
+                href={buildWhatsAppUrl(config.whatsappNumero || config.whatsapp, sharedMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-accent w-full justify-center py-4 text-lg"

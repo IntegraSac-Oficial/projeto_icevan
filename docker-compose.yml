@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build: 
@@ -39,7 +37,7 @@ services:
       - MYSQL_USER=${MYSQL_USER:-icevans}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-icevans123}
     ports:
-      - "3307:3306"
+      - "3308:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     restart: unless-stopped

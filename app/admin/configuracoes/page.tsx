@@ -65,6 +65,10 @@ interface Settings {
   // WhatsApp
   empresa_whatsapp:   string;
   empresa_whatsapp_numero: string;
+  whatsapp_mensagem_padrao: string;
+  whatsapp_floating_enabled: string;
+  whatsapp_floating_numero: string;
+  whatsapp_floating_mensagem: string;
   // Endereço (componentes)
   empresa_rua:        string;
   empresa_bairro:     string;
@@ -120,6 +124,10 @@ const DEFAULTS: Settings = {
   // WhatsApp
   empresa_whatsapp:  "+55 (11) 94824-2999",
   empresa_whatsapp_numero: "5511948242999",
+  whatsapp_mensagem_padrao: "Olá! Gostaria de falar com a Ice Van sobre isolamento térmico para meu veículo.",
+  whatsapp_floating_enabled: "true",
+  whatsapp_floating_numero: "5511948242999",
+  whatsapp_floating_mensagem: "Olá! Gostaria de falar com a Ice Van sobre isolamento térmico para meu veículo.",
   // Endereço (componentes)
   empresa_rua:       "Rua Gabriela Mistral, 1246",
   empresa_bairro:    "Penha de França",
@@ -531,6 +539,10 @@ export default function ConfiguracoesPage() {
         footer_rodape:     settings.footer_rodape,
         header_telefone:   settings.header_telefone,
         banner_telefone:   settings.banner_telefone,
+        whatsapp_mensagem_padrao: settings.whatsapp_mensagem_padrao,
+        whatsapp_floating_enabled: settings.whatsapp_floating_enabled,
+        whatsapp_floating_numero: settings.whatsapp_floating_numero,
+        whatsapp_floating_mensagem: settings.whatsapp_floating_mensagem,
       }),
     });
     setSaving(false);
@@ -990,6 +1002,70 @@ export default function ConfiguracoesPage() {
                   onChange={(e) => setSettings((s) => ({ ...s, empresa_horario: e.target.value }))}
                   className="form-input"
                   placeholder="Seg a Sex: 8h às 18h | Sáb: 8h às 12h"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Phone className="w-4 h-4" /> Botão flutuante do WhatsApp
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Defina aqui o comportamento do botão flutuante que aparece no site. Esses dados são usados especificamente para esse botão.
+              </p>
+
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={settings.whatsapp_floating_enabled === "true"}
+                  onChange={(e) =>
+                    setSettings((s) => ({
+                      ...s,
+                      whatsapp_floating_enabled: e.target.checked ? "true" : "false",
+                    }))
+                  }
+                  className="h-4 w-4 rounded border-border text-[#25D366] focus:ring-[#25D366]"
+                />
+                <span className="text-sm font-medium">Exibir o botão flutuante no site</span>
+              </label>
+
+              <div>
+                <label className="form-label">Mensagem padrão para os links do WhatsApp</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Esse texto é usado também pelos principais links de WhatsApp do site, como header e footer. Deixe em branco para abrir sem texto pré-definido.</p>
+                <textarea
+                  rows={3}
+                  value={settings.whatsapp_mensagem_padrao}
+                  onChange={(e) => setSettings((s) => ({ ...s, whatsapp_mensagem_padrao: e.target.value }))}
+                  className="form-input resize-none"
+                  placeholder="Olá! Gostaria de falar com a empresa..."
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Número do WhatsApp</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Usado apenas pelo botão flutuante. Ex: 5511948242999</p>
+                <input
+                  type="text"
+                  value={settings.whatsapp_floating_numero}
+                  onChange={(e) => setSettings((s) => ({ ...s, whatsapp_floating_numero: e.target.value }))}
+                  className="form-input"
+                  placeholder="5511948242999"
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Mensagem inicial do botão</label>
+                <p className="text-xs text-muted-foreground mb-1.5">Texto que já vem preenchido ao abrir o WhatsApp. Deixe em branco para não enviar nenhuma mensagem.</p>
+                <textarea
+                  rows={3}
+                  value={settings.whatsapp_floating_mensagem}
+                  onChange={(e) => setSettings((s) => ({ ...s, whatsapp_floating_mensagem: e.target.value }))}
+                  className="form-input resize-none"
+                  placeholder="Olá! Gostaria de falar com a empresa..."
                 />
               </div>
             </CardContent>

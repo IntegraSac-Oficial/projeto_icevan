@@ -1,16 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MessageCircle } from "lucide-react";
-import { whatsappUrl } from "@/lib/utils";
+import { getEmpresaConfig } from "@/lib/empresa-config";
+import { buildWhatsAppUrl, getConfiguredWhatsAppMessage } from "@/lib/whatsapp-config";
 import type { Application } from "@/lib/applications";
 
 interface ApplicationCardProps {
   application: Application;
 }
 
-export function ApplicationCard({ application }: ApplicationCardProps) {
+export async function ApplicationCard({ application }: ApplicationCardProps) {
   const { slug, titulo, subtitulo, thumb, href } = application;
   const pageHref = href ?? `/${slug}`;
+  const [config, sharedMessage] = await Promise.all([
+    getEmpresaConfig(),
+    getConfiguredWhatsAppMessage(),
+  ]);
+  const whatsappHref = buildWhatsAppUrl(config.whatsappNumero || config.whatsapp, sharedMessage ?? `Olá! Tenho interesse em refrigeração para ${titulo}. Poderia me enviar um orçamento?`);
 
   return (
     <div className="card group flex flex-col hover:-translate-y-1 transition-transform duration-300">
@@ -47,9 +53,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
             <ArrowRight className="w-4 h-4" />
           </Link>
           <a
-            href={whatsappUrl(
-              `Olá! Tenho interesse em refrigeração para ${titulo}. Poderia me enviar um orçamento?`
-            )}
+            href={whatsappHref}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 btn-accent text-sm py-2.5 justify-center"
