@@ -75,8 +75,17 @@ export function PhotoGallery({ photos }: PhotoGalleryProps) {
             {/* Overlay ao hover */}
             <div className="absolute inset-0 bg-brand-primary/0 group-hover:bg-brand-primary/40
                             transition-all duration-300 flex items-center justify-center">
-              <ZoomIn className="w-10 h-10 text-white opacity-0 group-hover:opacity-100
-                                 transition-opacity duration-300 drop-shadow-lg" />
+              {/*
+                No desktop (md+): lupa aparece apenas ao passar o mouse (hover).
+                No celular (< md): não há hover, então mostramos a lupa sempre
+                visível na primeira imagem de cada aplicação (index === 0) para
+                indicar que a imagem pode ser ampliada ao toque.
+              */}
+              <ZoomIn
+                className={`w-10 h-10 text-white transition-opacity duration-300 drop-shadow-lg
+                            md:opacity-0 md:group-hover:opacity-100
+                            ${index === 0 ? "opacity-100" : "opacity-0"}`}
+              />
             </div>
             {/* Badge de categoria ou legenda personalizada */}
             {(photo.caption || photo.category) && (
